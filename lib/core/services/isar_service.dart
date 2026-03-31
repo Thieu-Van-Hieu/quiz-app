@@ -1,3 +1,5 @@
+import 'package:frontend/features/library/models/quiz.dart';
+import 'package:frontend/features/library/models/subject.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -21,7 +23,7 @@ class IsarService {
 
     // TODO: Thêm các Collection vào đây khi có model mới
     _instance = await Isar.open(
-      [],
+      [SubjectSchema, QuizSchema],
       directory: dir.path,
       inspector: true, // Bật cái này để debug DB trên Browser (cực xịn)
     );
