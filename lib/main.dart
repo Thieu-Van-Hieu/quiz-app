@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/services/isar_service.dart';
+import 'package:frontend/routes/app_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
@@ -28,13 +29,10 @@ class MyApp extends HookWidget {
       }
       FlutterError.presentError(details); // Các lỗi khác vẫn hiện bình thường
     };
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Isar + Riverpod Example')),
-        body: const Center(child: Text('Hello, Isar + Riverpod!')),
-      ),
+    return MaterialApp.router(
+      routerConfig: appRouter,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true),
     );
   }
 }
