@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/features/dashboard/routes/dashboard_routes.dart';
+import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/routes/types.dart';
 
 // Hàm xử lý hiện Dialog thoát
@@ -27,6 +28,7 @@ void _showExitDialog(BuildContext context) {
 class AppRouteConfig {
   static final List<AppRouteItem> mainMenuItems = [
     DashboardRoutes.config,
+    LibraryRoutes.config,
     AppRouteItem(
       title: 'Thoát',
       icon: Icons.logout_rounded,
