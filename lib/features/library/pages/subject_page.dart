@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:frontend/core/extensions/future_toast_extension.dart';
+import 'package:frontend/core/widgets/app_search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/notifiers/subject_notifier.dart';
+import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/widgets/add_subject_dialog.dart';
+import 'package:frontend/features/library/widgets/delete_confirm_dialog.dart';
 import 'package:frontend/features/library/widgets/subject_item.dart';
-import 'package:frontend/features/library/widgets/subject_search.dart';
+import 'package:frontend/features/library/widgets/update_subject_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class LibraryPage extends HookConsumerWidget {
-  const LibraryPage({super.key});
+class SubjectPage extends HookConsumerWidget {
+  const SubjectPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +34,7 @@ class LibraryPage extends HookConsumerWidget {
             const SizedBox(height: 40),
 
             // --- SEARCH SECTION ---
-            SubjectSearch(onSearch: (v) => searchQuery.value = v),
+            AppSearchBar(onSearch: (v) => searchQuery.value = v),
             const SizedBox(height: 32),
 
             // --- CONTENT SECTION ---
@@ -64,8 +68,14 @@ class LibraryPage extends HookConsumerWidget {
                     itemCount: filtered.length,
                     itemBuilder: (context, index) => SubjectItem(
                       subject: filtered[index],
-                      onTap: () =>
-                          context.go('/library/courses/${filtered[index].id}'),
+                      onTap: () => context.go(
+                        LibraryRoutes.getSubjectDetailPath(filtered[index].id),
+                      ),
+                      onEdit: () => _showUpdateSubjectDialog(
+                        context,
+                        ref,
+                        filtered[index],
+                      ),
                       onDelete: () =>
                           _confirmDelete(context, ref, filtered[index]),
                     ),
@@ -112,6 +122,7 @@ class LibraryPage extends HookConsumerWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: LibraryColors.accentColor,
             foregroundColor: Colors.white,
+            enabledMouseCursor: SystemMouseCursors.click,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -132,39 +143,53 @@ class LibraryPage extends HookConsumerWidget {
   void _showAddDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
-      builder: (context) =>
-          const AddSubjectDialog(), // Widget dialog này cũng nên tách file nếu cần
+      builder: (context) => AddSubjectDialog(
+        onSave: (name, code) {
+          final newSubject = Subject()
+            ..code = code
+            ..name = name;
+          ref
+              .read(subjectNotifierProvider.notifier)
+              .saveSubject(newSubject)
+              .withToast(context);
+        },
+      ),
+    );
+  }
+
+  void _showUpdateSubjectDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Subject subject,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => UpdateSubjectDialog(
+        subject: subject,
+        onUpdate: (newName, newCode) {
+          subject.name = newName;
+          subject.code = newCode;
+          // Gọi hàm update có validate trong notifier
+          ref
+              .read(subjectNotifierProvider.notifier)
+              .saveSubject(subject)
+              .withToast(context);
+        },
+      ),
     );
   }
 
   void _confirmDelete(BuildContext context, WidgetRef ref, Subject subject) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(LibraryStrings.deleteConfirmTitle),
-        content: Text(
-          "${LibraryStrings.deleteConfirmContent}\n(${subject.name})",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(LibraryStrings.btnCancel),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: LibraryColors.deleteButton,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () {
-              ref
-                  .read(subjectNotifierProvider.notifier)
-                  .deleteSubject(subject.id);
-              Navigator.pop(context);
-            },
-            child: const Text(LibraryStrings.btnDelete),
-          ),
-        ],
+      builder: (context) => DeleteConfirmDialog(
+        itemName: subject.name,
+        onDelete: () {
+          ref
+              .read(subjectNotifierProvider.notifier)
+              .deleteSubject(subject.id)
+              .withToast(context);
+        },
       ),
     );
   }

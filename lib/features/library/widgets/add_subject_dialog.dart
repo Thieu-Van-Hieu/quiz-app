@@ -2,27 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
-import 'package:frontend/features/library/models/subject.dart';
-import 'package:frontend/features/library/notifiers/subject_notifier.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AddSubjectDialog extends HookConsumerWidget {
-  const AddSubjectDialog({super.key});
+class AddSubjectDialog extends HookWidget {
+  // Page sẽ quyết định làm gì với name và code này
+  final Function(String name, String code) onSave;
+
+  const AddSubjectDialog({super.key, required this.onSave});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Dùng Hook để quản lý controller ngay trong Dialog
+  Widget build(BuildContext context) {
     final nameCtrl = useTextEditingController();
     final codeCtrl = useTextEditingController();
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: const Text(
-        LibraryStrings.dialogAddTitle,
+        LibraryStrings.dialogAddSubjectTitle,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       content: SizedBox(
-        width: 400, // Cố định chiều rộng để Dialog không bị co giãn
+        width: 400,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -30,7 +29,7 @@ class AddSubjectDialog extends HookConsumerWidget {
               controller: nameCtrl,
               autofocus: true,
               decoration: const InputDecoration(
-                labelText: LibraryStrings.dialogLabelName,
+                labelText: LibraryStrings.dialogLabelSubjectName,
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.book_rounded),
               ),
@@ -39,15 +38,20 @@ class AddSubjectDialog extends HookConsumerWidget {
             TextField(
               controller: codeCtrl,
               decoration: const InputDecoration(
-                labelText: LibraryStrings.dialogLabelCode,
+                labelText: LibraryStrings.dialogLabelSubjectCode,
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.qr_code_rounded),
               ),
-              // Tự động viết hoa mã môn học cho chuyên nghiệp
-              onChanged: (val) => codeCtrl.value = codeCtrl.value.copyWith(
-                text: val.toUpperCase(),
-                selection: TextSelection.collapsed(offset: val.length),
-              ),
+              onChanged: (val) {
+                // Giữ nguyên logic viết hoa mã môn cho xịn
+                final upper = val.toUpperCase();
+                if (codeCtrl.text != upper) {
+                  codeCtrl.value = codeCtrl.value.copyWith(
+                    text: upper,
+                    selection: TextSelection.collapsed(offset: upper.length),
+                  );
+                }
+              },
             ),
           ],
         ),
@@ -55,31 +59,28 @@ class AddSubjectDialog extends HookConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(enabledMouseCursor: SystemMouseCursors.click),
           child: const Text(LibraryStrings.btnCancel),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: LibraryColors.accentColor,
             foregroundColor: Colors.white,
+            enabledMouseCursor: SystemMouseCursors.click,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            elevation: 0,
           ),
           onPressed: () {
-            if (nameCtrl.text.trim().isNotEmpty &&
-                codeCtrl.text.trim().isNotEmpty) {
-              final newSub = Subject()
-                ..name = nameCtrl.text.trim()
-                ..code = codeCtrl.text.trim().toUpperCase();
-
-              // Gọi Notifier để lưu vào Isar
-              ref.read(subjectNotifierProvider.notifier).saveSubject(newSub);
-
-              Navigator.pop(context); // Đóng dialog sau khi lưu
+            final name = nameCtrl.text.trim();
+            final code = codeCtrl.text.trim().toUpperCase();
+            
+            if (name.isNotEmpty && code.isNotEmpty) {
+              onSave(name, code); // Bắn data về Page
+              Navigator.pop(context); 
             }
           },
-          child: const Text(LibraryStrings.btnSave),
+          child: const Text(LibraryStrings.btnSave, style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );

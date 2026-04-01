@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
-import 'package:frontend/features/library/models/subject.dart';
+import 'package:frontend/features/library/constants/library_strings.dart';
+import 'package:frontend/features/library/models/quiz.dart';
 
-class SubjectItem extends StatelessWidget {
-  final Subject subject;
+class QuizItem extends StatelessWidget {
+  final Quiz quiz;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const SubjectItem({
+  const QuizItem({
     super.key,
-    required this.subject,
+    required this.quiz,
     required this.onTap,
     required this.onEdit,
     required this.onDelete,
@@ -19,27 +20,63 @@ class SubjectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: LibraryColors.cardBackground,
+        color: LibraryColors.cardBackground, // Dùng màu card của phen
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
-            color: LibraryColors.shadow,
+            color: LibraryColors.shadow, // Bóng đổ siêu mờ
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
         ],
       ),
       child: InkWell(
-        mouseCursor: SystemMouseCursors.click,
-        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        mouseCursor: SystemMouseCursors.click,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
             children: [
-              // --- TOP ROW: Icon & Action Buttons ---
+              // Icon bộ đề dùng màu accent xanh dương hiện đại
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: LibraryColors.accentLight, // Đã tách vào colors
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.description_rounded,
+                  color: LibraryColors.quizIcon, // Đã tách vào colors
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      quiz.name,
+                      style: const TextStyle(
+                        color: LibraryColors.primaryText,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "${quiz.questions?.length ?? 0} ${LibraryStrings.labelQuestions}", // Đã tách vào strings
+                      style: const TextStyle(
+                        color: LibraryColors.secondaryText,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -78,33 +115,6 @@ class SubjectItem extends StatelessWidget {
                     ],
                   ),
                 ],
-              ),
-              const Spacer(),
-
-              // --- CONTENT: Code (Headline) & Name (Subtitle) ---
-              // 1. Mã môn học làm tiêu đề chính
-              Text(
-                subject.code.toUpperCase(),
-                style: const TextStyle(
-                  color: LibraryColors.primaryText,
-                  fontWeight: FontWeight.w900, // Đậm hơn để nổi bật
-                  fontSize: 18,
-                  letterSpacing: 1.2,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              // 2. Tên môn học cho xuống dưới làm phụ đề
-              Text(
-                subject.name,
-                style: const TextStyle(
-                  color: LibraryColors.secondaryText,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
