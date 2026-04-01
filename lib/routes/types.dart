@@ -3,14 +3,15 @@ import 'package:go_router/go_router.dart';
 
 class AppRouteItem {
   final String title;
-  final String? path; // Action thì không cần path
+  final String? path;
   final String? fullPath;
   final IconData? icon;
-  final Widget Function(BuildContext context)?
-  builder; // Action thì không cần builder
+  final Widget Function(BuildContext context)? builder;
   final List<AppRouteItem>? subRoutes;
-  final void Function(BuildContext context)?
-  onTap; // <--- Thêm cái này để xử lý Exit
+  final void Function(BuildContext context)? onTap;
+
+  // --- THÊM FIELD REDIRECT TƯƠNG TỰ GO_ROUTER ---
+  final String? Function(BuildContext context, GoRouterState state)? redirect;
 
   const AppRouteItem({
     required this.title,
@@ -19,17 +20,22 @@ class AppRouteItem {
     this.fullPath,
     this.builder,
     this.subRoutes,
-    this.onTap, // Thêm hành động vào đây
+    this.onTap,
+    this.redirect, // Gán vào đây
   });
 
-  // Hàm này vẫn giữ để build Router, nhưng lọc bỏ những cái không có builder
   GoRoute? toGoRoute() {
-    if (path == null || builder == null) {
-      return null; // Nếu là Action thì trả về null
+    // Lưu ý: GoRoute có thể không cần builder nếu nó chỉ có redirect
+    if (path == null) {
+      return null;
     }
+
     return GoRoute(
       path: path!,
-      builder: (context, state) => builder!(context),
+      // Map hàm redirect từ AppRouteItem sang GoRoute
+      redirect: redirect,
+      // Nếu có redirect mà không có builder thì GoRouter vẫn chạy tốt
+      builder: builder != null ? (context, state) => builder!(context) : null,
       routes:
           subRoutes
               ?.map((sub) => sub.toGoRoute())
