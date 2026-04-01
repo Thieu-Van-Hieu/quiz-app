@@ -10,7 +10,7 @@ class SidebarHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      color: AppColors.sidebarHeader,
+      color: DashboardColors.sidebarHeader,
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,

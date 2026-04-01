@@ -36,12 +36,12 @@ class SidebarButton extends HookWidget {
           decoration: BoxDecoration(
             // Đường kẻ mờ ngăn cách các item
             border: const Border(
-              bottom: BorderSide(color: AppColors.sidebarBorder, width: 0.5),
+              bottom: BorderSide(color: DashboardColors.sidebarHeader, width: 0.5),
             ),
             color: isSelected
-                ? AppColors.sidebarActive
+                ? DashboardColors.sidebarActive
                 : (isHovered.value
-                      ? AppColors.sidebarHover
+                      ? DashboardColors.sidebarHover
                       : Colors.transparent),
           ),
           child: Padding(
