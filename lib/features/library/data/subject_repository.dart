@@ -20,6 +20,10 @@ class SubjectRepository {
     return await _isar.subjects.get(id);
   }
 
+  Future<Subject?> getSubjectByCode(String code) async {
+    return await _isar.subjects.filter().codeEqualTo(code).findFirst();
+  }
+
   Future<void> saveSubject(Subject subject) async {
     await _isar.writeTxn(() async {
       await _isar.subjects.put(subject);

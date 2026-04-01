@@ -1,3 +1,4 @@
+import 'package:frontend/core/exceptions/app_exception.dart';
 import 'package:frontend/core/services/isar_service.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/models/subject.dart';
@@ -24,14 +25,23 @@ class QuizRepository {
     return await _isar.quizzes.get(id);
   }
 
+  Future<Quiz?> getQuizBySubjectIdAndName(int subjectId, String name) async {
+    return await _isar.quizzes
+        .filter()
+        .subject((subject) => subject.idEqualTo(subjectId))
+        .nameEqualTo(name)
+        .findFirst();
+  }
+
   Future<void> saveQuiz(int subjectId, Quiz quiz) async {
     final subject = await _isar.subjects.get(subjectId);
     if (subject == null) {
-      throw Exception('Subject with id $subjectId not found');
+      throw EntityNotFoundException('Môn học không tồn tại.');
     }
     quiz.subject.value = subject;
     await _isar.writeTxn(() async {
       await _isar.quizzes.put(quiz);
+      await quiz.subject.save(); // Lưu liên kết sau khi đã có ID của quiz
     });
   }
 
