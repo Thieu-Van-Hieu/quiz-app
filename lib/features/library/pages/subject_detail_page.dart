@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
 import 'package:frontend/core/widgets/app_search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
+import 'package:frontend/features/library/routes/library_routes.dart';
+import 'package:frontend/features/library/widgets/delete_confirm_dialog.dart'; // Import hàng xịn đã tách
 import 'package:frontend/features/library/widgets/quiz_item.dart';
 import 'package:frontend/features/library/widgets/update_quiz_dialog.dart';
-import 'package:frontend/features/library/widgets/delete_confirm_dialog.dart'; // Import hàng xịn đã tách
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SubjectDetailPage extends HookConsumerWidget {
@@ -52,7 +55,7 @@ class SubjectDetailPage extends HookConsumerWidget {
                 if (filteredQuizzes.isEmpty) {
                   return const Center(
                     child: Text(
-                      LibraryStrings.emptyQuizList,
+                      AppStrings.noData,
                       style: TextStyle(color: LibraryColors.secondaryText),
                     ),
                   );
@@ -184,7 +187,7 @@ class SubjectDetailPage extends HookConsumerWidget {
   }
 
   void _onQuizTap(BuildContext context, dynamic quiz) {
-    // Logic điều hướng sang trang học tập
+    context.go(LibraryRoutes.getQuizDetailPath(subjectId, quiz.id));
   }
 }
 
@@ -234,7 +237,7 @@ class _AddQuizDialog extends HookWidget {
           style: TextButton.styleFrom(
             enabledMouseCursor: SystemMouseCursors.click,
           ),
-          child: const Text(LibraryStrings.btnCancel),
+          child: const Text(AppStrings.btnCancel),
         ),
         const SizedBox(width: 8),
         ElevatedButton(
@@ -254,7 +257,7 @@ class _AddQuizDialog extends HookWidget {
             elevation: 0,
           ),
           child: const Text(
-            LibraryStrings.btnSave,
+            AppStrings.btnSave,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
