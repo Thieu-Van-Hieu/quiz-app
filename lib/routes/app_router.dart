@@ -10,6 +10,11 @@ final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: DashboardRoutes.root, // /dashboard
   routes: [
+    GoRoute(
+      path: '/',
+      redirect: (context, state) =>
+          DashboardRoutes.root, // Đá sang /dashboard ngay
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainScreen(navigationShell: navigationShell),
