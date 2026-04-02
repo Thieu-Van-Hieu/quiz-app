@@ -33,6 +33,20 @@ class QuizRepository {
         .findFirst();
   }
 
+  Future<void> updateQuizQuestions(int quizId, List<Question> questions) async {
+    final quiz = await _isar.quizzes.get(quizId);
+    if (quiz == null) {
+      throw EntityNotFoundException('Quiz không tồn tại.');
+    }
+
+    quiz.questions = questions;
+
+    await _isar.writeTxn(() async {
+      // Chỉ cần put lại chính nó, Isar tự hiểu là update dựa trên ID
+      await _isar.quizzes.put(quiz);
+    });
+  }
+
   Future<void> saveQuiz(int subjectId, Quiz quiz) async {
     final subject = await _isar.subjects.get(subjectId);
     if (subject == null) {

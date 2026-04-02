@@ -6,7 +6,7 @@ part of 'subject_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$subjectNotifierHash() => r'056d64bf727da0fc9ef55a1b0aae6bbd277a3dc4';
+String _$subjectNotifierHash() => r'afcf1be768133e4fdaad771707be77417521f6fb';
 
 /// See also [SubjectNotifier].
 @ProviderFor(SubjectNotifier)
