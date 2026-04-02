@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/dashboard/constants/dashboard_colors.dart';
-import 'package:frontend/features/dashboard/constants/dashboard_strings.dart';
+import 'package:frontend/core/constants/app_strings.dart';
 
 class SidebarHeader extends StatelessWidget {
   const SidebarHeader({super.key});
