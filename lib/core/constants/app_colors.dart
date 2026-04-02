@@ -14,4 +14,14 @@ class AppColors {
   // --- UI COMPONENTS ---
   static const Color secondaryText = Color(0xFF636E72);
   static const Color searchBarBg = Color(0xFFF1F2F6);
+  static const Color textFieldFill = Color(
+    0xFFF1F3F5,
+  ); // Xám nhạt thay cho opacity
+  static const Color transparent = Colors.transparent;
+
+  // Status & Alerts
+  static const Color success = Colors.green;
+  static final Color successLight = Colors.green.withValues(alpha: 0.1);
+  static const Color infoBlue = Colors.blue;
+  static const Color warningOrange = Colors.orange;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 
@@ -16,7 +17,7 @@ class DeleteConfirmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text(LibraryStrings.deleteConfirmTitle),
+      title: const Text(AppStrings.deleteConfirmTitle),
       content: Text(
         "${LibraryStrings.deleteConfirmContent}\n\nĐang chọn: $itemName",
       ),
@@ -27,7 +28,7 @@ class DeleteConfirmDialog extends StatelessWidget {
             enabledMouseCursor: SystemMouseCursors.click,
           ),
           child: const Text(
-            LibraryStrings.btnCancel,
+            AppStrings.btnCancel,
             style: TextStyle(color: LibraryColors.secondaryText),
           ),
         ),
@@ -47,7 +48,7 @@ class DeleteConfirmDialog extends StatelessWidget {
             ),
           ),
           child: const Text(
-            LibraryStrings.btnDelete,
+            AppStrings.btnDelete,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 
@@ -60,7 +61,7 @@ class AddSubjectDialog extends HookWidget {
         TextButton(
           onPressed: () => Navigator.pop(context),
           style: TextButton.styleFrom(enabledMouseCursor: SystemMouseCursors.click),
-          child: const Text(LibraryStrings.btnCancel),
+          child: const Text(AppStrings.btnCancel),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -80,7 +81,7 @@ class AddSubjectDialog extends HookWidget {
               Navigator.pop(context); 
             }
           },
-          child: const Text(LibraryStrings.btnSave, style: TextStyle(fontWeight: FontWeight.bold)),
+          child: const Text(AppStrings.btnSave, style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );

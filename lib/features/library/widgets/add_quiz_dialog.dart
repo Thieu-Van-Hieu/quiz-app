@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 
@@ -54,7 +55,7 @@ class AddQuizDialog extends HookWidget {
           style: TextButton.styleFrom(
             enabledMouseCursor: SystemMouseCursors.click,
           ),
-          child: const Text(LibraryStrings.btnCancel),
+          child: const Text(AppStrings.btnCancel),
         ),
         ElevatedButton(
           onPressed: () {
@@ -71,7 +72,7 @@ class AddQuizDialog extends HookWidget {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child: const Text(LibraryStrings.btnSave),
+          child: const Text(AppStrings.btnSave),
         ),
       ],
     );

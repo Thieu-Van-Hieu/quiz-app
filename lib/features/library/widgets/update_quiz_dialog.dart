@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
@@ -57,7 +58,7 @@ class UpdateQuizDialog extends HookWidget {
             enabledMouseCursor: SystemMouseCursors.click,
           ),
           child: const Text(
-            LibraryStrings.btnCancel,
+            AppStrings.btnCancel,
             style: TextStyle(color: LibraryColors.secondaryText),
           ),
         ),
@@ -78,7 +79,7 @@ class UpdateQuizDialog extends HookWidget {
             elevation: 0,
           ),
           child: const Text(
-            LibraryStrings.btnUpdate,
+            AppStrings.btnUpdate,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
