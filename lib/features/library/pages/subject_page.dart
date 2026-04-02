@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
-import 'package:frontend/core/widgets/app_search_bar.dart';
+import 'package:frontend/core/widgets/search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/notifiers/subject_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
-import 'package:frontend/features/library/widgets/add_subject_dialog.dart';
+import 'package:frontend/features/library/widgets/subject/add_dialog.dart';
 import 'package:frontend/features/library/widgets/delete_confirm_dialog.dart';
-import 'package:frontend/features/library/widgets/subject_item.dart';
-import 'package:frontend/features/library/widgets/update_subject_dialog.dart';
+import 'package:frontend/features/library/widgets/subject/subject_item.dart';
+import 'package:frontend/features/library/widgets/subject/update_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 

@@ -5,7 +5,7 @@ import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
-import 'package:frontend/features/library/widgets/option_item.dart';
+import 'package:frontend/features/library/widgets/question/option_item.dart';
 
 class QuestionItem extends HookWidget {
   final int index;

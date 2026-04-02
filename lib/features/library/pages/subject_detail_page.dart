@@ -3,15 +3,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
-import 'package:frontend/core/widgets/app_search_bar.dart';
+import 'package:frontend/core/widgets/search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/widgets/delete_confirm_dialog.dart'; // Import hàng xịn đã tách
-import 'package:frontend/features/library/widgets/quiz_item.dart';
-import 'package:frontend/features/library/widgets/update_quiz_dialog.dart';
+import 'package:frontend/features/library/widgets/quiz/quiz_item.dart';
+import 'package:frontend/features/library/widgets/quiz/update_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

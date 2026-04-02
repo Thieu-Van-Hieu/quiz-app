@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_strings.dart';
-import 'package:frontend/core/widgets/app_search_bar.dart';
+import 'package:frontend/core/widgets/search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart'; // Import Strings
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/notifiers/question_notifier.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
-import 'package:frontend/features/library/widgets/question_item.dart';
+import 'package:frontend/features/library/widgets/question/question_item.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class QuizDetailPage extends HookConsumerWidget {
