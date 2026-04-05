@@ -6,170 +6,94 @@ part of 'question_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$questionNotifierHash() => r'3e8c38156791db1ac52e7a826bcd8696db7929e9';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$QuestionNotifier
-    extends BuildlessAutoDisposeAsyncNotifier<List<Question>> {
-  late final int quizId;
-
-  FutureOr<List<Question>> build(
-    int quizId,
-  );
-}
-
-/// See also [QuestionNotifier].
 @ProviderFor(QuestionNotifier)
-const questionNotifierProvider = QuestionNotifierFamily();
+final questionProvider = QuestionNotifierFamily._();
 
-/// See also [QuestionNotifier].
-class QuestionNotifierFamily extends Family<AsyncValue<List<Question>>> {
-  /// See also [QuestionNotifier].
-  const QuestionNotifierFamily();
+final class QuestionNotifierProvider
+    extends $AsyncNotifierProvider<QuestionNotifier, List<Question>> {
+  QuestionNotifierProvider._({
+    required QuestionNotifierFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'questionProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [QuestionNotifier].
-  QuestionNotifierProvider call(
-    int quizId,
-  ) {
-    return QuestionNotifierProvider(
-      quizId,
-    );
+  @override
+  String debugGetCreateSourceHash() => _$questionNotifierHash();
+
+  @override
+  String toString() {
+    return r'questionProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  QuestionNotifierProvider getProviderOverride(
-    covariant QuestionNotifierProvider provider,
-  ) {
-    return call(
-      provider.quizId,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'questionNotifierProvider';
-}
-
-/// See also [QuestionNotifier].
-class QuestionNotifierProvider extends AutoDisposeAsyncNotifierProviderImpl<
-    QuestionNotifier, List<Question>> {
-  /// See also [QuestionNotifier].
-  QuestionNotifierProvider(
-    int quizId,
-  ) : this._internal(
-          () => QuestionNotifier()..quizId = quizId,
-          from: questionNotifierProvider,
-          name: r'questionNotifierProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$questionNotifierHash,
-          dependencies: QuestionNotifierFamily._dependencies,
-          allTransitiveDependencies:
-              QuestionNotifierFamily._allTransitiveDependencies,
-          quizId: quizId,
-        );
-
-  QuestionNotifierProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.quizId,
-  }) : super.internal();
-
-  final int quizId;
-
-  @override
-  FutureOr<List<Question>> runNotifierBuild(
-    covariant QuestionNotifier notifier,
-  ) {
-    return notifier.build(
-      quizId,
-    );
-  }
-
-  @override
-  Override overrideWith(QuestionNotifier Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: QuestionNotifierProvider._internal(
-        () => create()..quizId = quizId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        quizId: quizId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeAsyncNotifierProviderElement<QuestionNotifier, List<Question>>
-      createElement() {
-    return _QuestionNotifierProviderElement(this);
-  }
+  QuestionNotifier create() => QuestionNotifier();
 
   @override
   bool operator ==(Object other) {
-    return other is QuestionNotifierProvider && other.quizId == quizId;
+    return other is QuestionNotifierProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, quizId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-mixin QuestionNotifierRef
-    on AutoDisposeAsyncNotifierProviderRef<List<Question>> {
-  /// The parameter `quizId` of this provider.
-  int get quizId;
-}
+String _$questionNotifierHash() => r'7174353ecb4b75eb7bc95ef39b7456709708c60b';
 
-class _QuestionNotifierProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<QuestionNotifier,
-        List<Question>> with QuestionNotifierRef {
-  _QuestionNotifierProviderElement(super.provider);
+final class QuestionNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          QuestionNotifier,
+          AsyncValue<List<Question>>,
+          List<Question>,
+          FutureOr<List<Question>>,
+          int
+        > {
+  QuestionNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'questionProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: false,
+      );
+
+  QuestionNotifierProvider call(int quizId) =>
+      QuestionNotifierProvider._(argument: quizId, from: this);
 
   @override
-  int get quizId => (origin as QuestionNotifierProvider).quizId;
+  String toString() => r'questionProvider';
 }
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+
+abstract class _$QuestionNotifier extends $AsyncNotifier<List<Question>> {
+  late final _$args = ref.$arg as int;
+  int get quizId => _$args;
+
+  FutureOr<List<Question>> build(int quizId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<List<Question>>, List<Question>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<Question>>, List<Question>>,
+              AsyncValue<List<Question>>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
+  }
+}

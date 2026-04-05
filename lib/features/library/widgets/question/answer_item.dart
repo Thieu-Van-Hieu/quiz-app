@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class OptionItem extends HookWidget {
+class AnswerItem extends HookWidget {
   final int index;
   final String initialValue;
   final bool isCorrect;
@@ -10,7 +10,7 @@ class OptionItem extends HookWidget {
   final Function(bool) onToggleCorrect;
   final VoidCallback onDelete;
 
-  const OptionItem({
+  const AnswerItem({
     super.key,
     required this.index,
     required this.initialValue,
@@ -35,6 +35,7 @@ class OptionItem extends HookWidget {
             activeColor: Colors.green,
             shape: const CircleBorder(),
             onChanged: (val) => onToggleCorrect(val ?? false),
+            mouseCursor: SystemMouseCursors.click,
           ),
           const SizedBox(width: 8),
           Expanded(

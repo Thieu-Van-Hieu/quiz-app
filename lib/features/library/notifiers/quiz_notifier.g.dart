@@ -6,169 +6,232 @@ part of 'quiz_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$quizNotifierHash() => r'6ab6416d79f7b7adfd406eb0e894cf757480951f';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$QuizNotifier
-    extends BuildlessAutoDisposeStreamNotifier<List<Quiz>> {
-  late final int subjectId;
-
-  Stream<List<Quiz>> build(
-    int subjectId,
-  );
-}
-
-/// See also [QuizNotifier].
 @ProviderFor(QuizNotifier)
-const quizNotifierProvider = QuizNotifierFamily();
+final quizProvider = QuizNotifierFamily._();
 
-/// See also [QuizNotifier].
-class QuizNotifierFamily extends Family<AsyncValue<List<Quiz>>> {
-  /// See also [QuizNotifier].
-  const QuizNotifierFamily();
+final class QuizNotifierProvider
+    extends $StreamNotifierProvider<QuizNotifier, List<Quiz>> {
+  QuizNotifierProvider._({
+    required QuizNotifierFamily super.from,
+    required QuizSearchParams super.argument,
+  }) : super(
+         retry: null,
+         name: r'quizProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [QuizNotifier].
-  QuizNotifierProvider call(
-    int subjectId,
-  ) {
-    return QuizNotifierProvider(
-      subjectId,
-    );
+  @override
+  String debugGetCreateSourceHash() => _$quizNotifierHash();
+
+  @override
+  String toString() {
+    return r'quizProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  QuizNotifierProvider getProviderOverride(
-    covariant QuizNotifierProvider provider,
-  ) {
-    return call(
-      provider.subjectId,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'quizNotifierProvider';
-}
-
-/// See also [QuizNotifier].
-class QuizNotifierProvider
-    extends AutoDisposeStreamNotifierProviderImpl<QuizNotifier, List<Quiz>> {
-  /// See also [QuizNotifier].
-  QuizNotifierProvider(
-    int subjectId,
-  ) : this._internal(
-          () => QuizNotifier()..subjectId = subjectId,
-          from: quizNotifierProvider,
-          name: r'quizNotifierProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$quizNotifierHash,
-          dependencies: QuizNotifierFamily._dependencies,
-          allTransitiveDependencies:
-              QuizNotifierFamily._allTransitiveDependencies,
-          subjectId: subjectId,
-        );
-
-  QuizNotifierProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.subjectId,
-  }) : super.internal();
-
-  final int subjectId;
-
-  @override
-  Stream<List<Quiz>> runNotifierBuild(
-    covariant QuizNotifier notifier,
-  ) {
-    return notifier.build(
-      subjectId,
-    );
-  }
-
-  @override
-  Override overrideWith(QuizNotifier Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: QuizNotifierProvider._internal(
-        () => create()..subjectId = subjectId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        subjectId: subjectId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamNotifierProviderElement<QuizNotifier, List<Quiz>>
-      createElement() {
-    return _QuizNotifierProviderElement(this);
-  }
+  QuizNotifier create() => QuizNotifier();
 
   @override
   bool operator ==(Object other) {
-    return other is QuizNotifierProvider && other.subjectId == subjectId;
+    return other is QuizNotifierProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, subjectId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-mixin QuizNotifierRef on AutoDisposeStreamNotifierProviderRef<List<Quiz>> {
-  /// The parameter `subjectId` of this provider.
-  int get subjectId;
-}
+String _$quizNotifierHash() => r'75f114686908ce2ccf267468352dd14a118ea6b9';
 
-class _QuizNotifierProviderElement
-    extends AutoDisposeStreamNotifierProviderElement<QuizNotifier, List<Quiz>>
-    with QuizNotifierRef {
-  _QuizNotifierProviderElement(super.provider);
+final class QuizNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          QuizNotifier,
+          AsyncValue<List<Quiz>>,
+          List<Quiz>,
+          Stream<List<Quiz>>,
+          QuizSearchParams
+        > {
+  QuizNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'quizProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  QuizNotifierProvider call(QuizSearchParams params) =>
+      QuizNotifierProvider._(argument: params, from: this);
 
   @override
-  int get subjectId => (origin as QuizNotifierProvider).subjectId;
+  String toString() => r'quizProvider';
 }
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+
+abstract class _$QuizNotifier extends $StreamNotifier<List<Quiz>> {
+  late final _$args = ref.$arg as QuizSearchParams;
+  QuizSearchParams get params => _$args;
+
+  Stream<List<Quiz>> build(QuizSearchParams params);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<List<Quiz>>, List<Quiz>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<Quiz>>, List<Quiz>>,
+              AsyncValue<List<Quiz>>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
+  }
+}
+
+@ProviderFor(quizTotalPages)
+final quizTotalPagesProvider = QuizTotalPagesFamily._();
+
+final class QuizTotalPagesProvider
+    extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
+    with $FutureModifier<int>, $StreamProvider<int> {
+  QuizTotalPagesProvider._({
+    required QuizTotalPagesFamily super.from,
+    required QuizSearchParams super.argument,
+  }) : super(
+         retry: null,
+         name: r'quizTotalPagesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$quizTotalPagesHash();
+
+  @override
+  String toString() {
+    return r'quizTotalPagesProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<int> create(Ref ref) {
+    final argument = this.argument as QuizSearchParams;
+    return quizTotalPages(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is QuizTotalPagesProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$quizTotalPagesHash() => r'b8622f26ce4cdf279899ca9f3fe31048ec41efaf';
+
+final class QuizTotalPagesFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<int>, QuizSearchParams> {
+  QuizTotalPagesFamily._()
+    : super(
+        retry: null,
+        name: r'quizTotalPagesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  QuizTotalPagesProvider call(QuizSearchParams params) =>
+      QuizTotalPagesProvider._(argument: params, from: this);
+
+  @override
+  String toString() => r'quizTotalPagesProvider';
+}
+
+@ProviderFor(watchQuiz)
+final watchQuizProvider = WatchQuizFamily._();
+
+final class WatchQuizProvider
+    extends $FunctionalProvider<AsyncValue<Quiz?>, Quiz?, Stream<Quiz?>>
+    with $FutureModifier<Quiz?>, $StreamProvider<Quiz?> {
+  WatchQuizProvider._({
+    required WatchQuizFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'watchQuizProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$watchQuizHash();
+
+  @override
+  String toString() {
+    return r'watchQuizProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<Quiz?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Quiz?> create(Ref ref) {
+    final argument = this.argument as int;
+    return watchQuiz(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is WatchQuizProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$watchQuizHash() => r'85b20df142c660fd0ca79b50ff3998d77256540b';
+
+final class WatchQuizFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<Quiz?>, int> {
+  WatchQuizFamily._()
+    : super(
+        retry: null,
+        name: r'watchQuizProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  WatchQuizProvider call(int id) =>
+      WatchQuizProvider._(argument: id, from: this);
+
+  @override
+  String toString() => r'watchQuizProvider';
+}

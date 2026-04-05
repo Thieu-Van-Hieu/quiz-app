@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      # Phải dùng dấu "|" thay vì ":" và đúng tên định danh builder
+      riverpod_generator|riverpod_generator:
+        generate_for:
+          exclude: ["lib/**/.conform.*.dart"]
+      objectbox_generator|objectbox_generator:
+        generate_for:
+          exclude: ["lib/**/.conform.*.dart"]
+      dart_mappable_builder|dart_mappable_builder:
+        generate_for:
+          exclude: ["lib/**/.conform.*.dart"]
+      # Thêm source chung cho cả target để triệt để hơn
+    sources:
+      exclude: ["lib/**/.conform.*.dart"]

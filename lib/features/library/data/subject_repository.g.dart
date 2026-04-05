@@ -6,21 +6,52 @@ part of 'subject_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$subjectRepositoryHash() => r'6b5f8640994effbb7bc20819ed31a8d05b4b9866';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [subjectRepository].
 @ProviderFor(subjectRepository)
-final subjectRepositoryProvider =
-    AutoDisposeProvider<SubjectRepository>.internal(
-  subjectRepository,
-  name: r'subjectRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$subjectRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final subjectRepositoryProvider = SubjectRepositoryProvider._();
 
-typedef SubjectRepositoryRef = AutoDisposeProviderRef<SubjectRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+final class SubjectRepositoryProvider
+    extends
+        $FunctionalProvider<
+          SubjectRepository,
+          SubjectRepository,
+          SubjectRepository
+        >
+    with $Provider<SubjectRepository> {
+  SubjectRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'subjectRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$subjectRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<SubjectRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SubjectRepository create(Ref ref) {
+    return subjectRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SubjectRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SubjectRepository>(value),
+    );
+  }
+}
+
+String _$subjectRepositoryHash() => r'6e5e9989ddff7367e31a3a818f96f5b71211a755';

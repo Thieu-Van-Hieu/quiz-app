@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:frontend/core/services/isar_service.dart';
+import 'package:frontend/core/services/device_info_service.dart';
+import 'package:frontend/core/services/object_box_service.dart';
+import 'package:frontend/features/learning/pages/exam_page_template.dart';
 import 'package:frontend/routes/app_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -8,8 +10,9 @@ void main() async {
   // 1. Đảm bảo Flutter đã sẵn sàng
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. Khởi tạo Isar (Singleton đã viết ở bước trước)
-  await IsarService.init();
+  // 2. Khởi tạo các service cần thiết trước khi chạy app
+  await ObjectBoxService.create();
+  await DeviceInfoService().init();
 
   runApp(
     // 3. Bọc ProviderScope ở đây
@@ -36,3 +39,16 @@ class MyApp extends HookWidget {
     );
   }
 }
+
+// class MyApp extends HookWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: ExamPage(),
+//       debugShowCheckedModeBanner: false,
+//       theme: ThemeData(useMaterial3: true),
+//     );
+//   }
+// }

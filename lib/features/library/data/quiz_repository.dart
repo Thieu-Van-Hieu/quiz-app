@@ -1,67 +1,143 @@
 import 'package:frontend/core/exceptions/app_exception.dart';
-import 'package:frontend/core/services/isar_service.dart';
+import 'package:frontend/core/extensions/condition_extension.dart';
+import 'package:frontend/core/services/object_box_service.dart';
+import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
+import 'package:frontend/features/library/models/search_params/quiz_search_params.dart';
 import 'package:frontend/features/library/models/subject.dart';
-import 'package:isar/isar.dart';
+import 'package:frontend/objectbox.g.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 part 'quiz_repository.g.dart';
 
 @riverpod
-QuizRepository quizRepository(QuizRepositoryRef ref) {
+QuizRepository quizRepository(Ref ref) {
   return QuizRepository();
 }
 
 class QuizRepository {
-  final _isar = IsarService.instance;
+  final _db = ObjectBoxService.instance;
+  final _quizBox = ObjectBoxService.instance.get<Quiz>();
+  final _subjectBox = ObjectBoxService.instance.get<Subject>();
 
+  /// 1. Theo dõi tất cả Quiz của một Subject (Real-time)
   Stream<List<Quiz>> watchAllQuizzes(int subjectId) {
-    return _isar.quizzes
-        .filter()
-        .subject((subject) => subject.idEqualTo(subjectId))
-        .watch(fireImmediately: true);
+    return _quizBox
+        .query(Quiz_.subject.equals(subjectId))
+        .watch(triggerImmediately: true)
+        .map((query) => query.find());
   }
 
-  Future<Quiz?> getQuizById(int id) async {
-    return await _isar.quizzes.get(id);
+  Condition<Quiz>? getSearchParamsCondition(QuizSearchParams params) {
+    Condition<Quiz>? condition;
+    return condition
+        .safeAnd(params.subjectId, Quiz_.subject.equals)
+        .safeAnd(
+          params.keyword,
+          (value) => Quiz_.name.contains(value, caseSensitive: false),
+        );
   }
 
+  Stream<List<Quiz>> watchQuizzes(QuizSearchParams params) {
+    return _quizBox
+        .query(
+          // Quiz_.subject
+          //     .equals(params.subjectId)
+          //     .safeAnd(params.keyword, Quiz_.name.contains),
+          getSearchParamsCondition(params),
+        )
+        .watch(triggerImmediately: true)
+        .map(((query) {
+          query.offset = params.page * params.size;
+          query.limit = params.size;
+
+          // Lúc này find() sẽ trả về đúng số lượng đã phân trang
+          return query.find();
+        }));
+  }
+
+  Stream<Quiz?> watchQuiz(int id) {
+    return _quizBox
+        .query(Quiz_.id.equals(id))
+        .watch(triggerImmediately: true)
+        .map(((query) => query.findFirst()));
+  }
+
+  Stream<int> watchTotalPages(QuizSearchParams params) {
+    return _quizBox
+        .query(getSearchParamsCondition(params))
+        .watch(triggerImmediately: true)
+        .map((query) {
+          final totalCount = query.count();
+          if (totalCount == 0) return 1;
+          return (totalCount / params.size).ceil();
+        });
+  }
+
+  /// 2. Lấy Quiz theo ID
+  Future<Quiz?> getQuizById(int id) {
+    return _quizBox.getAsync(id);
+  }
+
+  /// 3. Lấy Quiz theo SubjectId và Tên (Query kết hợp)
   Future<Quiz?> getQuizBySubjectIdAndName(int subjectId, String name) async {
-    return await _isar.quizzes
-        .filter()
-        .subject((subject) => subject.idEqualTo(subjectId))
-        .nameEqualTo(name)
-        .findFirst();
+    final query = _quizBox
+        .query(Quiz_.subject.equals(subjectId).and(Quiz_.name.equals(name)))
+        .build();
+
+    final result = await query.findFirstAsync();
+    query.close();
+    return result;
   }
 
+  /// 4. Cập nhật danh sách câu hỏi của Quiz (Upsert logic)
   Future<void> updateQuizQuestions(int quizId, List<Question> questions) async {
-    final quiz = await _isar.quizzes.get(quizId);
+    final quiz = await _quizBox.getAsync(quizId);
     if (quiz == null) {
       throw EntityNotFoundException('Quiz không tồn tại.');
     }
 
-    quiz.questions = questions;
+    // Trong ObjectBox, nếu bạn muốn update quan hệ ToMany (questions)
+    // Bạn chỉ cần gán target cho từng question và putMany chúng.
+    await _db.store.runInTransactionAsync(TxMode.write, (
+      Store store,
+      List<dynamic> params,
+    ) {
+      final qId = params[0] as int;
+      final newQuestions = params[1] as List<Question>;
 
-    await _isar.writeTxn(() async {
-      // Chỉ cần put lại chính nó, Isar tự hiểu là update dựa trên ID
-      await _isar.quizzes.put(quiz);
-    });
+      final internalQuizBox = store.box<Quiz>();
+      final internalQuestionBox = store.box<Question>();
+
+      final currentQuiz = internalQuizBox.get(qId);
+      if (currentQuiz == null) return;
+
+      for (var q in newQuestions) {
+        q.quiz.target = currentQuiz;
+      }
+      internalQuestionBox.putMany(newQuestions);
+    }, [quizId, questions]);
   }
 
+  /// 5. Lưu Quiz mới kèm theo Subject
   Future<void> saveQuiz(int subjectId, Quiz quiz) async {
-    final subject = await _isar.subjects.get(subjectId);
+    final subject = await _subjectBox.getAsync(subjectId);
     if (subject == null) {
       throw EntityNotFoundException('Môn học không tồn tại.');
     }
-    quiz.subject.value = subject;
-    await _isar.writeTxn(() async {
-      await _isar.quizzes.put(quiz);
-      await quiz.subject.save(); // Lưu liên kết sau khi đã có ID của quiz
-    });
+
+    // Thiết lập liên kết (Target thay cho Value)
+    quiz.subject.target = subject;
+
+    // ObjectBox tự động lưu relation khi put
+    await _quizBox.putAsync(quiz);
   }
 
+  /// 6. Xóa Quiz
   Future<void> deleteQuiz(int id) async {
-    await _isar.writeTxn(() async {
-      await _isar.quizzes.delete(id);
-    });
+    final success = await _quizBox.removeAsync(id);
+    if (!success) {
+      throw EntityNotFoundException('Quiz không tồn tại hoặc đã bị xóa.');
+    }
   }
 }

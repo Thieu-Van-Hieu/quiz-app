@@ -1,5 +1,6 @@
 import 'package:frontend/core/exceptions/app_exception.dart'; // Đảm bảo đã có ValidationException
 import 'package:frontend/features/library/data/subject_repository.dart';
+import 'package:frontend/features/library/models/search_params/subject_search_params.dart';
 import 'package:frontend/features/library/models/subject.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -8,9 +9,9 @@ part 'subject_notifier.g.dart';
 @riverpod
 class SubjectNotifier extends _$SubjectNotifier {
   @override
-  Stream<List<Subject>> build() {
+  Stream<List<Subject>> build(SubjectSearchParams params) {
     final repo = ref.watch(subjectRepositoryProvider);
-    return repo.watchAllSubjects();
+    return repo.watchSubjects(params);
   }
 
   // --- HÀM GET THEO ID ---
@@ -46,8 +47,7 @@ class SubjectNotifier extends _$SubjectNotifier {
     }
 
     // 3. Thực thi lưu dữ liệu
-    subject.code = trimmedCode;
-    subject.name = trimmedName;
+    subject = subject.copyWith(code: trimmedCode, name: trimmedName);
 
     await repo.saveSubject(subject);
   }
@@ -61,4 +61,9 @@ class SubjectNotifier extends _$SubjectNotifier {
 
     await repo.deleteSubject(id);
   }
+}
+
+@riverpod
+Stream<int> subjectTotalPages(Ref ref, SubjectSearchParams params) {
+  return ref.watch(subjectRepositoryProvider).watchTotalPages(params);
 }

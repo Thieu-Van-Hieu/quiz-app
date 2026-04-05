@@ -6,20 +6,46 @@ part of 'quiz_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$quizRepositoryHash() => r'4a223ab5ef56673db3af2da1d6d4ed4a773c2785';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [quizRepository].
 @ProviderFor(quizRepository)
-final quizRepositoryProvider = AutoDisposeProvider<QuizRepository>.internal(
-  quizRepository,
-  name: r'quizRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$quizRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final quizRepositoryProvider = QuizRepositoryProvider._();
 
-typedef QuizRepositoryRef = AutoDisposeProviderRef<QuizRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+final class QuizRepositoryProvider
+    extends $FunctionalProvider<QuizRepository, QuizRepository, QuizRepository>
+    with $Provider<QuizRepository> {
+  QuizRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'quizRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$quizRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<QuizRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  QuizRepository create(Ref ref) {
+    return quizRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(QuizRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<QuizRepository>(value),
+    );
+  }
+}
+
+String _$quizRepositoryHash() => r'0b674b7a91614384cd47f1a35cbb595139a55518';

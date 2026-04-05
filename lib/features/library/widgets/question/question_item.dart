@@ -4,8 +4,9 @@ import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
-import 'package:frontend/features/library/models/quiz.dart';
-import 'package:frontend/features/library/widgets/question/option_item.dart';
+import 'package:frontend/features/library/models/answer.dart';
+import 'package:frontend/features/library/models/question.dart';
+import 'package:frontend/features/library/widgets/question/answer_item.dart';
 
 class QuestionItem extends HookWidget {
   final int index;
@@ -25,23 +26,25 @@ class QuestionItem extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = useState(question.content.isEmpty);
+    final isEditing = useState(question.content.isEmpty || isNew);
     final contentController = useTextEditingController(text: question.content);
-    // 1. Thêm controller cho Explanation
     final explanationController = useTextEditingController(
       text: question.explanation,
     );
 
-    final options = useState<List<String>>(List.from(question.options));
-    final correctIndices = useState<List<int>>(
-      List.from(question.correctOptions),
+    final localAnswers = useState<List<Answer>>(
+      question.answers.isNotEmpty
+          ? question.answers.toList()
+          : [
+              Answer(content: "", isCorrect: true),
+              Answer(content: "", isCorrect: false),
+            ],
     );
 
     void startEditing() {
       contentController.text = question.content;
-      explanationController.text = question.explanation; // Xử lý optional
-      options.value = List.from(question.options);
-      correctIndices.value = List.from(question.correctOptions);
+      explanationController.text = question.explanation;
+      localAnswers.value = question.answers.toList();
       isEditing.value = true;
     }
 
@@ -65,32 +68,25 @@ class QuestionItem extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- HEADER ---
           _buildHeader(isEditing, startEditing, () {
-            question.content = contentController.text.trim();
-            // 2. Lưu explanation vào model
-            question.explanation = explanationController.text.trim();
-            question.options = List.from(options.value);
-            question.correctOptions = List.from(correctIndices.value);
-
-            onSave(question);
+            final updatedQuestion = question.copyWith(
+              content: contentController.text.trim(),
+              explanation: explanationController.text.trim(),
+            );
+            updatedQuestion.answers.clear();
+            updatedQuestion.answers.addAll(localAnswers.value);
+            onSave(updatedQuestion);
             isEditing.value = false;
           }),
-
           const SizedBox(height: 16),
-
           if (isEditing.value) ...[
-            // --- EDIT MODE: Content ---
             _buildCustomTextField(
               controller: contentController,
               hintText: LibraryStrings.hintEnterQuestion,
               autofocus: question.content.isEmpty,
               isBold: true,
             ),
-
             const SizedBox(height: 12),
-
-            // --- EDIT MODE: Explanation (Optional) ---
             _buildCustomTextField(
               controller: explanationController,
               hintText: "Add explanation (optional)...",
@@ -98,41 +94,42 @@ class QuestionItem extends HookWidget {
               maxLines: 2,
               prefixIcon: Icons.lightbulb_outline,
             ),
-
             const SizedBox(height: 20),
-
-            ...List.generate(options.value.length, (i) {
-              return OptionItem(
+            ...localAnswers.value.asMap().entries.map((entry) {
+              final i = entry.key;
+              final ans = entry.value;
+              return AnswerItem(
                 index: i,
-                initialValue: options.value[i],
-                isCorrect: correctIndices.value.contains(i),
-                canDelete: options.value.length > 2,
+                initialValue: ans.content,
+                isCorrect: ans.isCorrect,
+                canDelete: localAnswers.value.length > 2,
                 onChanged: (val) {
-                  final newList = List<String>.from(options.value);
-                  newList[i] = val;
-                  options.value = newList;
+                  localAnswers.value[i] = localAnswers.value[i].copyWith(
+                    content: val,
+                  );
                 },
                 onToggleCorrect: (val) {
-                  if (val) {
-                    correctIndices.value = [...correctIndices.value, i];
-                  } else {
-                    correctIndices.value = correctIndices.value
-                        .where((idx) => idx != i)
-                        .toList();
-                  }
+                  final newList = List<Answer>.from(localAnswers.value);
+                  newList[i] = newList[i].copyWith(isCorrect: val);
+                  localAnswers.value = newList;
                 },
                 onDelete: () {
-                  final newList = List<String>.from(options.value)..removeAt(i);
-                  options.value = newList;
-                  correctIndices.value = correctIndices.value
-                      .where((idx) => idx != i)
-                      .map((idx) => idx > i ? idx - 1 : idx)
-                      .toList();
+                  final newList = List<Answer>.from(localAnswers.value)
+                    ..removeAt(i);
+                  localAnswers.value = newList;
                 },
               );
             }),
             TextButton.icon(
-              onPressed: () => options.value = [...options.value, ""],
+              onPressed: () {
+                localAnswers.value = [
+                  ...localAnswers.value,
+                  Answer(content: "", isCorrect: false),
+                ];
+              },
+              style: TextButton.styleFrom(
+                enabledMouseCursor: SystemMouseCursors.click,
+              ),
               icon: const Icon(
                 Icons.add_circle_outline,
                 color: AppColors.infoBlue,
@@ -143,10 +140,10 @@ class QuestionItem extends HookWidget {
               ),
             ),
           ] else ...[
-            // --- VIEW MODE: Content ---
             InkWell(
               onDoubleTap: startEditing,
               borderRadius: BorderRadius.circular(8),
+              // InkWell mặc định có cursor bàn tay, không cần MouseRegion
               child: Text(
                 question.content.isEmpty
                     ? LibraryStrings.noContent
@@ -159,12 +156,8 @@ class QuestionItem extends HookWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // --- VIEW MODE: Options ---
-            ...List.generate(question.options.length, (i) {
-              final isCorrect = question.correctOptions.contains(i);
+            ...question.answers.map((ans) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.symmetric(
@@ -172,26 +165,26 @@ class QuestionItem extends HookWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isCorrect
+                  color: ans.isCorrect
                       ? AppColors.successLight
-                      : AppColors.transparent,
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
                     Icon(
-                      isCorrect
+                      ans.isCorrect
                           ? Icons.check_circle
                           : Icons.radio_button_off_rounded,
                       size: 18,
-                      color: isCorrect
+                      color: ans.isCorrect
                           ? AppColors.success
                           : AppColors.secondaryText,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        question.options[i],
+                        ans.content,
                         style: const TextStyle(color: AppColors.toastText),
                       ),
                     ),
@@ -199,17 +192,15 @@ class QuestionItem extends HookWidget {
                 ),
               );
             }),
-
-            // --- VIEW MODE: Explanation (Chỉ hiện nếu có data) ---
             if (question.explanation.isNotEmpty) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.infoBlue.withOpacity(0.05),
+                  color: AppColors.infoBlue.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.infoBlue.withOpacity(0.1),
+                    color: AppColors.infoBlue.withValues(alpha: 0.1),
                   ),
                 ),
                 child: Row(
@@ -241,7 +232,6 @@ class QuestionItem extends HookWidget {
     );
   }
 
-  // Widget phụ để build TextField cho gọn
   Widget _buildCustomTextField({
     required TextEditingController controller,
     required String hintText,
@@ -305,6 +295,9 @@ class QuestionItem extends HookWidget {
                   color: AppColors.infoBlue,
                   size: 20,
                 ),
+                style: IconButton.styleFrom(
+                  enabledMouseCursor: SystemMouseCursors.click,
+                ),
               ),
               IconButton(
                 onPressed: onDelete,
@@ -312,6 +305,9 @@ class QuestionItem extends HookWidget {
                   Icons.delete,
                   color: AppColors.toastError,
                   size: 20,
+                ),
+                style: IconButton.styleFrom(
+                  enabledMouseCursor: SystemMouseCursors.click,
                 ),
               ),
             ],
@@ -321,12 +317,15 @@ class QuestionItem extends HookWidget {
             children: [
               TextButton(
                 onPressed: () {
-                  if (question.content.isEmpty) {
+                  if (question.content.isEmpty && isNew) {
                     onDelete();
                   } else {
                     isEditing.value = false;
                   }
                 },
+                style: TextButton.styleFrom(
+                  enabledMouseCursor: SystemMouseCursors.click,
+                ),
                 child: const Text(AppStrings.btnCancel),
               ),
               const SizedBox(width: 8),
@@ -336,6 +335,7 @@ class QuestionItem extends HookWidget {
                   backgroundColor: AppColors.infoBlue,
                   foregroundColor: Colors.white,
                   elevation: 0,
+                  enabledMouseCursor: SystemMouseCursors.click,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
