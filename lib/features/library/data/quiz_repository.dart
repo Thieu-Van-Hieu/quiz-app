@@ -91,14 +91,13 @@ class QuizRepository {
   }
 
   /// 4. Cập nhật danh sách câu hỏi của Quiz (Upsert logic)
+  /// 4. Cập nhật danh sách câu hỏi của Quiz (Upsert logic)
   Future<void> updateQuizQuestions(int quizId, List<Question> questions) async {
     final quiz = await _quizBox.getAsync(quizId);
     if (quiz == null) {
       throw EntityNotFoundException('Quiz không tồn tại.');
     }
 
-    // Trong ObjectBox, nếu bạn muốn update quan hệ ToMany (questions)
-    // Bạn chỉ cần gán target cho từng question và putMany chúng.
     await _db.store.runInTransactionAsync(TxMode.write, (
       Store store,
       List<dynamic> params,
@@ -114,8 +113,17 @@ class QuizRepository {
 
       for (var q in newQuestions) {
         q.quiz.target = currentQuiz;
+        // Tự động đồng bộ quan hệ nội bộ của Question
+        q.syncAnswers();
       }
+
+      // Chỉ cần put Question, ObjectBox sẽ tự động put các Answer trong ToMany
       internalQuestionBox.putMany(newQuestions);
+
+      // Cập nhật link từ Quiz sang Question để đồng bộ danh sách
+      currentQuiz.questions.clear();
+      currentQuiz.questions.addAll(newQuestions);
+      internalQuizBox.put(currentQuiz);
     }, [quizId, questions]);
   }
 

@@ -29,18 +29,16 @@ class QuestionNotifier extends _$QuestionNotifier {
 
   // --- LOGIC TRONG BỘ NHỚ (NHÁP) ---
 
+  void updateQuestion(int index, Question updatedQuestion) {
+    final currentList = state.value;
+    if (currentList != null) {
+      state = AsyncValue.data(List<Question>.from(currentList));
+    }
+  }
+
   void addQuestion(Question question) {
     final currentList = state.value ?? [];
     state = AsyncValue.data([...currentList, question]);
-  }
-
-  void updateQuestion(int index, Question question) {
-    final currentList = state.value;
-    if (currentList != null && index >= 0 && index < currentList.length) {
-      final newList = List<Question>.from(currentList);
-      newList[index] = question;
-      state = AsyncValue.data(newList);
-    }
   }
 
   void deleteQuestion(int index) {
@@ -53,7 +51,6 @@ class QuestionNotifier extends _$QuestionNotifier {
   }
 
   // --- LOGIC GHI XUỐNG DB ---
-
   Future<void> saveToDb() async {
     if (state.isLoading) return;
 
@@ -63,10 +60,15 @@ class QuestionNotifier extends _$QuestionNotifier {
     try {
       state = const AsyncValue.loading();
 
-      // Gọi repository lưu xuống Isar
+      // Đảm bảo mọi câu hỏi đều đã được gán quan hệ với Answer con
+      for (var q in questionsToSave) {
+        q.syncAnswers();
+      }
+
       await quizRepo.updateQuizQuestions(quizId, questionsToSave);
 
-      // Sau khi lưu xong, ép buộc load lại dữ liệu từ DB để lấy ID chính xác (tránh lỗi sync)
+      // Refresh lại dữ liệu từ DB để lấy ID mới nhất
+      ref.invalidate(questionRepositoryProvider);
       final repo = ref.read(questionRepositoryProvider);
       final freshData = await repo.getQuestionsByQuiz(quizId);
 

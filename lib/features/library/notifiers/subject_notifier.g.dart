@@ -50,7 +50,7 @@ final class SubjectNotifierProvider
   }
 }
 
-String _$subjectNotifierHash() => r'fff79566816eba22670edca464731a2a9061dd2a';
+String _$subjectNotifierHash() => r'e96da10260ee806316c2eeb15aeb0feafca84ced';
 
 final class SubjectNotifierFamily extends $Family
     with

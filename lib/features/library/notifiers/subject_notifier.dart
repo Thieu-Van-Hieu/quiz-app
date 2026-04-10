@@ -47,7 +47,9 @@ class SubjectNotifier extends _$SubjectNotifier {
     }
 
     // 3. Thực thi lưu dữ liệu
-    subject = subject.copyWith(code: trimmedCode, name: trimmedName);
+    subject
+      ..code = trimmedCode
+      ..name = trimmedName;
 
     await repo.saveSubject(subject);
   }

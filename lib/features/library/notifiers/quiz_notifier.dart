@@ -47,8 +47,8 @@ class QuizNotifier extends _$QuizNotifier {
     }
 
     // 3. Thực thi lưu dữ liệu
-    final updatedQuiz = quiz.copyWith(name: trimmedName);
-    await repo.saveQuiz(subjectId, updatedQuiz);
+    quiz.name = trimmedName; // Cập nhật tên đã được trim
+    await repo.saveQuiz(subjectId, quiz);
   }
 
   Future<void> deleteQuiz(int id) async {
