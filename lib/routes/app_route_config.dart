@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/features/dashboard/routes/dashboard_routes.dart';
+import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/routes/types.dart';
 
@@ -14,10 +17,22 @@ void _showExitDialog(BuildContext context) {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           child: const Text("Hủy"),
         ),
         TextButton(
-          onPressed: () => SystemNavigator.pop(), // Thoát app sạch sẽ
+          onPressed: () {
+            if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+              exit(0); // Lệnh thoát mạnh mẽ cho Desktop
+            } else {
+              SystemNavigator.pop(); // Dành cho Mobile
+            }
+          }, // Thoát app sạch sẽ
+          style: TextButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           child: const Text("Thoát", style: TextStyle(color: Colors.red)),
         ),
       ],
@@ -29,6 +44,7 @@ class AppRouteConfig {
   static final List<AppRouteItem> mainMenuItems = [
     DashboardRoutes.config,
     LibraryRoutes.config,
+    LearningRoutes.config,
     AppRouteItem(
       title: 'Thoát',
       icon: Icons.logout_rounded,

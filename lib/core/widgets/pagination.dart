@@ -29,6 +29,10 @@ class AppPagination extends StatelessWidget {
               : null,
           icon: const Icon(Icons.chevron_left),
           color: activeColor,
+          style: IconButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+            disabledMouseCursor: SystemMouseCursors.forbidden,
+          ),
         ),
 
         // Hiển thị vị trí trang
@@ -56,6 +60,10 @@ class AppPagination extends StatelessWidget {
               : null,
           icon: const Icon(Icons.chevron_right),
           color: activeColor,
+          style: IconButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+            disabledMouseCursor: SystemMouseCursors.forbidden,
+          ),
         ),
       ],
     );

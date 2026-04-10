@@ -10,48 +10,50 @@ class BreadcrumbBar extends StatelessWidget {
     final routerState = GoRouterState.of(context);
     final location = routerState.uri.path;
 
-    // Tách các phần của URL, bỏ khoảng trống
     final rawSegments = location.split('/').where((s) => s.isNotEmpty).toList();
 
-    // 1. Logic xử lý gộp Segment (Gộp "subject" + "id", "quiz" + "id")
     final List<Map<String, String>> breadcrumbs = [];
     String accumulatedPath = "";
-    int i = 0;
 
-    while (i < rawSegments.length) {
+    for (int i = 0; i < rawSegments.length; i++) {
       String segment = rawSegments[i];
-      accumulatedPath += "/$segment";
 
-      // Nếu gặp 'subject' hoặc 'quiz' và phía sau có ID (là số)
-      if ((segment == 'subject' || segment == 'quiz') &&
-          (i + 1 < rawSegments.length)) {
-        String nextSegment = rawSegments[i + 1];
-        if (int.tryParse(nextSegment) != null) {
-          // GỘP CHÚNG LẠI: Ví dụ: /library/subject/1 -> Title: "Môn học"
-          breadcrumbs.add({
-            'title': segment == 'subject' ? "Môn học" : "Bộ đề",
-            'path': "$accumulatedPath/$nextSegment",
-          });
-          accumulatedPath += "/$nextSegment"; // Cập nhật path bao gồm cả ID
-          i += 2; // Nhảy qua cả 2 segment
-          continue;
-        }
+      // 1. Nếu segment là 'session', 'subject' hoặc 'quiz'
+      // và phía sau nó CÓ một ID (số)
+      if ((segment == 'session' || segment == 'subject' || segment == 'quiz') &&
+          (i + 1 < rawSegments.length &&
+              int.tryParse(rawSegments[i + 1]) != null)) {
+        // Bỏ qua segment chữ này, để vòng lặp sau xử lý segment ID và đặt tên luôn
+        // Ví dụ: bỏ qua 'session' để vòng sau xử lý '123' thành "Phiên học"
+        continue;
       }
 
-      // Xử lý các segment thông thường (dashboard, library, etc.)
-      breadcrumbs.add({
-        'title': _mapPathToTitle(segment),
-        'path': accumulatedPath,
-      });
-      i++;
+      accumulatedPath += "/$segment";
+      bool isId = int.tryParse(segment) != null;
+
+      if (isId && i > 0) {
+        String parentSegment = rawSegments[i - 1];
+        breadcrumbs.add({
+          'title': _mapIdToTitle(parentSegment, segment),
+          'path': accumulatedPath,
+        });
+      } else if (segment == 'result' &&
+          i > 0 &&
+          rawSegments[i - 1] == 'learning') {
+        breadcrumbs.add({'title': 'Lịch sử', 'path': accumulatedPath});
+      } else {
+        breadcrumbs.add({
+          'title': _mapPathToTitle(segment),
+          'path': accumulatedPath,
+        });
+      }
     }
 
-    // 2. Lọc bỏ Dashboard nếu đang ở trang con (để đỡ rác)
+    // Logic lọc Dashboard (giữ nguyên)
     if (breadcrumbs.isNotEmpty && breadcrumbs.first['path'] == '/dashboard') {
       if (breadcrumbs.length > 1) {
         breadcrumbs.removeAt(0);
       } else {
-        // Nếu chỉ có mỗi Dashboard thì đổi title thành Tổng quan
         breadcrumbs[0]['title'] = "Tổng quan";
       }
     }
@@ -67,7 +69,6 @@ class BreadcrumbBar extends StatelessWidget {
                 size: 18,
                 color: Colors.grey,
               ),
-
             _buildItem(
               context,
               breadcrumbs[i]['title']!,
@@ -80,8 +81,33 @@ class BreadcrumbBar extends StatelessWidget {
     );
   }
 
+  // Map tiêu đề dựa trên ID và segment cha
+  String _mapIdToTitle(String parentSegment, String id) {
+    switch (parentSegment) {
+      case 'session':
+        return "Phiên học";
+      case 'subject':
+        return "Môn học";
+      case 'quiz':
+        return "Bộ đề";
+      default:
+        return "Chi tiết";
+    }
+  }
+
   String _mapPathToTitle(String segment) {
-    // 1. Ưu tiên tìm trong AppRouteConfig (cho Dashboard, Library, etc.)
+    final staticMap = {
+      'learning': 'Học tập',
+      'session': 'Phiên học', // Dự phòng nếu session đứng một mình
+      'result': 'Kết quả', // Mặc định chung cho các chỗ khác
+      'subject': 'Môn học',
+      'quiz': 'Bộ đề',
+      'library': 'Thư viện',
+      'dashboard': 'Tổng quan',
+    };
+
+    if (staticMap.containsKey(segment)) return staticMap[segment]!;
+
     final menuItem = AppRouteConfig.mainMenuItems.where((item) {
       return item.path != null &&
           (item.path == '/$segment' || item.path!.endsWith('/$segment'));
@@ -89,17 +115,6 @@ class BreadcrumbBar extends StatelessWidget {
 
     if (menuItem != null) return menuItem.title;
 
-    // 2. Map các từ khóa tĩnh
-    final subPathMap = {
-      'subject': 'Môn học',
-      'quiz': 'Bộ đề',
-      'result': 'Kết quả',
-      'library': 'Thư viện',
-    };
-
-    if (subPathMap.containsKey(segment)) return subPathMap[segment]!;
-
-    // 3. Xử lý mặc định (Viết hoa chữ cái đầu)
     return segment.isEmpty
         ? ""
         : segment[0].toUpperCase() + segment.substring(1);
