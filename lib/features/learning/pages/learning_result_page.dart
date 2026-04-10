@@ -33,7 +33,7 @@ class LearningResultPage extends HookConsumerWidget {
     // Trong build của LearningHistoryPage
     useEffect(() {
       // Cứ mỗi lần build (vào trang), ép provider xoá cache cũ và lấy cái mới nhất từ DB
-      ref.refresh(watchLearningSessionsProvider(params.value));
+      void _ = ref.refresh(watchLearningSessionsProvider(params.value));
       return null;
     }, []); // Mảng rỗng để chỉ chạy 1 lần khi init trang
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/core/services/path_service.dart';
 import 'package:path/path.dart' as p;
@@ -79,7 +80,7 @@ class OcrUtils {
           '/IM',
           'screen_capturer_helper.exe',
           '/T',
-        ]).catchError((_) => null);
+        ]).catchError((_) => ProcessResult(0, 1, '', ''));
       }
 
       await Future.delayed(const Duration(milliseconds: 200));
@@ -139,7 +140,7 @@ class OcrUtils {
             data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
           );
         } catch (e) {
-          print("Lỗi copy traineddata: $e");
+          debugPrint("Lỗi copy traineddata: $e");
         }
       }
     }

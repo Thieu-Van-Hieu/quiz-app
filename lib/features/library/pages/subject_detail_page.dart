@@ -81,10 +81,16 @@ class SubjectDetailPage extends HookConsumerWidget {
             newQuiz = QuizConverterService.importAsNew(utf8.decode(bytes));
           }
 
-          await ref
-              .read(quizProvider(params.value).notifier)
-              .saveQuiz(subjectId, newQuiz)
-              .withToast(context);
+          if (context.mounted) {
+            await ref
+                .read(quizProvider(params.value).notifier)
+                .saveQuiz(subjectId, newQuiz)
+                .withToast(context);
+          } else {
+            await ref
+                .read(quizProvider(params.value).notifier)
+                .saveQuiz(subjectId, newQuiz);
+          }
         }
       } catch (e) {
         if (context.mounted) {
@@ -408,7 +414,9 @@ class _SubjectHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: isOutlined ? Colors.transparent : LibraryColors.accentColor,
         border: isOutlined
-            ? Border.all(color: LibraryColors.accentColor.withOpacity(0.5))
+            ? Border.all(
+                color: LibraryColors.accentColor.withValues(alpha: 0.5),
+              )
             : null,
         borderRadius: BorderRadius.circular(12),
       ),

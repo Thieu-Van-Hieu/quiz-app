@@ -11,10 +11,10 @@ import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
 import 'package:frontend/features/library/notifiers/question_notifier.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
+import 'package:frontend/features/library/services/quiz_convert_service.dart';
 import 'package:frontend/features/library/widgets/question/question_item.dart';
 import 'package:frontend/utils/ocr.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hooks_riverpod/hooks_riverpodets/question/question_itemd/hooks_riverpod.dart';
 
 class QuizDetailPage extends HookConsumerWidget {
   final int subjectId;
@@ -312,6 +312,7 @@ class QuizDetailPage extends HookConsumerWidget {
                 }
               }
             } catch (e) {
+              debugPrint("Lỗi OCR: $e");
             } finally {
               isOcrLoading.value = false;
             }

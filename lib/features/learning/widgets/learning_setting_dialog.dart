@@ -74,7 +74,7 @@ class LearningSettingDialog extends HookWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<LearningMode>(
-                value: settingsNotifier.value.learningMode,
+                initialValue: settingsNotifier.value.learningMode,
                 decoration: const InputDecoration(
                   labelText: "Chế độ",
                   labelStyle: labelStyle,

@@ -1,17 +1,22 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 
 class AppPathService {
   static final AppPathService _instance = AppPathService._internal();
+
   factory AppPathService() => _instance;
+
   AppPathService._internal();
 
   late final String _rootPath;
 
   // Các đường dẫn con
   String get databasePath => p.join(_rootPath, 'database');
+
   String get tessDataPath => p.join(_rootPath, 'tessdata');
+
   String get tempPath => p.join(_rootPath, 'temp');
 
   /// Khởi tạo và tạo sẵn cấu trúc thư mục
@@ -31,7 +36,7 @@ class AppPathService {
       final dir = Directory(path);
       if (!await dir.exists()) {
         await dir.create(recursive: true);
-        print("📁 Đã tạo thư mục: $path");
+        debugPrint("📁 Đã tạo thư mục: $path");
       }
     }
   }
