@@ -1,7 +1,7 @@
 name: frontend
-description: "A new Flutter project."
+description: "Quiz App - A Flutter application for quizzes with ObjectBox database and Riverpod state management."
 publish_to: "none"
-version: 1.0.0+1
+version: 0.1.0
 
 environment:
   sdk: ^3.11.1
@@ -28,6 +28,9 @@ dependencies:
   path_provider: ^2.1.5
   riverpod_annotation: ^4.0.0 # nâng từ 2.6.1
   path: ^1.9.1
+  intl: ^0.20.2
+  file_picker: ^11.0.2
+  screen_capturer: ^0.2.3
 
 dev_dependencies:
   flutter_test:
@@ -39,6 +42,16 @@ dev_dependencies:
   objectbox_generator: ^5.1.0 # nâng từ 2.5.0
   riverpod_generator: ^4.0.3 # nâng từ 2.4.0
   build_runner: ^2.4.13 # giữ tương tự, đã là phiên bản ổn
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "assets/images/app_icon.png" # Icon cho Windows .exe
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/tessdata/
+  
