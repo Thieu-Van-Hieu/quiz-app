@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/widgets/breadcrumb_bar.dart';
-import 'package:frontend/features/dashboard/constants/dashboard_colors.dart';
-import 'package:frontend/routes/app_route_config.dart'; // Dùng config mới
 import 'package:frontend/core/widgets/sidebar_button.dart';
 import 'package:frontend/core/widgets/sidebar_header.dart';
+import 'package:frontend/features/dashboard/constants/dashboard_colors.dart';
+import 'package:frontend/routes/app_route_config.dart';
 import 'package:go_router/go_router.dart';
 
 class MainScreen extends HookWidget {
@@ -15,13 +15,18 @@ class MainScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final menuItems = AppRouteConfig.mainMenuItems;
+    final isCollapsed = useState(false);
+
+    // Lấy path hiện tại để check active
+    final String location = GoRouterState.of(context).matchedLocation;
 
     return Scaffold(
       body: Row(
         children: [
-          // --- VÙNG SIDEBAR (Cố định bên trái) ---
-          Container(
-            width: 260, // Chiều rộng Sidebar thoải mái cho tiếng Việt
+          // --- VÙNG SIDEBAR ---
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: isCollapsed.value ? 70 : 260,
             decoration: const BoxDecoration(
               border: Border(
                 right: BorderSide(color: DashboardColors.sidebarHeader),
@@ -30,7 +35,15 @@ class MainScreen extends HookWidget {
             ),
             child: Column(
               children: [
-                const SidebarHeader(),
+                SidebarHeader(isCollapsed: isCollapsed.value),
+
+                // Nút thu gọn/mở rộng
+                IconButton(
+                  mouseCursor: SystemMouseCursors.click,
+                  onPressed: () => isCollapsed.value = !isCollapsed.value,
+                  icon: Icon(isCollapsed.value ? Icons.menu_open : Icons.menu),
+                ),
+
                 const Divider(height: 1),
                 Expanded(
                   child: ListView.builder(
@@ -39,25 +52,32 @@ class MainScreen extends HookWidget {
                     itemBuilder: (context, index) {
                       final item = menuItems[index];
 
-                      // Logic xác định mục đang được chọn
                       final bool isAction = item.path == null;
+
+                      // LOGIC ACTIVE: Nếu route hiện tại bắt đầu bằng path của item
+                      // Ví dụ: /library/subject/1 vẫn tính là bắt đầu bằng /library
                       final bool isSelected =
-                          !isAction && navigationShell.currentIndex == index;
+                          !isAction && location.startsWith(item.path!);
 
                       return SidebarButton(
-                        title: item.title,
-                        icon: item.icon!,
+                        title: isCollapsed.value ? "" : item.title,
+                        icon: item.icon,
                         isSelected: isSelected,
                         onTap: () {
                           if (item.onTap != null) {
-                            // Nếu là Action (ví dụ: nút Thoát)
+                            // Nếu có onTap (như nút Thoát), thực thi ngay
                             item.onTap!(context);
-                          } else if (item.path != null) {
-                            // Nếu là Route (Chuyển trang)
+                          } else {
+                            // LỌC INDEX THỰC TẾ:
+                            // Chỉ đếm những item có path (các branch thực sự)
+                            final actualBranchIndex = menuItems
+                                .take(index)
+                                .where((m) => m.path != null)
+                                .length;
+
                             navigationShell.goBranch(
-                              index,
-                              initialLocation:
-                                  index == navigationShell.currentIndex,
+                              actualBranchIndex,
+                              initialLocation: false,
                             );
                           }
                         },
@@ -65,21 +85,47 @@ class MainScreen extends HookWidget {
                     },
                   ),
                 ),
+                // --- ĐÂY LÀ CHỖ THÊM BIỆT DANH ---
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!isCollapsed.value)
+                        Text(
+                          "Made with ❤️ by",
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 10,
+                          ),
+                        ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Mr.NoBody",
+                        style: TextStyle(
+                          color: DashboardColors.sidebarHeader.withValues(
+                            alpha: 0.8,
+                          ),
+                          fontWeight: FontWeight.bold,
+                          fontSize: isCollapsed.value ? 8 : 14,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
 
-          // --- VÙNG NỘI DUNG CHÍNH (Bên phải) ---
+          // --- VÙNG NỘI DUNG ---
           Expanded(
             child: Container(
               color: DashboardColors.backgroundContent,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Thanh Breadcrumb nằm cố định ở trên đầu nội dung
                   const BreadcrumbBar(),
-
-                  // Phần nội dung thay đổi linh hoạt theo Route (Library, Study, Settings...)
                   Expanded(child: navigationShell),
                 ],
               ),

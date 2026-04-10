@@ -4,7 +4,7 @@ import 'package:frontend/features/dashboard/constants/dashboard_colors.dart';
 
 class SidebarButton extends HookWidget {
   final String title;
-  final IconData? icon; // Thêm Icon để menu chuyên nghiệp hơn
+  final IconData? icon;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -19,24 +19,26 @@ class SidebarButton extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isHovered = useState(false);
+    // Trạng thái thu nhỏ dựa trên việc tiêu đề có trống hay không
+    final bool isCollapsed = title.isEmpty;
 
     return MouseRegion(
       onEnter: (_) => isHovered.value = true,
       onExit: (_) => isHovered.value = false,
-      cursor: SystemMouseCursors.click, // Hiện bàn tay khi rê chuột vào
+      // CÁCH 2: Ép con trỏ chuột luôn là bàn tay cho toàn bộ vùng bấm
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        // Dùng GestureDetector hoặc InkWell đều được
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          // Hiệu ứng đổi màu mượt
           width: double.infinity,
           constraints: const BoxConstraints(minHeight: 56.0),
-          // 56-64 là chuẩn
           decoration: BoxDecoration(
-            // Đường kẻ mờ ngăn cách các item
             border: const Border(
-              bottom: BorderSide(color: DashboardColors.sidebarHeader, width: 0.5),
+              bottom: BorderSide(
+                color: DashboardColors.sidebarHeader,
+                width: 0.5,
+              ),
             ),
             color: isSelected
                 ? DashboardColors.sidebarActive
@@ -44,40 +46,69 @@ class SidebarButton extends HookWidget {
                       ? DashboardColors.sidebarHover
                       : Colors.transparent),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              // Căn lề trái nhìn thuận mắt hơn trên Desktop
+          // Clip để tránh lỗi sọc vàng đen khi đang animation thu hẹp không gian
+          clipBehavior: Clip.hardEdge,
+          child: SizedBox(
+            height: 56,
+            child: Stack(
               children: [
-                if (icon != null) ...[
-                  Icon(
-                    icon,
-                    size: 20,
-                    color: isSelected ? Colors.blue[800] : Colors.black54,
-                  ),
-                  const SizedBox(width: 12),
-                ],
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16, // 16-18 là vừa đủ dùng
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                      color: isSelected ? Colors.blue[900] : Colors.black87,
+                // Phần hiển thị Icon
+                if (icon != null)
+                  Positioned(
+                    left: 0,
+                    width: isCollapsed ? 56 : 60,
+                    // Cố định chiều rộng vùng chứa icon
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: Icon(
+                        icon,
+                        size: 20,
+                        color: isSelected ? Colors.blue[800] : Colors.black54,
+                      ),
                     ),
                   ),
-                ),
-                // Thanh chỉ thị (Indicator) nhỏ bên trái nếu đang chọn (Option)
+
+                // Phần hiển thị Text (Chỉ hiện khi không thu gọn)
+                if (!isCollapsed)
+                  Positioned(
+                    left: 52,
+                    // Khoảng cách từ lề trái đến chữ (Icon 20px + Padding 20px + Spacing)
+                    right: 20,
+                    top: 0,
+                    bottom: 0,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: isSelected ? Colors.blue[900] : Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                // Vạch chỉ báo đang chọn (Active Indicator)
                 if (isSelected)
-                  Container(
-                    width: 4,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: Colors.blue[700],
-                      borderRadius: BorderRadius.circular(2),
+                  Positioned(
+                    right: 0,
+                    top: 15,
+                    bottom: 15,
+                    child: Container(
+                      width: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.blue[700],
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(2),
+                        ),
+                      ),
                     ),
                   ),
               ],
