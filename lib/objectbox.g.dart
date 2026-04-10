@@ -27,7 +27,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 7299001762337608636),
     name: 'Answer',
-    lastPropertyId: const obx_int.IdUid(4, 8858047260691144583),
+    lastPropertyId: const obx_int.IdUid(5, 8111846479549212992),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -57,6 +57,12 @@ final _entities = <obx_int.ModelEntity>[
         relationField: 'question',
         relationTarget: 'Question',
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 8111846479549212992),
+        name: 'questionTargetId',
+        type: 6,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[
@@ -70,7 +76,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(2, 2787929510791643226),
     name: 'Question',
-    lastPropertyId: const obx_int.IdUid(4, 7682172712956022625),
+    lastPropertyId: const obx_int.IdUid(5, 6094649052072019045),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -100,6 +106,12 @@ final _entities = <obx_int.ModelEntity>[
         relationField: 'quiz',
         relationTarget: 'Quiz',
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 6094649052072019045),
+        name: 'quizTargetId',
+        type: 6,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[
@@ -118,7 +130,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(3, 1223619618416249017),
     name: 'Quiz',
-    lastPropertyId: const obx_int.IdUid(3, 5528764215132486161),
+    lastPropertyId: const obx_int.IdUid(4, 8082341277111544156),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -141,6 +153,12 @@ final _entities = <obx_int.ModelEntity>[
         indexId: const obx_int.IdUid(3, 4860670046444866728),
         relationField: 'subject',
         relationTarget: 'Subject',
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 8082341277111544156),
+        name: 'subjectTargetId',
+        type: 6,
+        flags: 0,
       ),
     ],
     relations: <obx_int.ModelRelation>[],
@@ -191,7 +209,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 5502079073284747514),
     name: 'LearningSessionDetail',
-    lastPropertyId: const obx_int.IdUid(6, 6075764298969602044),
+    lastPropertyId: const obx_int.IdUid(7, 1626576770022630230),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -230,6 +248,12 @@ final _entities = <obx_int.ModelEntity>[
         relationField: 'learningSession',
         relationTarget: 'LearningSession',
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 1626576770022630230),
+        name: 'questionTargetId',
+        type: 6,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[
       obx_int.ModelRelation(
@@ -241,89 +265,95 @@ final _entities = <obx_int.ModelEntity>[
     backlinks: <obx_int.ModelBacklink>[],
   ),
   obx_int.ModelEntity(
-    id: const obx_int.IdUid(13, 1763644831287437937),
+    id: const obx_int.IdUid(14, 4024975291499176318),
     name: 'LearningSession',
-    lastPropertyId: const obx_int.IdUid(13, 7121853349119296041),
+    lastPropertyId: const obx_int.IdUid(25, 6849748057573735533),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(1, 9047396285256898018),
+        id: const obx_int.IdUid(1, 2139771849035858923),
         name: 'id',
         type: 6,
         flags: 1,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(2, 6141873939163442509),
+        id: const obx_int.IdUid(2, 1915649893065070788),
         name: 'quizId',
         type: 11,
         flags: 520,
-        indexId: const obx_int.IdUid(13, 6026732649327613350),
+        indexId: const obx_int.IdUid(15, 379639735380436061),
         relationField: 'quiz',
         relationTarget: 'Quiz',
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(3, 8584605567879980311),
-        name: 'learningMode',
-        type: 9,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(4, 7037096859418411473),
+        id: const obx_int.IdUid(4, 6880168520543185269),
         name: 'startTime',
         type: 10,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(5, 5894548907070236658),
+        id: const obx_int.IdUid(5, 8018202501068506886),
         name: 'shuffleQuestions',
         type: 1,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(6, 8072267530557979247),
+        id: const obx_int.IdUid(6, 8782944028849370890),
         name: 'shuffleAnswers',
         type: 1,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(7, 3411991043566285988),
+        id: const obx_int.IdUid(7, 5806153554850083549),
         name: 'currentIndex',
         type: 6,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(8, 2385495259337550541),
+        id: const obx_int.IdUid(8, 5954749709625237847),
         name: 'studyTime',
         type: 6,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(9, 7461321401101591390),
+        id: const obx_int.IdUid(9, 3448039748449309428),
         name: 'timeLimit',
         type: 6,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(10, 2631531781013020662),
+        id: const obx_int.IdUid(10, 1615231433326829010),
         name: 'isCompleted',
         type: 1,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(11, 5105569352636023297),
+        id: const obx_int.IdUid(11, 5355497963196388424),
         name: 'endTime',
         type: 10,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(12, 3683074668220061082),
+        id: const obx_int.IdUid(12, 5043944630363418254),
         name: 'totalCorrect',
         type: 6,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(13, 7121853349119296041),
+        id: const obx_int.IdUid(13, 4339430802236869996),
         name: 'totalWrong',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(21, 1423225547210962661),
+        name: 'learningMode',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(24, 7603499362119049651),
+        name: 'quizTargetId',
         type: 6,
         flags: 0,
       ),
@@ -382,9 +412,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(13, 1763644831287437937),
-    lastIndexId: const obx_int.IdUid(14, 4626027454110207633),
-    lastRelationId: const obx_int.IdUid(2, 9164081888470751568),
+    lastEntityId: const obx_int.IdUid(14, 4024975291499176318),
+    lastIndexId: const obx_int.IdUid(20, 4906833056168862516),
+    lastRelationId: const obx_int.IdUid(7, 8362246070475913355),
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [
       2396496313140079722,
@@ -394,8 +424,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
       8360411958099064413,
       4920760139726279388,
       8150576158054074434,
+      1763644831287437937,
     ],
-    retiredIndexUids: const [7347700586798717336],
+    retiredIndexUids: const [
+      7347700586798717336,
+      1540933757665640831,
+      1057985058308706369,
+      2124571327299695343,
+      1990295136756352924,
+      4906833056168862516,
+    ],
     retiredPropertyUids: const [
       2318664718927489466,
       1469496124070769133,
@@ -492,8 +530,38 @@ obx_int.ModelDefinition getObjectBoxModel() {
       1535566084756155748,
       8505331117145444507,
       6678169052645426052,
+      9047396285256898018,
+      6141873939163442509,
+      8584605567879980311,
+      7037096859418411473,
+      5894548907070236658,
+      8072267530557979247,
+      3411991043566285988,
+      2385495259337550541,
+      7461321401101591390,
+      2631531781013020662,
+      5105569352636023297,
+      3683074668220061082,
+      7121853349119296041,
+      1248859767542364344,
+      6106360613448998475,
+      920426485979270051,
+      1658124175764256579,
+      5935642483109839422,
+      2152236491451129832,
+      563601163632320191,
+      7060876806625588756,
+      2626478897613327985,
+      2866774429764172645,
+      6849748057573735533,
     ],
-    retiredRelationUids: const [],
+    retiredRelationUids: const [
+      604733439351293478,
+      8764137301684483581,
+      209961309989937723,
+      7656245509509046707,
+      8362246070475913355,
+    ],
     modelVersion: 5,
     modelVersionParserMinimum: 5,
     version: 1,
@@ -513,11 +581,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (Answer object, fb.Builder fbb) {
         final contentOffset = fbb.writeString(object.content);
-        fbb.startTable(5);
+        fbb.startTable(6);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, contentOffset);
         fbb.addBool(2, object.isCorrect);
         fbb.addInt64(3, object.question.targetId);
+        fbb.addInt64(4, object.questionTargetId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -539,10 +608,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
           8,
           false,
         );
+        final questionTargetIdParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          0,
+        );
         final object = Answer(
           id: idParam,
           content: contentParam,
           isCorrect: isCorrectParam,
+          questionTargetId: questionTargetIdParam,
         );
         object.question.targetId = const fb.Int64Reader().vTableGet(
           buffer,
@@ -581,11 +657,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
       objectToFB: (Question object, fb.Builder fbb) {
         final contentOffset = fbb.writeString(object.content);
         final explanationOffset = fbb.writeString(object.explanation);
-        fbb.startTable(5);
+        fbb.startTable(6);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, contentOffset);
         fbb.addOffset(2, explanationOffset);
         fbb.addInt64(3, object.quiz.targetId);
+        fbb.addInt64(4, object.quizTargetId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -604,10 +681,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final explanationParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 8, '');
+        final quizTargetIdParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          0,
+        );
         final object = Question(
           id: idParam,
           content: contentParam,
           explanation: explanationParam,
+          quizTargetId: quizTargetIdParam,
         );
         object.quiz.targetId = const fb.Int64Reader().vTableGet(
           buffer,
@@ -653,10 +737,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (Quiz object, fb.Builder fbb) {
         final nameOffset = fbb.writeString(object.name);
-        fbb.startTable(4);
+        fbb.startTable(5);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, nameOffset);
         fbb.addInt64(2, object.subject.targetId);
+        fbb.addInt64(3, object.subjectTargetId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -672,7 +757,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final nameParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 6, '');
-        final object = Quiz(id: idParam, name: nameParam);
+        final subjectTargetIdParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          10,
+          0,
+        );
+        final object = Quiz(
+          id: idParam,
+          name: nameParam,
+          subjectTargetId: subjectTargetIdParam,
+        );
         object.subject.targetId = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -759,12 +854,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
         object.id = id;
       },
       objectToFB: (LearningSessionDetail object, fb.Builder fbb) {
-        fbb.startTable(7);
+        fbb.startTable(8);
         fbb.addInt64(0, object.id);
         fbb.addInt64(2, object.question.targetId);
         fbb.addBool(3, object.isChecked);
         fbb.addBool(4, object.isCorrect);
         fbb.addInt64(5, object.learningSession.targetId);
+        fbb.addInt64(6, object.questionTargetId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -783,13 +879,23 @@ obx_int.ModelDefinition getObjectBoxModel() {
           10,
           false,
         );
-        final object =
-            LearningSessionDetail(id: idParam, isChecked: isCheckedParam)
-              ..isCorrect = const fb.BoolReader().vTableGetNullable(
-                buffer,
-                rootOffset,
-                12,
-              );
+        final isCorrectParam = const fb.BoolReader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          12,
+        );
+        final questionTargetIdParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          16,
+          0,
+        );
+        final object = LearningSessionDetail(
+          id: idParam,
+          isChecked: isCheckedParam,
+          isCorrect: isCorrectParam,
+          questionTargetId: questionTargetIdParam,
+        );
         object.question.targetId = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -828,10 +934,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (LearningSession object, fb.Builder fbb) {
         final learningModeOffset = fbb.writeString(object.learningMode);
-        fbb.startTable(14);
+        fbb.startTable(26);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.quiz.targetId);
-        fbb.addOffset(2, learningModeOffset);
         fbb.addInt64(3, object.startTime.millisecondsSinceEpoch);
         fbb.addBool(4, object.shuffleQuestions);
         fbb.addBool(5, object.shuffleAnswers);
@@ -842,6 +947,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(10, object.endTime?.millisecondsSinceEpoch);
         fbb.addInt64(11, object.totalCorrect);
         fbb.addInt64(12, object.totalWrong);
+        fbb.addOffset(20, learningModeOffset);
+        fbb.addInt64(23, object.quizTargetId);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -861,7 +968,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         );
         final learningModeParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGet(buffer, rootOffset, 8, '');
+        ).vTableGet(buffer, rootOffset, 44, '');
         final startTimeParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
         );
@@ -915,6 +1022,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           28,
           0,
         );
+        final quizTargetIdParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          50,
+          0,
+        );
         final object = LearningSession(
           id: idParam,
           learningMode: learningModeParam,
@@ -928,6 +1041,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           endTime: endTimeParam,
           totalCorrect: totalCorrectParam,
           totalWrong: totalWrongParam,
+          quizTargetId: quizTargetIdParam,
         );
         object.quiz.targetId = const fb.Int64Reader().vTableGet(
           buffer,
@@ -974,6 +1088,11 @@ class Answer_ {
   static final question = obx.QueryRelationToOne<Answer, Question>(
     _entities[0].properties[3],
   );
+
+  /// See [Answer.questionTargetId].
+  static final questionTargetId = obx.QueryIntegerProperty<Answer>(
+    _entities[0].properties[4],
+  );
 }
 
 /// [Question] entity fields to define ObjectBox queries.
@@ -996,6 +1115,11 @@ class Question_ {
   /// See [Question.quiz].
   static final quiz = obx.QueryRelationToOne<Question, Quiz>(
     _entities[1].properties[3],
+  );
+
+  /// See [Question.quizTargetId].
+  static final quizTargetId = obx.QueryIntegerProperty<Question>(
+    _entities[1].properties[4],
   );
 
   /// see [Question.answers]
@@ -1021,6 +1145,11 @@ class Quiz_ {
   /// See [Quiz.subject].
   static final subject = obx.QueryRelationToOne<Quiz, Subject>(
     _entities[2].properties[2],
+  );
+
+  /// See [Quiz.subjectTargetId].
+  static final subjectTargetId = obx.QueryIntegerProperty<Quiz>(
+    _entities[2].properties[3],
   );
 
   /// see [Quiz.questions]
@@ -1079,6 +1208,12 @@ class LearningSessionDetail_ {
         _entities[4].properties[4],
       );
 
+  /// See [LearningSessionDetail.questionTargetId].
+  static final questionTargetId =
+      obx.QueryIntegerProperty<LearningSessionDetail>(
+        _entities[4].properties[5],
+      );
+
   /// see [LearningSessionDetail.selectedAnswers]
   static final selectedAnswers =
       obx.QueryRelationToMany<LearningSessionDetail, Answer>(
@@ -1098,59 +1233,64 @@ class LearningSession_ {
     _entities[5].properties[1],
   );
 
-  /// See [LearningSession.learningMode].
-  static final learningMode = obx.QueryStringProperty<LearningSession>(
-    _entities[5].properties[2],
-  );
-
   /// See [LearningSession.startTime].
   static final startTime = obx.QueryDateProperty<LearningSession>(
-    _entities[5].properties[3],
+    _entities[5].properties[2],
   );
 
   /// See [LearningSession.shuffleQuestions].
   static final shuffleQuestions = obx.QueryBooleanProperty<LearningSession>(
-    _entities[5].properties[4],
+    _entities[5].properties[3],
   );
 
   /// See [LearningSession.shuffleAnswers].
   static final shuffleAnswers = obx.QueryBooleanProperty<LearningSession>(
-    _entities[5].properties[5],
+    _entities[5].properties[4],
   );
 
   /// See [LearningSession.currentIndex].
   static final currentIndex = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[6],
+    _entities[5].properties[5],
   );
 
   /// See [LearningSession.studyTime].
   static final studyTime = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[7],
+    _entities[5].properties[6],
   );
 
   /// See [LearningSession.timeLimit].
   static final timeLimit = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[8],
+    _entities[5].properties[7],
   );
 
   /// See [LearningSession.isCompleted].
   static final isCompleted = obx.QueryBooleanProperty<LearningSession>(
-    _entities[5].properties[9],
+    _entities[5].properties[8],
   );
 
   /// See [LearningSession.endTime].
   static final endTime = obx.QueryDateProperty<LearningSession>(
-    _entities[5].properties[10],
+    _entities[5].properties[9],
   );
 
   /// See [LearningSession.totalCorrect].
   static final totalCorrect = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[11],
+    _entities[5].properties[10],
   );
 
   /// See [LearningSession.totalWrong].
   static final totalWrong = obx.QueryIntegerProperty<LearningSession>(
+    _entities[5].properties[11],
+  );
+
+  /// See [LearningSession.learningMode].
+  static final learningMode = obx.QueryStringProperty<LearningSession>(
     _entities[5].properties[12],
+  );
+
+  /// See [LearningSession.quizTargetId].
+  static final quizTargetId = obx.QueryIntegerProperty<LearningSession>(
+    _entities[5].properties[13],
   );
 
   /// see [LearningSession.learningSessionDetails]

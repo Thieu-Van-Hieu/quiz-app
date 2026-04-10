@@ -46,16 +46,3 @@ class MyApp extends HookWidget {
     );
   }
 }
-
-// class MyApp extends HookWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: ExamPage(),
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(useMaterial3: true),
-//     );
-//   }
-// }

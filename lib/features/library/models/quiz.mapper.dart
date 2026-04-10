@@ -15,6 +15,7 @@ class QuizMapper extends ClassMapperBase<Quiz> {
   static QuizMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = QuizMapper._());
+      QuestionMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -26,11 +27,17 @@ class QuizMapper extends ClassMapperBase<Quiz> {
   static const Field<Quiz, int> _f$id = Field('id', _$id, opt: true, def: 0);
   static String _$name(Quiz v) => v.name;
   static const Field<Quiz, String> _f$name = Field('name', _$name);
-  static ToMany<Question> _$questions(Quiz v) => v.questions;
-  static const Field<Quiz, ToMany<Question>> _f$questions = Field(
-    'questions',
-    _$questions,
-    mode: FieldMode.member,
+  static int _$subjectTargetId(Quiz v) => v.subjectTargetId;
+  static const Field<Quiz, int> _f$subjectTargetId = Field(
+    'subjectTargetId',
+    _$subjectTargetId,
+    opt: true,
+  );
+  static List<Question> _$questionsList(Quiz v) => v.questionsList;
+  static const Field<Quiz, List<Question>> _f$questionsList = Field(
+    'questionsList',
+    _$questionsList,
+    opt: true,
   );
   static ToOne<Subject> _$subject(Quiz v) => v.subject;
   static const Field<Quiz, ToOne<Subject>> _f$subject = Field(
@@ -38,17 +45,30 @@ class QuizMapper extends ClassMapperBase<Quiz> {
     _$subject,
     mode: FieldMode.member,
   );
+  static ToMany<Question> _$questions(Quiz v) => v.questions;
+  static const Field<Quiz, ToMany<Question>> _f$questions = Field(
+    'questions',
+    _$questions,
+    mode: FieldMode.member,
+  );
 
   @override
   final MappableFields<Quiz> fields = const {
     #id: _f$id,
     #name: _f$name,
-    #questions: _f$questions,
+    #subjectTargetId: _f$subjectTargetId,
+    #questionsList: _f$questionsList,
     #subject: _f$subject,
+    #questions: _f$questions,
   };
 
   static Quiz _instantiate(DecodingData data) {
-    return Quiz(id: data.dec(_f$id), name: data.dec(_f$name));
+    return Quiz(
+      id: data.dec(_f$id),
+      name: data.dec(_f$name),
+      subjectTargetId: data.dec(_f$subjectTargetId),
+      questionsList: data.dec(_f$questionsList),
+    );
   }
 
   @override
@@ -71,40 +91,5 @@ mixin QuizMappable {
   Map<String, dynamic> toMap() {
     return QuizMapper.ensureInitialized().encodeMap<Quiz>(this as Quiz);
   }
-
-  QuizCopyWith<Quiz, Quiz, Quiz> get copyWith =>
-      _QuizCopyWithImpl<Quiz, Quiz>(this as Quiz, $identity, $identity);
-}
-
-extension QuizValueCopy<$R, $Out> on ObjectCopyWith<$R, Quiz, $Out> {
-  QuizCopyWith<$R, Quiz, $Out> get $asQuiz =>
-      $base.as((v, t, t2) => _QuizCopyWithImpl<$R, $Out>(v, t, t2));
-}
-
-abstract class QuizCopyWith<$R, $In extends Quiz, $Out>
-    implements ClassCopyWith<$R, $In, $Out> {
-  $R call({int? id, String? name});
-  QuizCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
-}
-
-class _QuizCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Quiz, $Out>
-    implements QuizCopyWith<$R, Quiz, $Out> {
-  _QuizCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<Quiz> $mapper = QuizMapper.ensureInitialized();
-  @override
-  $R call({int? id, String? name}) => $apply(
-    FieldCopyWithData({if (id != null) #id: id, if (name != null) #name: name}),
-  );
-  @override
-  Quiz $make(CopyWithData data) => Quiz(
-    id: data.get(#id, or: $value.id),
-    name: data.get(#name, or: $value.name),
-  );
-
-  @override
-  QuizCopyWith<$R2, Quiz, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
-      _QuizCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 

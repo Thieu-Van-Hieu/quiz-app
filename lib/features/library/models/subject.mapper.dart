@@ -80,51 +80,5 @@ mixin SubjectMappable {
       this as Subject,
     );
   }
-
-  SubjectCopyWith<Subject, Subject, Subject> get copyWith =>
-      _SubjectCopyWithImpl<Subject, Subject>(
-        this as Subject,
-        $identity,
-        $identity,
-      );
-}
-
-extension SubjectValueCopy<$R, $Out> on ObjectCopyWith<$R, Subject, $Out> {
-  SubjectCopyWith<$R, Subject, $Out> get $asSubject =>
-      $base.as((v, t, t2) => _SubjectCopyWithImpl<$R, $Out>(v, t, t2));
-}
-
-abstract class SubjectCopyWith<$R, $In extends Subject, $Out>
-    implements ClassCopyWith<$R, $In, $Out> {
-  $R call({int? id, String? code, String? name});
-  SubjectCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
-}
-
-class _SubjectCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, Subject, $Out>
-    implements SubjectCopyWith<$R, Subject, $Out> {
-  _SubjectCopyWithImpl(super.value, super.then, super.then2);
-
-  @override
-  late final ClassMapperBase<Subject> $mapper =
-      SubjectMapper.ensureInitialized();
-  @override
-  $R call({int? id, String? code, String? name}) => $apply(
-    FieldCopyWithData({
-      if (id != null) #id: id,
-      if (code != null) #code: code,
-      if (name != null) #name: name,
-    }),
-  );
-  @override
-  Subject $make(CopyWithData data) => Subject(
-    id: data.get(#id, or: $value.id),
-    code: data.get(#code, or: $value.code),
-    name: data.get(#name, or: $value.name),
-  );
-
-  @override
-  SubjectCopyWith<$R2, Subject, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
-      _SubjectCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
