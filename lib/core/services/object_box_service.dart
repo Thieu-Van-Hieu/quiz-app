@@ -1,15 +1,12 @@
-import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
-
 // Import tất cả các model của bạn
+import 'package:flutter/cupertino.dart';
+import 'package:frontend/core/services/path_service.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
+import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
-import 'package:frontend/features/library/models/subject.dart';
-
-// File generated bởi ObjectBox
+import 'package:frontend/features/library/models/subject.dart'; // File generated bởi ObjectBox
 import 'package:frontend/objectbox.g.dart';
 
 class ObjectBoxService {
@@ -57,10 +54,9 @@ class ObjectBoxService {
     // Nếu đã khởi tạo rồi thì trả về luôn (Tránh mở nhiều Store lỗi DB)
     if (_instance != null) return _instance!;
 
-    final docsDir = await getApplicationDocumentsDirectory();
-    final storePath = p.join(docsDir.path, "objectbox");
-
-    final store = await openStore(directory: storePath);
+    final String customPath = AppPathService().databasePath;
+    debugPrint("ObjectBox Path chuẩn: $customPath");
+    final store = await openStore(directory: customPath);
 
     _instance = ObjectBoxService._create(store);
     return _instance!;
