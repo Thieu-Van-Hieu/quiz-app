@@ -25,6 +25,12 @@ class AnswerItem extends HookWidget {
   Widget build(BuildContext context) {
     // Controller riêng cho từng option để gõ mượt, không bị lag
     final controller = useTextEditingController(text: initialValue);
+    useEffect(() {
+      if (controller.text != initialValue) {
+        controller.text = initialValue;
+      }
+      return null;
+    }, [initialValue]);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),

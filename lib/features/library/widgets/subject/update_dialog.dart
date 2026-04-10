@@ -21,7 +21,8 @@ class UpdateSubjectDialog extends HookWidget {
     final codeController = useTextEditingController(text: subject.code);
 
     return AlertDialog(
-      backgroundColor: AppColors.toastBackground, // Dùng màu trắng từ AppColors
+      backgroundColor: AppColors.toastBackground,
+      // Dùng màu trắng từ AppColors
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: const Text(
         LibraryStrings.dialogUpdateSubjectTitle,
@@ -50,8 +51,8 @@ class UpdateSubjectDialog extends HookWidget {
               hintText: LibraryStrings.hintSubjectCode,
               hintStyle: const TextStyle(color: AppColors.secondaryText),
               filled: true,
-              fillColor: AppColors
-                  .textFieldFill, // Dùng màu xám nhạt phen đã định nghĩa
+              fillColor: AppColors.textFieldFill,
+              // Dùng màu xám nhạt phen đã định nghĩa
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -87,6 +88,9 @@ class UpdateSubjectDialog extends HookWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           child: const Text(
             AppStrings.btnCancel,
             style: TextStyle(color: AppColors.secondaryText),
@@ -102,12 +106,13 @@ class UpdateSubjectDialog extends HookWidget {
             }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor:
-                AppColors.infoBlue, // Dùng màu xanh này làm Accent/Primary
+            backgroundColor: AppColors.infoBlue,
+            // Dùng màu xanh này làm Accent/Primary
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            enabledMouseCursor: SystemMouseCursors.click,
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),

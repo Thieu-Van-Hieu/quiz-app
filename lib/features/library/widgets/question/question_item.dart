@@ -32,21 +32,34 @@ class QuestionItem extends HookWidget {
       text: question.explanation,
     );
 
-    final localAnswers = useState<List<Answer>>(
-      question.answers.isNotEmpty
-          ? question.answers.toList()
-          : [
-              Answer(content: "", isCorrect: true),
-              Answer(content: "", isCorrect: false),
-            ],
-    );
+    final localAnswers = useState<List<Answer>>([]);
 
     void startEditing() {
       contentController.text = question.content;
       explanationController.text = question.explanation;
-      localAnswers.value = question.answers.toList();
+
+      if (question.answers.isNotEmpty) {
+        localAnswers.value = question.answers
+            .map(
+              (a) =>
+                  Answer(content: a.content, isCorrect: a.isCorrect)..id = a.id,
+            )
+            .toList();
+      } else {
+        localAnswers.value = [
+          Answer(content: "", isCorrect: true),
+          Answer(content: "", isCorrect: false),
+        ];
+      }
       isEditing.value = true;
     }
+
+    useEffect(() {
+      if (isEditing.value && localAnswers.value.isEmpty) {
+        startEditing();
+      }
+      return null;
+    }, []);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -68,165 +81,162 @@ class QuestionItem extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header giữ cố định phía trên
           _buildHeader(isEditing, startEditing, () {
-            final updatedQuestion = question.copyWith(
-              content: contentController.text.trim(),
-              explanation: explanationController.text.trim(),
-            );
-            updatedQuestion.answers.clear();
-            updatedQuestion.answers.addAll(localAnswers.value);
-            onSave(updatedQuestion);
+            question.content = contentController.text.trim();
+            question.explanation = explanationController.text.trim();
+            question.answers.clear();
+            question.answers.addAll(localAnswers.value);
+            question.syncAnswers();
+            onSave(question);
             isEditing.value = false;
           }),
           const SizedBox(height: 16),
-          if (isEditing.value) ...[
-            _buildCustomTextField(
-              controller: contentController,
-              hintText: LibraryStrings.hintEnterQuestion,
-              autofocus: question.content.isEmpty,
-              isBold: true,
-            ),
-            const SizedBox(height: 12),
-            _buildCustomTextField(
-              controller: explanationController,
-              hintText: "Add explanation (optional)...",
-              fontSize: 14,
-              maxLines: 2,
-              prefixIcon: Icons.lightbulb_outline,
-            ),
-            const SizedBox(height: 20),
-            ...localAnswers.value.asMap().entries.map((entry) {
-              final i = entry.key;
-              final ans = entry.value;
-              return AnswerItem(
-                index: i,
-                initialValue: ans.content,
-                isCorrect: ans.isCorrect,
-                canDelete: localAnswers.value.length > 2,
-                onChanged: (val) {
-                  localAnswers.value[i] = localAnswers.value[i].copyWith(
-                    content: val,
-                  );
-                },
-                onToggleCorrect: (val) {
-                  final newList = List<Answer>.from(localAnswers.value);
-                  newList[i] = newList[i].copyWith(isCorrect: val);
-                  localAnswers.value = newList;
-                },
-                onDelete: () {
-                  final newList = List<Answer>.from(localAnswers.value)
-                    ..removeAt(i);
-                  localAnswers.value = newList;
-                },
-              );
-            }),
-            TextButton.icon(
-              onPressed: () {
-                localAnswers.value = [
-                  ...localAnswers.value,
-                  Answer(content: "", isCorrect: false),
-                ];
-              },
-              style: TextButton.styleFrom(
-                enabledMouseCursor: SystemMouseCursors.click,
-              ),
-              icon: const Icon(
-                Icons.add_circle_outline,
-                color: AppColors.infoBlue,
-              ),
-              label: const Text(
-                LibraryStrings.btnAddOption,
-                style: TextStyle(color: AppColors.infoBlue),
-              ),
-            ),
-          ] else ...[
-            InkWell(
-              onDoubleTap: startEditing,
-              borderRadius: BorderRadius.circular(8),
-              // InkWell mặc định có cursor bàn tay, không cần MouseRegion
-              child: Text(
-                question.content.isEmpty
-                    ? LibraryStrings.noContent
-                    : question.content,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  height: 1.5,
-                  color: AppColors.toastText,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...question.answers.map((ans) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: ans.isCorrect
-                      ? AppColors.successLight
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      ans.isCorrect
-                          ? Icons.check_circle
-                          : Icons.radio_button_off_rounded,
-                      size: 18,
-                      color: ans.isCorrect
-                          ? AppColors.success
-                          : AppColors.secondaryText,
+
+          // Phần nội dung có khả năng cuộn để tránh Overflow
+          Expanded(
+            child: SingleChildScrollView(
+              // Physics giúp cuộn mượt hơn trên Desktop
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (isEditing.value) ...[
+                    _buildCustomTextField(
+                      controller: contentController,
+                      hintText: LibraryStrings.hintEnterQuestion,
+                      autofocus: question.content.isEmpty,
+                      isBold: true,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        ans.content,
-                        style: const TextStyle(color: AppColors.toastText),
+                    const SizedBox(height: 12),
+                    _buildCustomTextField(
+                      controller: explanationController,
+                      hintText: "Add explanation (optional)...",
+                      fontSize: 14,
+                      maxLines: 2,
+                      prefixIcon: Icons.lightbulb_outline,
+                    ),
+                    const SizedBox(height: 20),
+                    ...localAnswers.value.asMap().entries.map((entry) {
+                      final i = entry.key;
+                      final ans = entry.value;
+                      return AnswerItem(
+                        key: ObjectKey(ans),
+                        index: i,
+                        initialValue: ans.content,
+                        isCorrect: ans.isCorrect,
+                        canDelete: localAnswers.value.length > 2,
+                        onChanged: (val) {
+                          ans.content = val;
+                        },
+                        onToggleCorrect: (val) {
+                          final newList = List<Answer>.from(localAnswers.value);
+                          newList[i].isCorrect = val;
+                          localAnswers.value = newList;
+                        },
+                        onDelete: () {
+                          final newList = List<Answer>.from(localAnswers.value)
+                            ..removeAt(i);
+                          localAnswers.value = newList;
+                        },
+                      );
+                    }),
+                    TextButton.icon(
+                      onPressed: () {
+                        localAnswers.value = [
+                          ...localAnswers.value,
+                          Answer(content: "", isCorrect: false),
+                        ];
+                      },
+                      icon: const Icon(
+                        Icons.add_circle_outline,
+                        color: AppColors.infoBlue,
+                      ),
+                      label: const Text(
+                        LibraryStrings.btnAddOption,
+                        style: TextStyle(color: AppColors.infoBlue),
                       ),
                     ),
-                  ],
-                ),
-              );
-            }),
-            if (question.explanation.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.infoBlue.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.infoBlue.withValues(alpha: 0.1),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(
-                      Icons.lightbulb,
-                      size: 18,
-                      color: AppColors.infoBlue,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
+                  ] else ...[
+                    // View Mode
+                    InkWell(
+                      onDoubleTap: startEditing,
+                      // Bỏ highlight để nhìn sạch hơn
+                      hoverColor: Colors.transparent,
+                      splashColor: Colors.transparent,
                       child: Text(
-                        question.explanation,
+                        question.content.isEmpty
+                            ? LibraryStrings.noContent
+                            : question.content,
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic,
-                          color: AppColors.secondaryText,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.toastText,
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    ...question.answers.map((ans) => _buildAnswerView(ans)),
+                    if (question.explanation.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      _buildExplanationView(),
+                    ],
                   ],
-                ),
+                ],
               ),
-            ],
-          ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- WIDGETS PHỤ ---
+
+  Widget _buildAnswerView(Answer ans) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: ans.isCorrect ? AppColors.successLight : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            ans.isCorrect ? Icons.check_circle : Icons.radio_button_off_rounded,
+            size: 18,
+            color: ans.isCorrect ? AppColors.success : AppColors.secondaryText,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              ans.content,
+              style: const TextStyle(color: AppColors.toastText),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExplanationView() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.infoBlue.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lightbulb, size: 18, color: AppColors.infoBlue),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              question.explanation,
+              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+            ),
+          ),
         ],
       ),
     );
@@ -238,7 +248,7 @@ class QuestionItem extends HookWidget {
     bool autofocus = false,
     bool isBold = false,
     double fontSize = 16,
-    int maxLines = 2,
+    int maxLines = 1,
     IconData? prefixIcon,
   }) {
     return TextField(
@@ -248,23 +258,15 @@ class QuestionItem extends HookWidget {
       style: TextStyle(
         fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
         fontSize: fontSize,
-        color: AppColors.toastText,
       ),
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: prefixIcon != null
-            ? Icon(prefixIcon, size: 20, color: AppColors.secondaryText)
-            : null,
-        hintStyle: const TextStyle(color: AppColors.secondaryText),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20) : null,
         filled: true,
         fillColor: AppColors.textFieldFill,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
         ),
       ),
     );
@@ -290,25 +292,13 @@ class QuestionItem extends HookWidget {
             children: [
               IconButton(
                 onPressed: onEdit,
-                icon: const Icon(
-                  Icons.edit,
-                  color: AppColors.infoBlue,
-                  size: 20,
-                ),
-                style: IconButton.styleFrom(
-                  enabledMouseCursor: SystemMouseCursors.click,
-                ),
+                mouseCursor: SystemMouseCursors.click,
+                icon: const Icon(Icons.edit, color: AppColors.infoBlue),
               ),
               IconButton(
                 onPressed: onDelete,
-                icon: const Icon(
-                  Icons.delete,
-                  color: AppColors.toastError,
-                  size: 20,
-                ),
-                style: IconButton.styleFrom(
-                  enabledMouseCursor: SystemMouseCursors.click,
-                ),
+                mouseCursor: SystemMouseCursors.click,
+                icon: const Icon(Icons.delete, color: AppColors.toastError),
               ),
             ],
           )
@@ -316,13 +306,7 @@ class QuestionItem extends HookWidget {
           Row(
             children: [
               TextButton(
-                onPressed: () {
-                  if (question.content.isEmpty && isNew) {
-                    onDelete();
-                  } else {
-                    isEditing.value = false;
-                  }
-                },
+                onPressed: () => isEditing.value = false,
                 style: TextButton.styleFrom(
                   enabledMouseCursor: SystemMouseCursors.click,
                 ),
@@ -332,13 +316,7 @@ class QuestionItem extends HookWidget {
               ElevatedButton(
                 onPressed: onSaveAction,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.infoBlue,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
                   enabledMouseCursor: SystemMouseCursors.click,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
                 ),
                 child: const Text(AppStrings.btnDone),
               ),

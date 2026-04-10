@@ -8,6 +8,8 @@ class QuizItem extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback onLearn;
+  final VoidCallback onExport;
 
   const QuizItem({
     super.key,
@@ -15,6 +17,8 @@ class QuizItem extends StatelessWidget {
     required this.onTap,
     required this.onEdit,
     required this.onDelete,
+    required this.onLearn,
+    required this.onExport,
   });
 
   @override
@@ -31,12 +35,22 @@ class QuizItem extends StatelessWidget {
           ),
         ],
       ),
-      // Bọc MouseRegion bên ngoài cùng để đảm bảo toàn bộ card đều đổi cursor
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
+      // Dùng Material để InkWell hiển thị hiệu ứng gợn sóng (ripple) chuẩn
+      child: Material(
+        color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
+          hoverColor: Colors.transparent,
+          // Bỏ màu nền khi di chuột qua
+          splashColor: Colors.transparent,
+          // Bỏ hiệu ứng gợn sóng khi click
+          highlightColor: Colors.transparent,
+          // Bỏ hiệu ứng đổi màu khi giữ chuột
+          overlayColor: WidgetStateProperty.all(Colors.transparent),
+          // Chắc chắn bỏ mọi lớp phủ
           onTap: onTap,
+          // InkWell tự xử lý cursor, không cần MouseRegion bao ngoài nữa
+          mouseCursor: SystemMouseCursors.click,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -58,34 +72,30 @@ class QuizItem extends StatelessWidget {
                         size: 22,
                       ),
                     ),
+                    // Các IconButton bên trong vẫn sẽ có cursor riêng của chúng
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          onPressed: onEdit,
-                          constraints: const BoxConstraints(),
-                          padding: const EdgeInsets.all(6),
-                          tooltip: "Sửa", // Thêm tooltip để thân thiện hơn
-                          icon: const Icon(
-                            Icons.edit_note_rounded,
-                            color: LibraryColors.accentColor,
-                            size: 22,
-                          ),
-                          // IconButton trong Flutter mặc định đã là click cursor,
-                          // nhưng khai báo lại cho chắc chắn.
-                          mouseCursor: SystemMouseCursors.click,
+                        _buildActionButton(
+                          icon: Icons.file_upload_outlined,
+                          tooltip: "Xuất bộ đề (JSON)",
+                          onPressed: onExport,
                         ),
-                        IconButton(
-                          onPressed: onDelete,
-                          constraints: const BoxConstraints(),
-                          padding: const EdgeInsets.all(6),
+                        _buildActionButton(
+                          icon: Icons.school_outlined,
+                          tooltip: "Bắt đầu học",
+                          onPressed: onLearn,
+                        ),
+                        _buildActionButton(
+                          icon: Icons.edit_note_rounded,
+                          tooltip: "Sửa",
+                          onPressed: onEdit,
+                        ),
+                        _buildActionButton(
+                          icon: Icons.delete_outline_rounded,
                           tooltip: "Xóa",
-                          icon: const Icon(
-                            Icons.delete_outline_rounded,
-                            color: LibraryColors.deleteButton,
-                            size: 20,
-                          ),
-                          mouseCursor: SystemMouseCursors.click,
+                          onPressed: onDelete,
+                          color: LibraryColors.deleteButton,
                         ),
                       ],
                     ),
@@ -93,7 +103,7 @@ class QuizItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // --- NỘI DUNG: Tên bộ đề & Số lượng câu hỏi ---
+                // --- NỘI DUNG: Tên bộ đề ---
                 Text(
                   quiz.name,
                   style: const TextStyle(
@@ -128,6 +138,23 @@ class QuizItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Helper để code gọn hơn và đảm bảo mọi nút đều có cursor click
+  Widget _buildActionButton({
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback onPressed,
+    Color color = LibraryColors.accentColor,
+  }) {
+    return IconButton(
+      onPressed: onPressed,
+      constraints: const BoxConstraints(),
+      padding: const EdgeInsets.all(6),
+      tooltip: tooltip,
+      mouseCursor: SystemMouseCursors.click,
+      icon: Icon(icon, color: color, size: 20),
     );
   }
 }

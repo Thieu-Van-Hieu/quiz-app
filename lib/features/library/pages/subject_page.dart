@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
 import 'package:frontend/core/widgets/delete_confirm_dialog.dart';
-import 'package:frontend/core/widgets/search_bar.dart';
 import 'package:frontend/core/widgets/pagination.dart'; // Import Widget phân trang của bạn
+import 'package:frontend/core/widgets/search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
-import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/models/search_params/subject_search_params.dart';
+import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/notifiers/subject_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/widgets/subject/add_dialog.dart';
-import 'package:frontend/features/library/widgets/delete_confirm_dialog.dart';
 import 'package:frontend/features/library/widgets/subject/subject_item.dart';
 import 'package:frontend/features/library/widgets/subject/update_dialog.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SubjectPage extends HookConsumerWidget {
   const SubjectPage({super.key});
@@ -29,9 +28,9 @@ class SubjectPage extends HookConsumerWidget {
     final subjectsAsync = ref.watch(subjectProvider(params.value));
     final totalPagesAsync = ref.watch(subjectTotalPagesProvider(params.value));
 
-    return Scaffold(
-      backgroundColor: LibraryColors.background,
-      body: Padding(
+    return Material(
+      color: LibraryColors.background,
+      child: Padding(
         padding: const EdgeInsets.all(40.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,6 +151,7 @@ class SubjectPage extends HookConsumerWidget {
             backgroundColor: LibraryColors.accentColor,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            enabledMouseCursor: SystemMouseCursors.click,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -196,10 +196,12 @@ class SubjectPage extends HookConsumerWidget {
       builder: (ctx) => UpdateSubjectDialog(
         subject: subject,
         onUpdate: (newName, newCode) {
-          final updated = subject.copyWith(name: newName, code: newCode);
+          subject
+            ..name = newName
+            ..code = newCode;
           ref
               .read(subjectProvider(currentParams).notifier)
-              .saveSubject(updated)
+              .saveSubject(subject)
               .withToast(context);
         },
       ),
