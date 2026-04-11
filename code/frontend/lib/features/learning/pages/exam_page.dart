@@ -22,7 +22,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ExamShortcuts {
   static const List<dynamic> nextActions = [
-    kPrimaryMouseButton, // Thêm nút chuột trái để tiện chuyển câu
+    kSecondaryButton,
     kForwardMouseButton,
     LogicalKeyboardKey.arrowRight,
     LogicalKeyboardKey.pageDown,
