@@ -37,9 +37,9 @@ class LearningResultPage extends HookConsumerWidget {
       return null;
     }, []); // Mảng rỗng để chỉ chạy 1 lần khi init trang
 
-    return Scaffold(
-      backgroundColor: Colors.white, // Hoặc LibraryColors.background
-      body: Padding(
+    return Material(
+      color: Colors.white, // Hoặc LibraryColors.background
+      child: Padding(
         padding: const EdgeInsets.all(
           40.0,
         ), // Padding rộng rãi theo style của phen

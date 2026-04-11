@@ -52,8 +52,8 @@ class QuestionPage extends HookConsumerWidget {
       orElse: () => AppStrings.error,
     );
 
-    return Scaffold(
-      body: Stack(
+    return Material(
+      child: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.all(40.0),

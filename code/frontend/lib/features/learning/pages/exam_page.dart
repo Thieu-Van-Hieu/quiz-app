@@ -56,12 +56,12 @@ class ExamPage extends HookConsumerWidget {
 
     return sessionAsync.when(
       loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (err, stack) => Scaffold(body: Center(child: Text("Lỗi: $err"))),
+          const Material(child: Center(child: CircularProgressIndicator())),
+      error: (err, stack) => Material(child: Center(child: Text("Lỗi: $err"))),
       data: (session) {
         if (session == null) {
-          return const Scaffold(
-            body: Center(child: Text("Không tìm thấy phiên thi")),
+          return const Material(
+            child: Center(child: Text("Không tìm thấy phiên thi")),
           );
         }
 
@@ -183,9 +183,9 @@ class ExamPage extends HookConsumerWidget {
           onKeyEvent: (event) {
             if (event is KeyDownEvent) handleInput(event.logicalKey);
           },
-          child: Scaffold(
-            backgroundColor: const Color(0xFFF0F0F0),
-            body: Column(
+          child: Material(
+            color: const Color(0xFFF0F0F0),
+            child: Column(
               children: [
                 eosHeader,
                 EosProgressRow(
