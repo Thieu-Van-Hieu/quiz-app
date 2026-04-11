@@ -7,7 +7,7 @@ import 'package:frontend/features/library/models/quiz.dart';
 
 class QuizConverterService {
   static const String errorFlag = "[ERR_FORMAT]";
-  static final _optionLabelRegex = RegExp(r'([A-D])[\.\)\-\s]\s+');
+  static final _optionLabelRegex = RegExp(r'([A-Z])[.)\-\s]\s+');
 
   // --- 1. JSON EXPORT & IMPORT (Giữ nguyên) ---
   static String exportQuizToJson(Quiz quiz) => quiz.toJson();
@@ -35,7 +35,7 @@ class QuizConverterService {
       if (trimmed.isEmpty) continue;
 
       // Nếu dòng bắt đầu bằng số (VD: "1.", "Câu 1:") thì mới xuống dòng mới
-      if (RegExp(r'^(\d+|Câu\s*\d+)[\.\:\)\-\s]').hasMatch(trimmed)) {
+      if (RegExp(r'^(\d+|Câu\s*\d+)[.:)\-\s]').hasMatch(trimmed)) {
         normalizedBuffer.write('\n$trimmed');
       } else {
         normalizedBuffer.write(' $trimmed');
