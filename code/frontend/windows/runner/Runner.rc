@@ -87,15 +87,15 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904e4"
+        BLOCK "040904E4"
         BEGIN
-            VALUE "CompanyName", "mr.nobody.project.quiz" "\0"
-            VALUE "FileDescription", "frontend" "\0"
+            VALUE "CompanyName", "Mr.NoBody" "\0"
+            VALUE "FileDescription", "Quiz App" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "frontend" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 mr.nobody.project.quiz. All rights reserved." "\0"
-            VALUE "OriginalFilename", "frontend.exe" "\0"
-            VALUE "ProductName", "frontend" "\0"
+            VALUE "InternalName", "quiz_app" "\0"
+            VALUE "LegalCopyright", "Copyright (c) 2026 Mr.NoBody. All rights reserved." "\0"
+            VALUE "OriginalFilename", "QuizApp.exe" "\0"
+            VALUE "ProductName", "Quiz App" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
@@ -108,14 +108,11 @@ END
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
-
-
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

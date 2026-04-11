@@ -1,11 +1,11 @@
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.1.1"
 #define MyAppExeName "QuizApp.exe"
 
 [Setup]
 ; AppId duy nhất để Windows nhận diện bản cập nhật
 AppId={{D3F7B2A1-0E34-4A8E-9C8F-123456789ABC}}
 AppName=QuizApp
-AppVersion=0.1.0
+AppVersion={#MyAppVersion}
 AppPublisher=Mr.NoBody
 
 ; --- CONFIG HIỂN THỊ TRONG CONTROL PANEL ---
