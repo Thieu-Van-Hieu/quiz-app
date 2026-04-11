@@ -34,6 +34,7 @@ class EosFeedbackColumn extends StatelessWidget {
     final correctAnswersCount = question.answers
         .where((a) => a.isCorrect)
         .length;
+    final totalAnswersCount = question.answers.length;
 
     // 2. Logic hiển thị Feedback Icon (Dùng trạng thái isChecked của detail)
     bool shouldShowFeedback = false;
@@ -60,7 +61,9 @@ class EosFeedbackColumn extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            '(Choose $correctAnswersCount answer${correctAnswersCount > 1 ? 's' : ''})',
+            correctAnswersCount == totalAnswersCount
+                ? '(Check all that apply)'
+                : '(Choose $correctAnswersCount answer${correctAnswersCount > 1 ? 's' : ''})',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
           ),
