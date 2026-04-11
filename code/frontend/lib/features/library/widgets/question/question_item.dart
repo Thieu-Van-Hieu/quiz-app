@@ -161,17 +161,24 @@ class QuestionItem extends HookWidget {
                     // View Mode
                     InkWell(
                       onDoubleTap: startEditing,
-                      // Bỏ highlight để nhìn sạch hơn
                       hoverColor: Colors.transparent,
                       splashColor: Colors.transparent,
-                      child: Text(
-                        question.content.isEmpty
-                            ? LibraryStrings.noContent
-                            : question.content,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.toastText,
+                      child: Container(
+                        constraints: const BoxConstraints(maxHeight: 150),
+                        // Giới hạn chiều cao vùng text câu hỏi
+                        width: double.infinity,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Text(
+                            question.content.isEmpty
+                                ? LibraryStrings.noContent
+                                : question.content,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.toastText,
+                            ),
+                          ),
                         ),
                       ),
                     ),
