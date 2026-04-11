@@ -52,23 +52,29 @@ class EosQuestionContent extends StatelessWidget {
     if (question == null) return const SizedBox.shrink();
 
     return Container(
-      color: const Color(0xFFD4D0C8), // Màu nền bao quanh retro
+      color: const Color(0xFFD4D0C8),
       padding: const EdgeInsets.all(1),
-      alignment: Alignment.topLeft,
+      alignment: Alignment.topLeft, // Neo vào góc trái
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+        scrollDirection: Axis.vertical,
+        child: ConstrainedBox(
+          // CHỐT CHẶN: Ép chiều ngang tối đa bằng màn hình
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width - 2,
+          ),
           child: IntrinsicWidth(
+            // CƠ CHẾ CO GIÃN: Tự co theo nội dung bên trong
             child: Container(
-              constraints: const BoxConstraints(minWidth: 500),
+              constraints: const BoxConstraints(
+                minWidth: 500, // Bắt buộc chiều rộng tối thiểu là 500px
+              ),
               padding: const EdgeInsets.all(20),
               color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // 1. Nội dung câu hỏi
+                  // 1. Text Câu hỏi (Sẽ tự wrap khi đụng maxWidth của ConstrainedBox)
                   Text(
                     question.content,
                     style: TextStyle(
@@ -84,37 +90,29 @@ class EosQuestionContent extends StatelessWidget {
                   ...question.answers.asMap().entries.map((entry) {
                     final index = entry.key;
                     final answer = entry.value;
-                    final label = String.fromCharCode(
-                      65 + index,
-                    ); // A, B, C, D...
-
+                    final label = String.fromCharCode(65 + index);
                     final status = _getAnswerStatus(answer);
-                    final isUserSelected = learningSessionDetail.selectedAnswers
-                        .any((a) => a.id == answer.id);
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // Quan trọng: Row không chiếm hết chỗ
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "$label. ${answer.content}",
-                            style: TextStyle(
-                              fontSize: fontSize,
-                              fontFamily: fontFamily,
-                              // Highlight đậm nếu là đáp án người dùng chọn
-                              fontWeight: isUserSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              // Đổi màu xanh nếu là đáp án đúng và đang show kết quả
-                              color: (status == AnswerStatus.correct)
-                                  ? Colors.green.shade700
-                                  : Colors.black,
+                          // Sử dụng Flexible thay vì Expanded để hỗ trợ IntrinsicWidth tốt hơn
+                          Flexible(
+                            child: Text(
+                              "$label. ${answer.content}",
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontFamily: fontFamily,
+                                color: (status == AnswerStatus.correct)
+                                    ? Colors.green.shade700
+                                    : Colors.black,
+                              ),
                             ),
                           ),
-
-                          // Icon Trạng thái (Tích xanh / X đỏ)
                           if (status != AnswerStatus.none) ...[
                             const SizedBox(width: 10),
                             Icon(
@@ -132,27 +130,14 @@ class EosQuestionContent extends StatelessWidget {
                     );
                   }),
 
-                  // 3. Phần Giải thích (Explanation) - Hiện theo Template ảnh
+                  // 3. Explanation... (tương tự nội dung câu hỏi)
                   if (showAnswer && question.explanation.isNotEmpty) ...[
-                    const SizedBox(height: 30),
-                    const Divider(thickness: 1, color: Color(0xFFEEEEEE)),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Explanation:",
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade800,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
+                    const Divider(thickness: 1),
                     Text(
                       question.explanation,
                       style: TextStyle(
                         fontSize: fontSize,
-                        fontFamily: fontFamily,
                         fontStyle: FontStyle.italic,
-                        color: Colors.black87,
                       ),
                     ),
                   ],
