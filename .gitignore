@@ -45,3 +45,4 @@ app.*.map.json
 /android/app/profile
 /android/app/releass
 /deploy/windows/
+/deploy/appcast.xml.tmpl

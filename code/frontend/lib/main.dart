@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:auto_updater/auto_updater.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
@@ -19,6 +22,16 @@ void main() async {
   await DatabaseCleanupService.runFullCleanup(); // Dọn dẹp DB trước khi app chạy
   await DeviceInfoService().init();
   await OcrUtils().initOcr();
+
+  if (Platform.isWindows) {
+    String feedURL =
+        'https://raw.githubusercontent.com/Thieu-Van-Hieu/quiz-app/refs/heads/main/deploy/appcast.xml';
+    await autoUpdater.setFeedURL(feedURL);
+    await autoUpdater.setScheduledCheckInterval(7200); // Check mỗi 2 tiếng
+    await autoUpdater.checkForUpdates(
+      inBackground: true,
+    ); // Kiểm tra ngầm khi mở app
+  }
 
   runApp(
     // 3. Bọc ProviderScope ở đây

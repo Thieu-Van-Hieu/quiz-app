@@ -1,10 +1,11 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(frontend LANGUAGES CXX)
+project(quiz_app LANGUAGES CXX)
+set(CMAKE_POLICY_DEFAULT_CMP0169 OLD)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "frontend")
+set(BINARY_NAME "QuizApp")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

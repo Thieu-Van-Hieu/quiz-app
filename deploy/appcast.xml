@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+	<channel>
+		<title>QuizApp Updates</title>
+		<language>vi</language>
+		<item>
+			<title>QuizApp v0.1.0 đã sẵn sàng!</title>
+			<sparkle:releaseNotesLink>https://github.com/Thieu-Van-Hieu/quiz-app/releases/tag/v0.1.0
+			</sparkle:releaseNotesLink>
+			<enclosure
+					url="https://github.com/Thieu-Van-Hieu/quiz-app/releases/download/v0.1.0/QuizApp_Setup_v0.1.0.exe"
+					sparkle:version="0.1.0"
+					os="windows"
+					type="application/octet-stream"/>
+		</item>
+	</channel>
+</rss>

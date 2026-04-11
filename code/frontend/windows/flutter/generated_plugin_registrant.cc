@@ -6,10 +6,13 @@
 
 #include "generated_plugin_registrant.h"
 
+#include <auto_updater_windows/auto_updater_windows_plugin_c_api.h>
 #include <objectbox_flutter_libs/objectbox_flutter_libs_plugin.h>
 #include <screen_capturer_windows/screen_capturer_windows_plugin_c_api.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
+  AutoUpdaterWindowsPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AutoUpdaterWindowsPluginCApi"));
   ObjectboxFlutterLibsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ObjectboxFlutterLibsPlugin"));
   ScreenCapturerWindowsPluginCApiRegisterWithRegistrar(
