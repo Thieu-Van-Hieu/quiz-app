@@ -9,7 +9,8 @@ class QuizItem extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final VoidCallback onLearn;
-  final VoidCallback onExport;
+  final VoidCallback onExportJson;
+  final VoidCallback onExportQuizlet;
 
   const QuizItem({
     super.key,
@@ -18,7 +19,8 @@ class QuizItem extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onLearn,
-    required this.onExport,
+    required this.onExportJson,
+    required this.onExportQuizlet,
   });
 
   @override
@@ -76,11 +78,7 @@ class QuizItem extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildActionButton(
-                          icon: Icons.file_upload_outlined,
-                          tooltip: "Xuất bộ đề (JSON)",
-                          onPressed: onExport,
-                        ),
+                        _buildExportMenu(),
                         _buildActionButton(
                           icon: Icons.school_outlined,
                           tooltip: "Bắt đầu học",
@@ -155,6 +153,44 @@ class QuizItem extends StatelessWidget {
       tooltip: tooltip,
       mouseCursor: SystemMouseCursors.click,
       icon: Icon(icon, color: color, size: 20),
+    );
+  }
+
+  Widget _buildExportMenu() {
+    return PopupMenuButton<int>(
+      tooltip: "Xuất bộ đề",
+      icon: const Icon(
+        Icons.file_upload_outlined,
+        color: LibraryColors.accentColor,
+        size: 20,
+      ),
+      padding: const EdgeInsets.all(6),
+      constraints: const BoxConstraints(),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onSelected: (value) {
+        if (value == 0) onExportJson();
+        if (value == 1) onExportQuizlet();
+      },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 0,
+          child: ListTile(
+            leading: Icon(Icons.data_object, size: 20),
+            title: Text("Xuất file JSON"),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+        ),
+        const PopupMenuItem(
+          value: 1,
+          child: ListTile(
+            leading: Icon(Icons.content_paste_go_rounded, size: 20),
+            title: Text("Copy cho Quizlet"),
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -255,6 +255,7 @@ class QuestionPage extends HookConsumerWidget {
               backgroundColor: Colors.red.shade50,
               selectedColor: Colors.red.shade100,
               checkmarkColor: Colors.red,
+              mouseCursor: SystemMouseCursors.click,
               labelStyle: TextStyle(
                 color: showOnlyErrors.value ? Colors.red : Colors.red.shade700,
                 fontWeight: FontWeight.bold,
@@ -278,6 +279,9 @@ class QuestionPage extends HookConsumerWidget {
       children: [
         IconButton(
           onPressed: () => Navigator.maybePop(context),
+          style: IconButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
         const SizedBox(width: 16),
@@ -359,6 +363,7 @@ class QuestionPage extends HookConsumerWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: LibraryColors.accentColor,
             foregroundColor: Colors.white,
+            enabledMouseCursor: SystemMouseCursors.click,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -387,6 +392,7 @@ class _HeaderButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton.icon(
       onPressed: onPressed,
+      style: TextButton.styleFrom(enabledMouseCursor: SystemMouseCursors.click),
       icon: Icon(icon, color: color),
       label: Text(
         label,

@@ -40,7 +40,7 @@ class QuizPage extends HookConsumerWidget {
 
     // --- LOGIC XỬ LÝ DỮ LIỆU ---
 
-    Future<void> handleExport(Quiz quiz) async {
+    Future<void> handleExportJson(Quiz quiz) async {
       try {
         final jsonStr = QuizConverterService.exportQuizToJson(quiz);
         final bytes = utf8.encode(jsonStr);
@@ -113,15 +113,22 @@ class QuizPage extends HookConsumerWidget {
     }
 
     Future<void> handleQuizletImport() async {
-      final String? rawText = await showDialog<String>(
+      final Map<String, String>? result = await showDialog<Map<String, String>>(
         context: context,
         builder: (ctx) => const _QuizletImportDialog(),
       );
 
-      if (rawText != null && rawText.trim().isNotEmpty && context.mounted) {
+      if (result != null &&
+          result['text']!.trim().isNotEmpty &&
+          context.mounted) {
         try {
+          String parse(String input) =>
+              input.replaceAll("\\t", "\t").replaceAll("\\n", "\n");
+
           final newQuiz = QuizConverterService.convertQuizletToQuiz(
-            rawText,
+            result['text']!,
+            termDefSeparator: parse(result['termDef']!), // Dùng dấu tùy chỉnh
+            rowSeparator: parse(result['row']!), // Dùng dấu tùy chỉnh
             quizName: "Import ${DateTime.now().hour}:${DateTime.now().minute}",
           );
 
@@ -152,6 +159,47 @@ class QuizPage extends HookConsumerWidget {
               context,
             ).showSnackBar(SnackBar(content: Text("Lỗi xử lý Quizlet: $e")));
           }
+        }
+      }
+    }
+
+    // HÀM MỚI: Export ra Quizlet (Copy vào Clipboard)
+    Future<void> handleQuizletExport(Quiz quiz) async {
+      // 1. Hiện dialog để người dùng chọn định dạng muốn Export
+      final Map<String, String>? config = await showDialog<Map<String, String>>(
+        context: context,
+        builder: (ctx) =>
+            const _QuizletExportConfigDialog(), // Tạo mới dialog này bên dưới
+      );
+
+      if (config == null) return;
+
+      try {
+        String parse(String input) =>
+            input.replaceAll("\\t", "\t").replaceAll("\\n", "\n");
+
+        final quizletRaw = QuizConverterService.exportToQuizletRaw(
+          quiz,
+          termDefSeparator: parse(config['termDef']!),
+          rowSeparator: parse(config['row']!),
+        );
+
+        await Clipboard.setData(ClipboardData(text: quizletRaw));
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Đã sao chép với định dạng tùy chỉnh!"),
+              backgroundColor: Colors.blue.shade700,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Lỗi Export: $e")));
         }
       }
     }
@@ -209,7 +257,10 @@ class QuizPage extends HookConsumerWidget {
                                 ref,
                                 quizzes[index],
                               ),
-                              onExport: () => handleExport(quizzes[index]),
+                              onExportJson: () =>
+                                  handleExportJson(quizzes[index]),
+                              onExportQuizlet: () =>
+                                  handleQuizletExport(quizzes[index]),
                             ),
                           ),
                   ),
@@ -480,34 +531,31 @@ class _QuizletImportDialog extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
+    // Thêm controller cho cấu hình dấu
+    final termDefSep = useTextEditingController(text: "\\t");
+    final rowSep = useTextEditingController(text: "\\n");
+
     return AlertDialog(
-      title: const Text("Nhập từ Quizlet / Văn bản"),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text("Nhập từ Quizlet"),
       content: SizedBox(
         width: 600,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              "Dán nội dung từ Quizlet (Term - Definition) hoặc dạng Trắc nghiệm A,B,C,D vào đây.",
-              style: TextStyle(
-                fontSize: 13,
-                color: LibraryColors.secondaryText,
-              ),
-            ),
-            const SizedBox(height: 16),
             TextField(
               controller: controller,
-              maxLines: 12,
-              decoration: InputDecoration(
-                hintText: "Ví dụ:\nCâu 1: ...\nA. Đáp án\nB. Đáp án\nĐáp án: A",
-                filled: true,
-                fillColor: AppColors.searchBarBg,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+              maxLines: 10,
+              decoration: InputDecoration(/* ... hintText giữ nguyên ... */),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSmallInput("Dấu giữa Term - Def", termDefSep),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(child: _buildSmallInput("Dấu giữa các hàng", rowSep)),
+              ],
             ),
           ],
         ),
@@ -531,16 +579,101 @@ class _QuizletImportDialog extends HookWidget {
           style: TextButton.styleFrom(
             enabledMouseCursor: SystemMouseCursors.click,
           ),
-          child: const Text(AppStrings.btnCancel),
+          child: const Text("Hủy"),
         ),
         ElevatedButton(
-          onPressed: () => Navigator.pop(context, controller.text),
+          onPressed: () => Navigator.pop(context, {
+            'text': controller.text,
+            'termDef': termDefSep.text,
+            'row': rowSep.text,
+          }),
           style: ElevatedButton.styleFrom(
-            backgroundColor: LibraryColors.accentColor,
-            foregroundColor: Colors.white,
             enabledMouseCursor: SystemMouseCursors.click,
           ),
-          child: const Text("Phân tích dữ liệu"),
+          child: const Text("Phân tích"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSmallInput(String label, TextEditingController ctrl) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+        ),
+        TextField(
+          controller: ctrl,
+          decoration: const InputDecoration(hintText: "\\t hoặc |"),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuizletExportConfigDialog extends HookWidget {
+  const _QuizletExportConfigDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final termDefSep = useTextEditingController(text: "\\t");
+    final rowSep = useTextEditingController(text: "\\n");
+
+    return AlertDialog(
+      title: const Text("Cấu hình định dạng Export"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildField(
+            "Dấu giữa Câu hỏi & Đáp án (Term-Def):",
+            termDefSep,
+            "\\t (Tab)",
+          ),
+          const SizedBox(height: 16),
+          _buildField(
+            "Dấu giữa các hàng (Giữa các câu):",
+            rowSep,
+            "\\n (Xuống dòng)",
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
+          child: const Text("Hủy"),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, {
+            'termDef': termDefSep.text,
+            'row': rowSep.text,
+          }),
+          style: ElevatedButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
+          child: const Text("Sao chép dữ liệu"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController ctrl, String hint) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 13)),
+        const SizedBox(height: 5),
+        TextField(
+          controller: ctrl,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: AppColors.searchBarBg,
+          ),
         ),
       ],
     );

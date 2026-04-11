@@ -63,22 +63,31 @@ class QuizConverterService {
   static Quiz convertQuizletToQuiz(
     String quizletRaw, {
     String quizName = "New Quizlet",
+    String termDefSeparator = "\t",
+    String rowSeparator = "\n",
   }) {
     final quiz = Quiz(name: quizName);
+
+    // Giữ nguyên logic tách hàng cũ nhưng thay đổi cách nối dòng
     final lines = quizletRaw.split('\n');
-    String currentBlock = "";
+    StringBuffer currentBlock = StringBuffer();
 
     for (int i = 0; i < lines.length; i++) {
-      final line = lines[i].trim();
-      if (line.isEmpty) continue;
+      final line = lines[i]; // Không trim ở đây để giữ cấu trúc dòng
 
-      currentBlock = currentBlock.isEmpty ? line : "$currentBlock $line";
+      if (currentBlock.isEmpty) {
+        currentBlock.write(line);
+      } else {
+        currentBlock.write("\n$line");
+      }
 
-      if (line.contains('\t') || i == lines.length - 1) {
-        _processFullBlock(currentBlock, quiz);
-        currentBlock = "";
+      // Kiểm tra nếu dòng hiện tại kết thúc 1 khối (chứa termDefSeparator)
+      if (line.contains(termDefSeparator) || i == lines.length - 1) {
+        _processFullBlock(currentBlock.toString(), quiz);
+        currentBlock.clear();
       }
     }
+
     return _prepareForImport(quiz);
   }
 
@@ -175,12 +184,15 @@ class QuizConverterService {
   ) {
     if (definition == "..." || definition.trim().isEmpty) return false;
 
+    final defUpper = definition.trim().toUpperCase();
+    bool foundAtLeastOne = false;
+
+    // 1. Kiểm tra so khớp nội dung text (Text Match)
+    // Dùng cho trường hợp định nghĩa ghi rõ nội dung đáp án
     final cleanDef = definition
         .replaceFirst(_optionLabelRegex, '')
         .trim()
         .toUpperCase();
-    final defUpper = definition.trim().toUpperCase();
-    bool found = false;
 
     for (var ans in answers) {
       final ansUpper = ans.content.toUpperCase();
@@ -188,22 +200,31 @@ class QuizConverterService {
           (ansUpper == cleanDef ||
               (cleanDef.contains(ansUpper) && ansUpper.length > 3))) {
         ans.isCorrect = true;
-        found = true;
-        break;
+        foundAtLeastOne = true;
+        // Nếu khớp theo text thì thường là single choice, nhưng vẫn cho chạy tiếp
       }
     }
 
-    if (!found && defUpper.isNotEmpty) {
-      String firstChar = defUpper.substring(0, 1);
+    // 2. Kiểm tra so khớp theo Nhãn (Label Match - VD: "A, B" hoặc "ACD")
+    // Nếu kịch bản 1 chưa tìm thấy hoặc định nghĩa ngắn (dạng ký tự đại diện)
+    if (!foundAtLeastOne || defUpper.length < 5) {
+      // Tách các ký tự nhãn từ định nghĩa (Ví dụ: "A, B, C" -> ["A", "B", "C"])
+      // Regex này bắt tất cả các chữ cái đứng đơn lẻ
+      final labelInDef = RegExp(
+        r'[A-Z]',
+      ).allMatches(defUpper).map((m) => m.group(0)).toList();
+
       for (int i = 0; i < matches.length; i++) {
-        if (matches[i].group(1)!.toUpperCase() == firstChar) {
+        String labelInQuestion = matches[i].group(1)!.toUpperCase();
+
+        if (labelInDef.contains(labelInQuestion)) {
           answers[i].isCorrect = true;
-          found = true;
-          break;
+          foundAtLeastOne = true;
         }
       }
     }
-    return found;
+
+    return foundAtLeastOne;
   }
 
   // --- 4. BINARY IMPORT (Giữ nguyên) ---
@@ -226,6 +247,56 @@ class QuizConverterService {
     } catch (e) {
       throw Exception("Lỗi parse file Binary: $e");
     }
+  }
+
+  // --- 5. EXPORT TO QUIZLET ---
+  /// Chuyển đổi Quiz sang định dạng văn bản để có thể Copy-Paste vào Quizlet
+  static String exportToQuizletRaw(
+    Quiz quiz, {
+    String termDefSeparator =
+        "\t", // Phân tách giữa mặt trước (Term) và mặt sau (Def)
+    String rowSeparator = "\n", // Phân tách giữa các câu hỏi
+  }) {
+    StringBuffer buffer = StringBuffer();
+
+    for (int i = 0; i < quiz.questions.length; i++) {
+      final question = quiz.questions[i];
+
+      // 1. Xử lý nội dung câu hỏi (vẫn làm phẳng để tránh gãy hàng)
+      String questionContent = question.content.replaceAll('\n', ' ').trim();
+
+      List<String> answerLines = [];
+      List<String> correctLabels = [];
+
+      for (int j = 0; j < question.answers.length; j++) {
+        final ans = question.answers[j];
+        final label = String.fromCharCode(65 + j);
+
+        // Tách từng đáp án xuống dòng mới
+        answerLines.add("$label. ${ans.content.replaceAll('\n', ' ').trim()}");
+
+        if (ans.isCorrect) correctLabels.add(label);
+      }
+
+      // 2. Gom Term: Câu hỏi -> Xuống dòng -> Các lựa chọn
+      String fullTerm = questionContent;
+      if (answerLines.isNotEmpty) {
+        // Sử dụng \n thực sự ở đây để tách dòng các đáp án bên trong 1 Term
+        fullTerm += "\n${answerLines.join("\n")}";
+      }
+
+      // 3. Definition: Đáp án đúng (ví dụ: A, B)
+      String definition = correctLabels.join(", ");
+
+      // 4. Ghép lại: [Câu hỏi + Đáp án các dòng] [TAB] [Đáp án đúng]
+      buffer.write("$fullTerm$termDefSeparator$definition");
+
+      // Nếu chưa phải câu cuối thì mới thêm rowSeparator để sang câu tiếp theo
+      if (i < quiz.questions.length - 1) {
+        buffer.write(rowSeparator);
+      }
+    }
+    return buffer.toString();
   }
 
   static ({Question question, int newOffset}) _readBinaryQuestion(
