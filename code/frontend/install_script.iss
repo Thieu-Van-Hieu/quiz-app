@@ -20,7 +20,7 @@ SetupIconFile=windows\runner\resources\app_icon.ico
 ; --- NÉN & ĐẦU RA ---
 Compression=lzma
 SolidCompression=yes
-OutputDir=build\windows\installer
+OutputDir=..\..\deploy\windows
 ; Tên file setup sẽ là: QuizApp_Setup_v1.0.0.exe
 OutputBaseFilename=QuizApp_Setup_v{#SetupSetting("AppVersion")}
 

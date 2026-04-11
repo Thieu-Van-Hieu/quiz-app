@@ -20,13 +20,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ExamShortcuts {
   static const List<dynamic> nextActions = [
+    kPrimaryMouseButton, // Thêm nút chuột trái để tiện chuyển câu
     kForwardMouseButton,
     LogicalKeyboardKey.arrowRight,
     LogicalKeyboardKey.pageDown,
   ];
 
   static const List<dynamic> backActions = [
-    kMiddleMouseButton,
     kBackMouseButton,
     LogicalKeyboardKey.arrowLeft,
     LogicalKeyboardKey.pageUp,
@@ -122,7 +122,6 @@ class ExamPage extends HookConsumerWidget {
 
         // --- SHORTCUT HANDLER ---
         void handleInput(dynamic input) {
-          // 1. Chỉ xử lý Next/Back (Không có CheckAction)
           if (ExamShortcuts.nextActions.contains(input)) {
             jumpToPage(session.currentIndex + 1);
             return;
@@ -132,7 +131,6 @@ class ExamPage extends HookConsumerWidget {
             return;
           }
 
-          // 2. Xử lý Toggle Answer bằng phím A-Z
           if (input is LogicalKeyboardKey) {
             final index = ExamShortcuts.getAnswerIndex(input);
             if (index != null) {
@@ -181,29 +179,33 @@ class ExamPage extends HookConsumerWidget {
           onKeyEvent: (event) {
             if (event is KeyDownEvent) handleInput(event.logicalKey);
           },
-          child: Listener(
-            behavior: HitTestBehavior.opaque,
-            onPointerDown: (event) => handleInput(event.buttons),
-            child: Scaffold(
-              backgroundColor: const Color(0xFFF0F0F0),
-              body: Column(
-                children: [
-                  eosHeader,
-                  EosProgressRow(
-                    answeredCount: session.learningSessionDetails
-                        .where((d) => d.selectedAnswers.isNotEmpty)
-                        .length,
-                    totalQuestions: session.learningSessionDetails.length,
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
+          child: Scaffold(
+            backgroundColor: const Color(0xFFF0F0F0),
+            body: Column(
+              children: [
+                eosHeader,
+                EosProgressRow(
+                  answeredCount: session.learningSessionDetails
+                      .where((d) => d.selectedAnswers.isNotEmpty)
+                      .length,
+                  totalQuestions: session.learningSessionDetails.length,
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                    ),
+                    child: Row(
+                      children: [
+                        // MOUSE SHORTCUTS: Chỉ hoạt động trong vùng Answer Column
+                        Listener(
+                          behavior: HitTestBehavior.opaque,
+                          onPointerDown: (event) {
+                            focusNode.requestFocus();
+                            handleInput(event.buttons);
+                          },
+                          child: SizedBox(
                             width: 130.0,
                             child: EosAnswerColumn(
                               learningSessionDetail: currentDetail,
@@ -245,64 +247,62 @@ class ExamPage extends HookConsumerWidget {
                               ],
                             ),
                           ),
-                          const VerticalDivider(width: 1, color: Colors.grey),
-                          EosFeedbackColumn(
-                            width: feedbackColWidth,
+                        ),
+                        const VerticalDivider(width: 1, color: Colors.grey),
+                        EosFeedbackColumn(
+                          width: feedbackColWidth,
+                          learningSessionDetail: currentDetail,
+                        ),
+                        feedbackColSplitter,
+                        Expanded(
+                          child: EosQuestionContent(
+                            fontSize: fontSize,
+                            fontFamily: fontFamily,
                             learningSessionDetail: currentDetail,
                           ),
-                          feedbackColSplitter,
-                          Expanded(
-                            child: EosQuestionContent(
-                              fontSize: fontSize,
-                              fontFamily: fontFamily,
-                              learningSessionDetail: currentDetail,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  EosBottomBar(
-                    bgColor: const Color(0xFFD4D0C8),
-                    leftActions: [
-                      Checkbox(
-                        value: isConfirmedFinish.value,
-                        activeColor: primaryBlue,
-                        onChanged: (v) => isConfirmedFinish.value = v ?? false,
+                ),
+                EosBottomBar(
+                  bgColor: const Color(0xFFD4D0C8),
+                  leftActions: [
+                    Checkbox(
+                      value: isConfirmedFinish.value,
+                      activeColor: primaryBlue,
+                      onChanged: (v) => isConfirmedFinish.value = v ?? false,
+                    ),
+                    const Text(
+                      "I want to finish the exam.",
+                      style: TextStyle(
+                        color: primaryBlue,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
-                      const Text(
-                        "I want to finish the exam.",
-                        style: TextStyle(
-                          color: primaryBlue,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      RetroButton(
-                        label: "Finish",
-                        color: isConfirmedFinish.value
-                            ? const Color(0xFFFFF176)
-                            : Colors.grey.shade400,
-                        width: 80,
-                        onTap: isConfirmedFinish.value
-                            ? handleFinishExam
-                            : null,
-                      ),
-                    ],
-                    rightActions: [
-                      RetroButton(
-                        label: "Exit",
-                        width: 80,
-                        onTap: () {
-                          performSave();
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    const SizedBox(width: 10),
+                    RetroButton(
+                      label: "Finish",
+                      color: isConfirmedFinish.value
+                          ? const Color(0xFFFFF176)
+                          : Colors.grey.shade400,
+                      width: 80,
+                      onTap: isConfirmedFinish.value ? handleFinishExam : null,
+                    ),
+                  ],
+                  rightActions: [
+                    RetroButton(
+                      label: "Exit",
+                      width: 80,
+                      onTap: () {
+                        performSave();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );

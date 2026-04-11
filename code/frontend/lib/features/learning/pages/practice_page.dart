@@ -19,16 +19,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PracticeShortcuts {
   static const List<dynamic> toggleActions = [
-    kSecondaryMouseButton,
-    LogicalKeyboardKey.space,
+    kSecondaryMouseButton, // Chuột phải để Show/Hide
+    kPrimaryMouseButton,
+    LogicalKeyboardKey.space, // Phím Space để Show/Hide
   ];
   static const List<dynamic> nextActions = [
-    kPrimaryMouseButton,
     kForwardMouseButton,
     LogicalKeyboardKey.arrowRight,
   ];
   static const List<dynamic> backActions = [
-    kMiddleMouseButton,
     kBackMouseButton,
     LogicalKeyboardKey.arrowLeft,
   ];
@@ -56,35 +55,28 @@ class PracticePage extends HookConsumerWidget {
           );
         }
 
-        // Quản lý các trạng thái UI đơn giản
         final currentIndex = useState<int>(session.currentIndex);
         final elapsedSeconds = useState<int>(session.studyTime);
         final isShowingAnswer = useState<bool>(false);
-
         final isFinishingRef = useRef(false);
 
-        // --- CORE LOGIC: LƯU ---
-        // Sử dụng async/await để đảm bảo DB đã ghi xong
+        // --- CORE LOGIC ---
         Future<void> performSave({
           bool isCompleted = false,
           int? overrideIndex,
         }) async {
           if (isFinishingRef.value && !isCompleted) return;
 
-          // Cập nhật trực tiếp lên Object để giữ Reference của ObjectBox
           session.studyTime = elapsedSeconds.value;
           session.currentIndex = overrideIndex ?? currentIndex.value;
           session.isCompleted = isCompleted;
-          if (isCompleted) {
-            session.endTime = DateTime.now();
-          }
+          if (isCompleted) session.endTime = DateTime.now();
 
           await container
               .read(learningSessionProvider.notifier)
               .updateSession(session);
         }
 
-        // --- CORE LOGIC: ĐIỀU HƯỚNG ---
         void jumpToPage(int newIndex) {
           final details = session.learningSessionDetails;
           if (newIndex >= 0 && newIndex < details.length) {
@@ -93,25 +85,15 @@ class PracticePage extends HookConsumerWidget {
           }
         }
 
-        // --- CORE LOGIC: SHOW/HIDE ---
         void toggleShowAnswer() {
           final currentDetail = session.getCurrentLearningSessionDetail();
           if (currentDetail == null) return;
 
           isShowingAnswer.value = !isShowingAnswer.value;
-
-          // Lưu trạng thái check vào DB
           container
               .read(learningSessionDetailProvider(currentDetail.id).notifier)
               .toggleCheckStatus(currentDetail.id);
         }
-
-        // Cập nhật isShowingAnswer dựa trên trạng thái của câu hỏi hiện tại
-        useEffect(() {
-          final detail = session.learningSessionDetails[currentIndex.value];
-          isShowingAnswer.value = detail.isChecked;
-          return null;
-        }, [currentIndex.value]);
 
         // --- HANDLERS ---
         void handleShortcut(dynamic input) {
@@ -124,7 +106,12 @@ class PracticePage extends HookConsumerWidget {
           }
         }
 
-        // --- TIMER ---
+        useEffect(() {
+          final detail = session.learningSessionDetails[currentIndex.value];
+          isShowingAnswer.value = detail.isChecked;
+          return null;
+        }, [currentIndex.value]);
+
         useEffect(() {
           focusNode.requestFocus();
           final timer = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -136,11 +123,9 @@ class PracticePage extends HookConsumerWidget {
           };
         }, []);
 
-        // --- UI PRE-BUILD ---
         final currentDetail =
             session.learningSessionDetails[currentIndex.value];
 
-        // Header & Resizable hooks
         final (eosHeader, fontSize, fontFamily) = useEosHeader(
           info: LearningStrings.generateStudyHeader(
             quizName: session.quiz.target?.name ?? "N/A",
@@ -159,8 +144,10 @@ class PracticePage extends HookConsumerWidget {
           },
           child: Material(
             color: const Color(0xFFF0F0F0),
+            // KEYBOARD LISTENER: Bọc toàn bộ trang
             child: KeyboardListener(
               focusNode: focusNode,
+              autofocus: true,
               onKeyEvent: (event) {
                 if (event is KeyDownEvent) handleShortcut(event.logicalKey);
               },
@@ -185,12 +172,16 @@ class PracticePage extends HookConsumerWidget {
                           ),
                           eosVerticalSplitter,
                           Expanded(
+                            // MOUSE SHORTCUTS: Chỉ bọc vùng Content câu hỏi
                             child: MouseRegion(
                               cursor: SystemMouseCursors.click,
                               child: Listener(
                                 behavior: HitTestBehavior.opaque,
-                                onPointerDown: (event) =>
-                                    handleShortcut(event.buttons),
+                                onPointerDown: (event) {
+                                  focusNode
+                                      .requestFocus(); // Đảm bảo luôn giữ focus cho phím
+                                  handleShortcut(event.buttons);
+                                },
                                 child: EosQuestionContent(
                                   fontSize: fontSize,
                                   fontFamily: fontFamily,
@@ -237,18 +228,11 @@ class PracticePage extends HookConsumerWidget {
                         color: Colors.green.shade100,
                         onTap: () async {
                           isFinishingRef.value = true;
-
-                          // 1. Lưu dữ liệu hiện tại
                           await performSave(isCompleted: true);
-
-                          // 2. Chạy logic hoàn tất
                           await container
                               .read(learningSessionProvider.notifier)
                               .completeSession(sessionId);
-
-                          // 3. Invalidate để History Page biết cần load lại (Dùng container để an toàn khi unmounted)
                           container.invalidate(watchLearningSessionsProvider);
-
                           if (context.mounted) Navigator.of(context).pop();
                         },
                       ),

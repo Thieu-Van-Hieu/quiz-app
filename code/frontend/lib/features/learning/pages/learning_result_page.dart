@@ -157,7 +157,7 @@ class LearningResultPage extends HookConsumerWidget {
     try {
       final newSession = await notifier.retakeSession(oldId).withToast(context);
       if (context.mounted) {
-        context.go('${LearningRoutes.root}/${newSession!.id}');
+        context.go(LearningRoutes.sessionPath(newSession?.id));
       }
     } catch (e) {
       // Xử lý lỗi hoặc hiện toast ở đây
@@ -176,7 +176,7 @@ class LearningResultPage extends HookConsumerWidget {
           .createMistakeSession(oldId)
           .withToast(context);
       if (context.mounted) {
-        context.go('${LearningRoutes.root}/${newSession!.id}');
+        context.go(LearningRoutes.sessionPath(newSession?.id));
       }
     } catch (e) {
       // Xử lý lỗi

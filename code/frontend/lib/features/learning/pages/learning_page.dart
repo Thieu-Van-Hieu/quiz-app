@@ -17,9 +17,9 @@ class LearningPage extends HookConsumerWidget {
 
     return sessionAsync.when(
       // 1. Màn hình Loading đơn giản
-      loading: () => const Scaffold(
-        backgroundColor: Color(0xFFD4D0C8), // Màu xám đặc trưng Win98
-        body: Center(
+      loading: () => const Material(
+        color: Color(0xFFD4D0C8), // Màu xám đặc trưng Win98
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -41,9 +41,9 @@ class LearningPage extends HookConsumerWidget {
       ),
 
       // 2. Màn hình Error
-      error: (err, stack) => Scaffold(
-        backgroundColor: const Color(0xFFD4D0C8),
-        body: Center(
+      error: (err, stack) => Material(
+        color: const Color(0xFFD4D0C8),
+        child: Center(
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -59,8 +59,8 @@ class LearningPage extends HookConsumerWidget {
 
       data: (session) {
         if (session == null) {
-          return const Scaffold(
-            body: Center(child: Text("404 - Session Not Found")),
+          return const Material(
+            child: Center(child: Text("404 - Session Not Found")),
           );
         }
 

@@ -44,13 +44,24 @@ class SubjectDetailPage extends HookConsumerWidget {
       try {
         final jsonStr = QuizConverterService.exportQuizToJson(quiz);
         final bytes = utf8.encode(jsonStr);
-        await FilePicker.saveFile(
+        final outputFile = await FilePicker.saveFile(
           dialogTitle: 'Chọn nơi lưu bộ đề',
           fileName: '${quiz.name}.json',
           type: FileType.custom,
           allowedExtensions: ['json'],
           bytes: bytes,
         );
+
+        if (outputFile != null && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Đã xuất file thành công: ${quiz.name}.json"),
+              backgroundColor: Colors.green.shade700,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(

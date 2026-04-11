@@ -26,12 +26,10 @@ class StudyShortcuts {
     LogicalKeyboardKey.enter,
   ];
   static const List<dynamic> nextActions = [
-    kPrimaryMouseButton,
     kForwardMouseButton,
     LogicalKeyboardKey.arrowRight,
   ];
   static const List<dynamic> backActions = [
-    kMiddleMouseButton,
     kBackMouseButton,
     LogicalKeyboardKey.arrowLeft,
   ];
@@ -123,7 +121,6 @@ class StudyPage extends HookConsumerWidget {
 
         // --- HOTKEY HANDLER ---
         void handleInput(dynamic input) {
-          // 1. Xử lý các Action chính (Chuột hoặc Phím chức năng)
           if (StudyShortcuts.checkActions.contains(input)) {
             handleCheckAction();
             return;
@@ -139,7 +136,6 @@ class StudyPage extends HookConsumerWidget {
             return;
           }
 
-          // 2. Xử lý chọn đáp án A-Z (Chỉ dành cho phím)
           if (input is LogicalKeyboardKey) {
             final index = StudyShortcuts.getAnswerIndex(input);
             if (index != null && !currentDetail.isChecked) {
@@ -184,33 +180,38 @@ class StudyPage extends HookConsumerWidget {
           },
           child: Material(
             color: const Color(0xFFF0F0F0),
+            // KEYBOARD LISTENER: Ăn phím trên toàn bộ Page
             child: KeyboardListener(
               focusNode: focusNode,
               autofocus: true,
               onKeyEvent: (event) {
                 if (event is KeyDownEvent) handleInput(event.logicalKey);
               },
-              child: Listener(
-                behavior: HitTestBehavior.opaque,
-                onPointerDown: (event) => handleInput(event.buttons),
-                child: Column(
-                  children: [
-                    eosHeader,
-                    EosProgressRow(
-                      answeredCount: session.learningSessionDetails
-                          .where((d) => d.isChecked)
-                          .length,
-                      totalQuestions: session.learningSessionDetails.length,
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
+              child: Column(
+                children: [
+                  eosHeader,
+                  EosProgressRow(
+                    answeredCount: session.learningSessionDetails
+                        .where((d) => d.isChecked)
+                        .length,
+                    totalQuestions: session.learningSessionDetails.length,
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                      ),
+                      child: Row(
+                        children: [
+                          // LISTENER: Chỉ ăn các nút chuột khi di chuyển trong vùng AnswerColumn
+                          Listener(
+                            behavior: HitTestBehavior.opaque,
+                            onPointerDown: (event) {
+                              focusNode.requestFocus();
+                              handleInput(event.buttons);
+                            },
+                            child: SizedBox(
                               width: 140.0,
                               child: EosAnswerColumn(
                                 learningSessionDetail: currentDetail,
@@ -241,64 +242,64 @@ class StudyPage extends HookConsumerWidget {
                                 ],
                               ),
                             ),
-                            const VerticalDivider(width: 1, color: Colors.grey),
-                            EosFeedbackColumn(
-                              width: feedbackColumnWidth,
+                          ),
+                          const VerticalDivider(width: 1, color: Colors.grey),
+                          EosFeedbackColumn(
+                            width: feedbackColumnWidth,
+                            learningSessionDetail: currentDetail,
+                          ),
+                          eosVerticalSplitter,
+                          Expanded(
+                            child: EosQuestionContent(
+                              fontSize: fontSize,
+                              fontFamily: fontFamily,
                               learningSessionDetail: currentDetail,
+                              showAnswer: currentDetail.isChecked,
                             ),
-                            eosVerticalSplitter,
-                            Expanded(
-                              child: EosQuestionContent(
-                                fontSize: fontSize,
-                                fontFamily: fontFamily,
-                                learningSessionDetail: currentDetail,
-                                showAnswer: currentDetail.isChecked,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    EosBottomBar(
-                      bgColor: const Color(0xFFD4D0C8),
-                      rightActions: [
-                        RetroButton(
-                          label: "<< Back",
-                          width: 85,
-                          onTap: session.currentIndex > 0
-                              ? () => jumpToPage(session.currentIndex - 1)
-                              : null,
-                        ),
-                        const SizedBox(width: 8),
-                        RetroButton(
-                          label: "Next >>",
-                          width: 85,
-                          onTap:
-                              session.currentIndex <
-                                  session.learningSessionDetails.length - 1
-                              ? () => jumpToPage(session.currentIndex + 1)
-                              : null,
-                        ),
-                        const SizedBox(width: 16),
-                        RetroButton(
-                          label: "Finish",
-                          width: 85,
-                          color: Colors.green.shade100,
-                          onTap: () async {
-                            isFinishingRef.value = true;
-                            performSave(isCompleted: true);
-                            await container
-                                .read(learningSessionProvider.notifier)
-                                .completeSession(sessionId);
-                            container.invalidate(watchLearningSessionsProvider);
-                            if (context.mounted) Navigator.of(context).pop();
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                  EosBottomBar(
+                    bgColor: const Color(0xFFD4D0C8),
+                    rightActions: [
+                      RetroButton(
+                        label: "<< Back",
+                        width: 85,
+                        onTap: session.currentIndex > 0
+                            ? () => jumpToPage(session.currentIndex - 1)
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      RetroButton(
+                        label: "Next >>",
+                        width: 85,
+                        onTap:
+                            session.currentIndex <
+                                session.learningSessionDetails.length - 1
+                            ? () => jumpToPage(session.currentIndex + 1)
+                            : null,
+                      ),
+                      const SizedBox(width: 16),
+                      RetroButton(
+                        label: "Finish",
+                        width: 85,
+                        color: Colors.green.shade100,
+                        onTap: () async {
+                          isFinishingRef.value = true;
+                          performSave(isCompleted: true);
+                          await container
+                              .read(learningSessionProvider.notifier)
+                              .completeSession(sessionId);
+                          container.invalidate(watchLearningSessionsProvider);
+                          if (context.mounted) Navigator.of(context).pop();
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

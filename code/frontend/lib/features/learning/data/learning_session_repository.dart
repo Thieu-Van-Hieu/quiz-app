@@ -175,9 +175,8 @@ class LearningSessionRepository {
     session.isCompleted = false;
     session.startTime = DateTime.now();
     session.endTime = null;
-
-    // 3. Xử lý danh sách details: Chỉ giữ lại những câu sai và reset chúng
-    session.learningSessionDetails.clear(); // Xóa hết con cũ trong proxy list
+    final newSessionId = _sessionBox.put(session);
+    session.id = newSessionId; // Cập nhật lại ID mới sau khi lưu
 
     for (var detail in mistakeDetails) {
       detail.id = 0; // Biến thành bản ghi mới
@@ -185,10 +184,9 @@ class LearningSessionRepository {
       detail.isCorrect = null;
       detail.selectedAnswers.clear();
       detail.learningSession.target = session;
-      session.learningSessionDetails.add(detail); // Add lại vào cha mới
     }
+    _sessionDetailBox.putMany(mistakeDetails);
 
-    _sessionBox.put(session);
     return session;
   }
 
