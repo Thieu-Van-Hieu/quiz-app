@@ -1,7 +1,7 @@
 // features/library/routes/library_routes.dart
 import 'package:flutter/material.dart';
-import 'package:frontend/features/library/pages/subject_detail_page.dart';
-import 'package:frontend/features/library/pages/quiz_detail_page.dart'; // Import trang Quiz mới
+import 'package:frontend/features/library/pages/question_page.dart'; // Import trang Quiz mới
+import 'package:frontend/features/library/pages/quiz_page.dart';
 import 'package:frontend/features/library/pages/subject_page.dart';
 import 'package:frontend/routes/types.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +29,7 @@ class LibraryRoutes {
           final state = GoRouterState.of(context);
           final subjectId =
               int.tryParse(state.pathParameters['subjectId'] ?? '0') ?? 0;
-          return SubjectDetailPage(subjectId: subjectId);
+          return QuizPage(subjectId: subjectId);
         },
         // --- THÊM SUB-ROUTE CHO QUIZ DETAIL TẠI ĐÂY ---
         subRoutes: [
@@ -44,7 +44,7 @@ class LibraryRoutes {
               final quizId =
                   int.tryParse(state.pathParameters['quizId'] ?? '0') ?? 0;
 
-              return QuizDetailPage(subjectId: subjectId, quizId: quizId);
+              return QuestionPage(subjectId: subjectId, quizId: quizId);
             },
           ),
         ],

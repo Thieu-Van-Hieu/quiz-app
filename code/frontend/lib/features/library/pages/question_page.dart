@@ -16,11 +16,11 @@ import 'package:frontend/features/library/widgets/question/question_item.dart';
 import 'package:frontend/utils/ocr.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class QuizDetailPage extends HookConsumerWidget {
+class QuestionPage extends HookConsumerWidget {
   final int subjectId;
   final int quizId;
 
-  const QuizDetailPage({
+  const QuestionPage({
     super.key,
     required this.subjectId,
     required this.quizId,
@@ -73,15 +73,24 @@ class QuizDetailPage extends HookConsumerWidget {
                 Expanded(
                   child: questionsAsync.when(
                     data: (allQuestions) {
-                      // Xử lý filter tại Client
-                      Iterable<Question> baseFiltered = allQuestions;
-                      if (showOnlyErrors.value) {
-                        baseFiltered = allQuestions.where(
-                          (q) => q.explanation.contains(
-                            QuizConverterService.errorFlag,
-                          ),
-                        );
+                      final errorQuestions = allQuestions.where(
+                        (q) => q.explanation.contains(
+                          QuizConverterService.errorFlag,
+                        ),
+                      );
+
+                      // 2. TỰ ĐỘNG KHÔI PHỤC: Nếu đang bật "Xem lỗi" mà thực tế không còn lỗi nào
+                      if (showOnlyErrors.value && errorQuestions.isEmpty) {
+                        // Dùng Future.microtask để tránh lỗi "setState during build"
+                        Future.microtask(() => showOnlyErrors.value = false);
                       }
+
+                      // 3. Quyết định danh sách gốc để lọc tiếp theo Keyword
+                      Iterable<Question> baseFiltered = showOnlyErrors.value
+                          ? errorQuestions
+                          : allQuestions;
+
+                      // 4. Lọc theo keyword (giữ nguyên logic của bạn)
                       final filtered = baseFiltered.where((q) {
                         final kw = params.value.keyword?.toLowerCase() ?? '';
                         return q.content.toLowerCase().contains(kw) ||

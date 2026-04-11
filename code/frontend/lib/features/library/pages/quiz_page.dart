@@ -25,10 +25,10 @@ import 'package:frontend/features/library/widgets/quiz/update_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class SubjectDetailPage extends HookConsumerWidget {
+class QuizPage extends HookConsumerWidget {
   final int subjectId;
 
-  const SubjectDetailPage({super.key, required this.subjectId});
+  const QuizPage({super.key, required this.subjectId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
