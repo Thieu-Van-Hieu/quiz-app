@@ -10,6 +10,7 @@ import 'package:frontend/features/learning/hooks/eos/use_header.dart';
 import 'package:frontend/features/learning/hooks/eos/use_resizable.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_detail_notifier.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
+import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/learning/widgets/eos/answer_column.dart';
 import 'package:frontend/features/learning/widgets/eos/bottom_bar.dart';
 import 'package:frontend/features/learning/widgets/eos/clock.dart';
@@ -17,6 +18,7 @@ import 'package:frontend/features/learning/widgets/eos/feedback_column.dart';
 import 'package:frontend/features/learning/widgets/eos/progress_row.dart';
 import 'package:frontend/features/learning/widgets/eos/question_content_column.dart';
 import 'package:frontend/features/learning/widgets/retro/button.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class StudyShortcuts {
@@ -293,7 +295,9 @@ class StudyPage extends HookConsumerWidget {
                               .read(learningSessionProvider.notifier)
                               .completeSession(sessionId);
                           container.invalidate(watchLearningSessionsProvider);
-                          if (context.mounted) Navigator.of(context).pop();
+                          if (context.mounted) {
+                            context.go(LearningRoutes.sessionPath(sessionId));
+                          }
                         },
                       ),
                       const SizedBox(width: 10),
