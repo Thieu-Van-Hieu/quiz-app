@@ -139,7 +139,7 @@
     },
     {
       "id": "12:5502079073284747514",
-      "lastPropertyId": "7:1626576770022630230",
+      "lastPropertyId": "8:7482946366124564686",
       "name": "LearningSessionDetail",
       "properties": [
         {
@@ -178,6 +178,11 @@
           "id": "7:1626576770022630230",
           "name": "questionTargetId",
           "type": 6
+        },
+        {
+          "id": "8:7482946366124564686",
+          "name": "isSeen",
+          "type": 1
         }
       ],
       "relations": [
@@ -190,7 +195,7 @@
     },
     {
       "id": "14:4024975291499176318",
-      "lastPropertyId": "25:6849748057573735533",
+      "lastPropertyId": "26:7350298590860599548",
       "name": "LearningSession",
       "properties": [
         {
@@ -266,6 +271,11 @@
           "id": "24:7603499362119049651",
           "name": "quizTargetId",
           "type": 6
+        },
+        {
+          "id": "26:7350298590860599548",
+          "name": "recentLearningDateTime",
+          "type": 10
         }
       ],
       "relations": []

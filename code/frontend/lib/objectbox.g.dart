@@ -209,7 +209,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 5502079073284747514),
     name: 'LearningSessionDetail',
-    lastPropertyId: const obx_int.IdUid(7, 1626576770022630230),
+    lastPropertyId: const obx_int.IdUid(8, 7482946366124564686),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -254,6 +254,12 @@ final _entities = <obx_int.ModelEntity>[
         type: 6,
         flags: 0,
       ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 7482946366124564686),
+        name: 'isSeen',
+        type: 1,
+        flags: 0,
+      ),
     ],
     relations: <obx_int.ModelRelation>[
       obx_int.ModelRelation(
@@ -267,7 +273,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(14, 4024975291499176318),
     name: 'LearningSession',
-    lastPropertyId: const obx_int.IdUid(25, 6849748057573735533),
+    lastPropertyId: const obx_int.IdUid(26, 7350298590860599548),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -355,6 +361,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(24, 7603499362119049651),
         name: 'quizTargetId',
         type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(26, 7350298590860599548),
+        name: 'recentLearningDateTime',
+        type: 10,
         flags: 0,
       ),
     ],
@@ -854,13 +866,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         object.id = id;
       },
       objectToFB: (LearningSessionDetail object, fb.Builder fbb) {
-        fbb.startTable(8);
+        fbb.startTable(9);
         fbb.addInt64(0, object.id);
         fbb.addInt64(2, object.question.targetId);
         fbb.addBool(3, object.isChecked);
         fbb.addBool(4, object.isCorrect);
         fbb.addInt64(5, object.learningSession.targetId);
         fbb.addInt64(6, object.questionTargetId);
+        fbb.addBool(7, object.isSeen);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -879,6 +892,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           10,
           false,
         );
+        final isSeenParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          18,
+          false,
+        );
         final isCorrectParam = const fb.BoolReader().vTableGetNullable(
           buffer,
           rootOffset,
@@ -893,6 +912,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = LearningSessionDetail(
           id: idParam,
           isChecked: isCheckedParam,
+          isSeen: isSeenParam,
           isCorrect: isCorrectParam,
           questionTargetId: questionTargetIdParam,
         );
@@ -934,7 +954,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (LearningSession object, fb.Builder fbb) {
         final learningModeOffset = fbb.writeString(object.learningMode);
-        fbb.startTable(26);
+        fbb.startTable(27);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.quiz.targetId);
         fbb.addInt64(3, object.startTime.millisecondsSinceEpoch);
@@ -949,6 +969,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(12, object.totalWrong);
         fbb.addOffset(20, learningModeOffset);
         fbb.addInt64(23, object.quizTargetId);
+        fbb.addInt64(25, object.recentLearningDateTime?.millisecondsSinceEpoch);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -960,6 +981,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           24,
         );
+        final recentLearningDateTimeValue = const fb.Int64Reader()
+            .vTableGetNullable(buffer, rootOffset, 54);
         final idParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -972,6 +995,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final startTimeParam = DateTime.fromMillisecondsSinceEpoch(
           const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
         );
+        final recentLearningDateTimeParam = recentLearningDateTimeValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(recentLearningDateTimeValue);
         final shuffleQuestionsParam = const fb.BoolReader().vTableGet(
           buffer,
           rootOffset,
@@ -1032,6 +1058,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           id: idParam,
           learningMode: learningModeParam,
           startTime: startTimeParam,
+          recentLearningDateTime: recentLearningDateTimeParam,
           shuffleQuestions: shuffleQuestionsParam,
           shuffleAnswers: shuffleAnswersParam,
           currentIndex: currentIndexParam,
@@ -1214,6 +1241,11 @@ class LearningSessionDetail_ {
         _entities[4].properties[5],
       );
 
+  /// See [LearningSessionDetail.isSeen].
+  static final isSeen = obx.QueryBooleanProperty<LearningSessionDetail>(
+    _entities[4].properties[6],
+  );
+
   /// see [LearningSessionDetail.selectedAnswers]
   static final selectedAnswers =
       obx.QueryRelationToMany<LearningSessionDetail, Answer>(
@@ -1291,6 +1323,11 @@ class LearningSession_ {
   /// See [LearningSession.quizTargetId].
   static final quizTargetId = obx.QueryIntegerProperty<LearningSession>(
     _entities[5].properties[13],
+  );
+
+  /// See [LearningSession.recentLearningDateTime].
+  static final recentLearningDateTime = obx.QueryDateProperty<LearningSession>(
+    _entities[5].properties[14],
   );
 
   /// see [LearningSession.learningSessionDetails]

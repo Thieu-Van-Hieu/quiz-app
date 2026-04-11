@@ -62,6 +62,7 @@ class LearningSessionDetailRepository {
 
     // Đảo trạng thái hiện tại
     detail.isChecked = !detail.isChecked;
+    detail.isSeen = true; // Đánh dấu đã xem khi toggle trạng thái
     // Chỉ tính toán đúng/sai khi người dùng nhấn "Show" (chuyển từ false sang true)
     if (detail.isChecked) {
       final selected = detail.selectedAnswers;

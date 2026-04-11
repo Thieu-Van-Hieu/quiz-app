@@ -28,6 +28,9 @@ class LearningSession with LearningSessionMappable {
   @Property(type: PropertyType.date)
   DateTime startTime; // Cái này nên giữ final vì khởi tạo 1 lần
 
+  @Property(type: PropertyType.date)
+  DateTime? recentLearningDateTime; // Cái này sẽ update mỗi lần học, nên không final
+
   // --- Config & Progress: Bỏ final để sửa trực tiếp ---
   bool shuffleQuestions;
   bool shuffleAnswers;
@@ -52,6 +55,7 @@ class LearningSession with LearningSessionMappable {
     this.id = 0,
     required this.learningMode,
     DateTime? startTime,
+    DateTime? recentLearningDateTime,
     this.shuffleQuestions = false,
     this.shuffleAnswers = false,
     this.currentIndex = 0,
@@ -111,4 +115,12 @@ class LearningSession with LearningSessionMappable {
         .where((d) => d.isChecked && d.isCorrect == false)
         .length;
   }
+
+  int get accuracyRate {
+    final totalAnswered = totalCorrect + totalWrong;
+    if (totalAnswered == 0) return 0;
+    return ((totalCorrect / totalAnswered) * 100).round();
+  }
+
+  int get totalSeen => learningSessionDetails.where((d) => d.isSeen).length;
 }

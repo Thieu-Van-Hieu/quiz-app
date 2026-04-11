@@ -41,6 +41,10 @@ class LearningSessionMapper extends ClassMapperBase<LearningSession> {
     _$startTime,
     opt: true,
   );
+  static DateTime? _$recentLearningDateTime(LearningSession v) =>
+      v.recentLearningDateTime;
+  static const Field<LearningSession, DateTime> _f$recentLearningDateTime =
+      Field('recentLearningDateTime', _$recentLearningDateTime, opt: true);
   static bool _$shuffleQuestions(LearningSession v) => v.shuffleQuestions;
   static const Field<LearningSession, bool> _f$shuffleQuestions = Field(
     'shuffleQuestions',
@@ -133,6 +137,7 @@ class LearningSessionMapper extends ClassMapperBase<LearningSession> {
     #id: _f$id,
     #learningMode: _f$learningMode,
     #startTime: _f$startTime,
+    #recentLearningDateTime: _f$recentLearningDateTime,
     #shuffleQuestions: _f$shuffleQuestions,
     #shuffleAnswers: _f$shuffleAnswers,
     #currentIndex: _f$currentIndex,
@@ -153,6 +158,7 @@ class LearningSessionMapper extends ClassMapperBase<LearningSession> {
       id: data.dec(_f$id),
       learningMode: data.dec(_f$learningMode),
       startTime: data.dec(_f$startTime),
+      recentLearningDateTime: data.dec(_f$recentLearningDateTime),
       shuffleQuestions: data.dec(_f$shuffleQuestions),
       shuffleAnswers: data.dec(_f$shuffleAnswers),
       currentIndex: data.dec(_f$currentIndex),

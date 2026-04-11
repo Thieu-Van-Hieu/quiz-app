@@ -38,6 +38,13 @@ class LearningSessionDetailMapper
     opt: true,
     def: false,
   );
+  static bool _$isSeen(LearningSessionDetail v) => v.isSeen;
+  static const Field<LearningSessionDetail, bool> _f$isSeen = Field(
+    'isSeen',
+    _$isSeen,
+    opt: true,
+    def: false,
+  );
   static bool? _$isCorrect(LearningSessionDetail v) => v.isCorrect;
   static const Field<LearningSessionDetail, bool> _f$isCorrect = Field(
     'isCorrect',
@@ -86,6 +93,7 @@ class LearningSessionDetailMapper
   final MappableFields<LearningSessionDetail> fields = const {
     #id: _f$id,
     #isChecked: _f$isChecked,
+    #isSeen: _f$isSeen,
     #isCorrect: _f$isCorrect,
     #learningSessionTargetId: _f$learningSessionTargetId,
     #questionTargetId: _f$questionTargetId,
@@ -100,6 +108,7 @@ class LearningSessionDetailMapper
     return LearningSessionDetail(
       id: data.dec(_f$id),
       isChecked: data.dec(_f$isChecked),
+      isSeen: data.dec(_f$isSeen),
       isCorrect: data.dec(_f$isCorrect),
       learningSessionTargetId: data.dec(_f$learningSessionTargetId),
       questionTargetId: data.dec(_f$questionTargetId),

@@ -118,6 +118,30 @@ class LearningSessionRepository {
     return session;
   }
 
+  void resetSession(LearningSession session) {
+    session.id = 0; // Đổi ID về 0 để tạo bản ghi mới
+    session.startTime = DateTime.now();
+    session.recentLearningDateTime = DateTime.now();
+    session.endTime = null;
+    session.currentIndex = 0;
+    session.studyTime = 0;
+    session.totalCorrect = 0;
+    session.totalWrong = 0;
+    session.isCompleted = false;
+  }
+
+  void resetSessionDetail(
+    LearningSession session,
+    LearningSessionDetail detail,
+  ) {
+    detail.id = 0;
+    detail.isChecked = false;
+    detail.isSeen = false;
+    detail.isCorrect = null;
+    detail.selectedAnswers.clear();
+    detail.learningSession.target = session; // Liên kết lại với session mới
+  }
+
   /// Làm lại toàn bộ: Đổi ID về 0 để clone
   Future<LearningSession> retakeSession(int oldSessionId) async {
     final session = await _sessionBox.getAsync(oldSessionId);
@@ -126,25 +150,16 @@ class LearningSessionRepository {
     }
 
     // 1. Đưa ID về 0 để tạo bản ghi mới
-    session.id = 0;
-    session.startTime = DateTime.now();
-    session.endTime = null;
-    session.currentIndex = 0;
-    session.studyTime = 0;
-    session.totalCorrect = 0;
-    session.totalWrong = 0;
-    session.isCompleted = false;
-    final sessionId = _sessionBox.put(session);
-    session.id = sessionId; // Cập nhật lại ID mới sau khi lưu
+    resetSession(session);
 
-    // 2. Clone toàn bộ Details (con)
+    final newSessionId = _sessionBox.put(session);
+    session.id = newSessionId; // Cập nhật lại ID mới sau khi lưu
+
+    // 2. Reset chi tiết và liên kết lại với session mới
     for (var detail in session.learningSessionDetails) {
-      detail.id = 0; // Quan trọng: Phải reset ID con về 0
-      detail.isChecked = false;
-      detail.isCorrect = null;
-      detail.selectedAnswers.clear();
-      detail.learningSession.target = session; // Trỏ về cha mới
+      resetSessionDetail(session, detail);
     }
+
     _sessionDetailBox.putMany(session.learningSessionDetails);
 
     return session;
@@ -167,23 +182,12 @@ class LearningSessionRepository {
     }
 
     // 2. Reset session cha
-    session.id = 0;
-    session.currentIndex = 0;
-    session.studyTime = 0;
-    session.totalCorrect = 0;
-    session.totalWrong = 0;
-    session.isCompleted = false;
-    session.startTime = DateTime.now();
-    session.endTime = null;
+    resetSession(session);
     final newSessionId = _sessionBox.put(session);
     session.id = newSessionId; // Cập nhật lại ID mới sau khi lưu
 
     for (var detail in mistakeDetails) {
-      detail.id = 0; // Biến thành bản ghi mới
-      detail.isChecked = false;
-      detail.isCorrect = null;
-      detail.selectedAnswers.clear();
-      detail.learningSession.target = session;
+      resetSessionDetail(session, detail);
     }
     _sessionDetailBox.putMany(mistakeDetails);
 
