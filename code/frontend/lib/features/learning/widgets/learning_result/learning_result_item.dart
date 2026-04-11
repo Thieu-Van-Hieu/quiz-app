@@ -36,16 +36,28 @@ class LearningResultItem extends StatelessWidget {
     }
 
     // Logic lấy phạm vi câu hỏi
+    final List<int> allQuestionIdsInQuiz =
+        quiz?.questions.map((q) => q.id).toList() ?? [];
+
+    // 2. Logic lấy phạm vi câu hỏi dựa trên vị trí (index) trong Quiz
     final details = session.learningSessionDetails;
     String rangeText = "N/A";
-    if (details.isNotEmpty) {
-      final qIds = details
-          .map((d) => d.question.target?.id ?? 0)
-          .where((id) => id > 0)
+
+    if (details.isNotEmpty && allQuestionIdsInQuiz.isNotEmpty) {
+      final List<int> currentSessionIndices = details
+          .map((d) {
+            final qId = d.question.target?.id ?? 0;
+            // Tìm vị trí của câu hỏi này trong danh sách tổng của Quiz (index + 1 = STT)
+            final index = allQuestionIdsInQuiz.indexOf(qId);
+            return index != -1 ? index + 1 : -1;
+          })
+          .where((stt) => stt > 0)
           .toList();
-      if (qIds.isNotEmpty) {
-        qIds.sort();
-        rangeText = "Câu ${qIds.first} - ${qIds.last}";
+
+      if (currentSessionIndices.isNotEmpty) {
+        currentSessionIndices.sort();
+        rangeText =
+            "Câu ${currentSessionIndices.first} - ${currentSessionIndices.last}";
       }
     }
 
