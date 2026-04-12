@@ -1,14 +1,6 @@
 import 'package:frontend/core/services/device_info_service.dart';
 
 class LearningStrings {
-  static const String initFont =
-      "Microsoft Sans Serif"; // TODO: Nên lưu vào settings để người dùng có thể tùy chỉnh
-  static const List<String> fonts = [
-    "Microsoft Sans Serif",
-    "Arial",
-    "Times New Roman",
-  ];
-
   static Map<String, String> generateExamHeader({
     required String quizName,
     required int durationMinutes,

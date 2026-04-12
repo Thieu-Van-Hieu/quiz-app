@@ -21,4 +21,9 @@ class AppStrings {
   // Dialog Common
   static const String confirmTitle = "Xác nhận";
   static const String deleteConfirmTitle = "Xác nhận xóa?";
+  static const List<String> fonts = [
+    "Microsoft Sans Serif",
+    "Arial",
+    "Times New Roman",
+  ];
 }

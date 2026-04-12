@@ -1,7 +1,6 @@
 // lib/features/learning/widgets/eos_header.dart
 import 'package:flutter/material.dart';
-import 'package:frontend/features/learning/constants/learning_strings.dart';
-
+import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/features/learning/widgets/eos/header_info.dart';
 import 'package:frontend/features/learning/widgets/eos/national_flag.dart';
 import 'package:frontend/features/learning/widgets/retro/dropdown.dart';
@@ -59,7 +58,7 @@ class EosHeader extends StatelessWidget {
                     ),
                     RetroDropdown<String>(
                       initValue: fontFamilyNotifier.value,
-                      items: LearningStrings.fonts
+                      items: AppStrings.fonts
                           .map(
                             (font) => DropdownMenuItem(
                               value: font,
