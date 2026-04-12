@@ -9,6 +9,7 @@
 #include <auto_updater_windows/auto_updater_windows_plugin_c_api.h>
 #include <objectbox_flutter_libs/objectbox_flutter_libs_plugin.h>
 #include <screen_capturer_windows/screen_capturer_windows_plugin_c_api.h>
+#include <url_launcher_windows/url_launcher_windows.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   AutoUpdaterWindowsPluginCApiRegisterWithRegistrar(
@@ -17,4 +18,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("ObjectboxFlutterLibsPlugin"));
   ScreenCapturerWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ScreenCapturerWindowsPluginCApi"));
+  UrlLauncherWindowsRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/dashboard/pages/dashboard_page.dart';
 import 'package:frontend/routes/types.dart';
 
 // features/dashboard/routes/dashboard_routes.dart
@@ -9,6 +10,6 @@ class DashboardRoutes {
     title: 'Tổng quan', // Hiển thị tiếng Việt
     path: root,
     icon: Icons.dashboard_rounded,
-    builder: (context) => const Center(child: Text("Màn hình Tổng quan")),
+    builder: (context) => DashboardPage(),
   );
 }
