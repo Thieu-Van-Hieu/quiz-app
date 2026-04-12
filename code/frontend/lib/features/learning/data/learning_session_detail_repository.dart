@@ -30,6 +30,7 @@ class LearningSessionDetailRepository {
   Future<void> toggleAnswer(int id, Answer answer) async {
     final detail = _learningSessionDetailBox.get(id);
     if (detail == null || detail.isChecked) return;
+    detail.isSeen = true; // Đánh dấu đã xem khi chọn câu trả lời
 
     if (detail.selectedAnswers.any((a) => a.id == answer.id)) {
       detail.selectedAnswers.removeWhere((a) => a.id == answer.id);
