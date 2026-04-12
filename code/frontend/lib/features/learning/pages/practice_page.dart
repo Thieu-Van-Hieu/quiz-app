@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -16,24 +15,11 @@ import 'package:frontend/features/learning/widgets/eos/feedback_column.dart';
 import 'package:frontend/features/learning/widgets/eos/progress_row.dart';
 import 'package:frontend/features/learning/widgets/eos/question_content_column.dart';
 import 'package:frontend/features/learning/widgets/retro/button.dart';
+import 'package:frontend/features/setting/constants/keymaps.dart';
+import 'package:frontend/features/setting/enums/shortcut_action.dart';
+import 'package:frontend/features/setting/notifiers/app_config_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-class PracticeShortcuts {
-  static const List<dynamic> toggleActions = [
-    kSecondaryMouseButton, // Chuột phải để Show/Hide
-    kPrimaryMouseButton,
-    LogicalKeyboardKey.space, // Phím Space để Show/Hide
-  ];
-  static const List<dynamic> nextActions = [
-    kForwardMouseButton,
-    LogicalKeyboardKey.arrowRight,
-  ];
-  static const List<dynamic> backActions = [
-    kBackMouseButton,
-    LogicalKeyboardKey.arrowLeft,
-  ];
-}
 
 class PracticePage extends HookConsumerWidget {
   final int sessionId;
@@ -42,6 +28,8 @@ class PracticePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 1. Lấy dữ liệu cấu hình từ hệ thống
+    final configAsync = ref.watch(watchAppConfigProvider);
     final sessionAsync = ref.watch(watchLearningSessionProvider(sessionId));
     final focusNode = useFocusNode();
     final container = ProviderScope.containerOf(context);
@@ -57,10 +45,35 @@ class PracticePage extends HookConsumerWidget {
           );
         }
 
+        // Lấy config thực tế hoặc dùng object mặc định nếu đang load
+        final config = configAsync.maybeWhen(
+          data: (c) => c,
+          orElse: () => null,
+        );
+
         final currentIndex = useState<int>(session.currentIndex);
         final elapsedSeconds = useState<int>(session.studyTime);
         final isShowingAnswer = useState<bool>(false);
         final isFinishingRef = useRef(false);
+
+        // --- SHORTCUT MAPPER ---
+        // Hàm này kiểm tra xem input (phím/chuột) có khớp với hành động đã cài đặt không
+        bool isActionTriggered(ShortcutAction action, dynamic input) {
+          if (config == null) return false;
+          final bindings = config.keyBindings[action] ?? [];
+
+          return bindings.any((physicalKey) {
+            // Nếu input là bàn phím (LogicalKeyboardKey)
+            if (input is LogicalKeyboardKey) {
+              return KeyMaps.logicalToPhysical[input] == physicalKey;
+            }
+            // Nếu input là chuột (int - event.buttons)
+            if (input is int) {
+              return KeyMaps.mouseButtonsMap[input] == physicalKey;
+            }
+            return false;
+          });
+        }
 
         // --- CORE LOGIC ---
         Future<void> performSave({
@@ -99,11 +112,14 @@ class PracticePage extends HookConsumerWidget {
 
         // --- HANDLERS ---
         void handleShortcut(dynamic input) {
-          if (PracticeShortcuts.toggleActions.contains(input)) {
+          if (isActionTriggered(ShortcutAction.toggleQuestion, input)) {
             toggleShowAnswer();
-          } else if (PracticeShortcuts.nextActions.contains(input)) {
+          } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
             jumpToPage(currentIndex.value + 1);
-          } else if (PracticeShortcuts.backActions.contains(input)) {
+          } else if (isActionTriggered(
+            ShortcutAction.previousQuestion,
+            input,
+          )) {
             jumpToPage(currentIndex.value - 1);
           }
         }
@@ -129,6 +145,7 @@ class PracticePage extends HookConsumerWidget {
             session.learningSessionDetails[currentIndex.value];
 
         final (eosHeader, fontSize, fontFamily) = useEosHeader(
+          ref: ref,
           info: LearningStrings.generateStudyHeader(
             quizName: session.quiz.target?.name ?? "N/A",
           ),

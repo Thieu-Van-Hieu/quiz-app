@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -18,33 +17,11 @@ import 'package:frontend/features/learning/widgets/eos/feedback_column.dart';
 import 'package:frontend/features/learning/widgets/eos/progress_row.dart';
 import 'package:frontend/features/learning/widgets/eos/question_content_column.dart';
 import 'package:frontend/features/learning/widgets/retro/button.dart';
+import 'package:frontend/features/setting/constants/keymaps.dart';
+import 'package:frontend/features/setting/enums/shortcut_action.dart';
+import 'package:frontend/features/setting/notifiers/app_config_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-class StudyShortcuts {
-  static const List<dynamic> checkActions = [
-    kSecondaryMouseButton,
-    LogicalKeyboardKey.space,
-    LogicalKeyboardKey.enter,
-  ];
-  static const List<dynamic> nextActions = [
-    kForwardMouseButton,
-    LogicalKeyboardKey.arrowRight,
-  ];
-  static const List<dynamic> backActions = [
-    kBackMouseButton,
-    LogicalKeyboardKey.arrowLeft,
-  ];
-
-  /// Lấy index từ phím A-Z
-  static int? getAnswerIndex(LogicalKeyboardKey key) {
-    final label = key.keyLabel.toUpperCase();
-    if (label.length == 1 && label.contains(RegExp(r'[A-Z]'))) {
-      return label.codeUnitAt(0) - 65; // A=0, B=1...
-    }
-    return null;
-  }
-}
 
 class StudyPage extends HookConsumerWidget {
   final int sessionId;
@@ -53,6 +30,8 @@ class StudyPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 1. Lấy dữ liệu cấu hình từ hệ thống
+    final configAsync = ref.watch(watchAppConfigProvider);
     final sessionAsync = ref.watch(watchLearningSessionProvider(sessionId));
     final focusNode = useFocusNode();
     final container = ProviderScope.containerOf(context);
@@ -67,6 +46,12 @@ class StudyPage extends HookConsumerWidget {
             child: Center(child: Text("Session not found")),
           );
         }
+
+        // Lấy config thực tế hoặc dùng object mặc định nếu đang load
+        final config = configAsync.maybeWhen(
+          data: (c) => c,
+          orElse: () => null,
+        );
 
         final elapsedSeconds = useState<int>(session.studyTime);
         final isFinishingRef = useRef(false);
@@ -109,48 +94,85 @@ class StudyPage extends HookConsumerWidget {
           }
         }
 
+        // --- HANDLERS ---
         void handleCheckAction() {
           if (currentDetail.isChecked) {
-            jumpToPage(session.currentIndex + 1);
+            // Nếu đã check rồi thì nhảy sang câu tiếp theo
+            if (session.currentIndex <
+                session.learningSessionDetails.length - 1) {
+              // jumpToPage đã bao gồm performSave()
+              // Gọi trực tiếp logic chuyển trang
+              final nextIndex = session.currentIndex + 1;
+              session.currentIndex = nextIndex;
+              session.studyTime = elapsedSeconds.value;
+              container
+                  .read(learningSessionProvider.notifier)
+                  .updateSession(session);
+            }
           } else {
+            // Nếu chưa check thì thực hiện check
             ref
                 .read(learningSessionDetailProvider(currentDetail.id).notifier)
                 .checkQuestion(currentDetail.id);
             ref.invalidate(watchLearningSessionProvider(sessionId));
-            performSave();
+            // Lưu trạng thái ngay khi check
+            session.studyTime = elapsedSeconds.value;
+            container
+                .read(learningSessionProvider.notifier)
+                .updateSession(session);
           }
         }
 
-        // --- HOTKEY HANDLER ---
-        void handleInput(dynamic input) {
-          if (StudyShortcuts.checkActions.contains(input)) {
-            handleCheckAction();
-            return;
-          }
-
-          if (StudyShortcuts.nextActions.contains(input)) {
-            jumpToPage(session.currentIndex + 1);
-            return;
-          }
-
-          if (StudyShortcuts.backActions.contains(input)) {
-            jumpToPage(session.currentIndex - 1);
-            return;
-          }
-
-          if (input is LogicalKeyboardKey) {
-            final index = StudyShortcuts.getAnswerIndex(input);
-            if (index != null && !currentDetail.isChecked) {
-              final answers = currentDetail.question.target?.answers ?? [];
-              if (index < answers.length) {
-                ref
-                    .read(
-                      learningSessionDetailProvider(currentDetail.id).notifier,
-                    )
-                    .toggleAnswer(currentDetail.id, answers[index]);
-                ref.invalidate(watchLearningSessionProvider(sessionId));
-              }
+        // --- SHORTCUT LOGIC ---
+        bool isActionTriggered(ShortcutAction action, dynamic input) {
+          if (config == null) return false;
+          final bindings = config.keyBindings[action] ?? [];
+          return bindings.any((physicalKey) {
+            if (input is LogicalKeyboardKey) {
+              return KeyMaps.logicalToPhysical[input] == physicalKey;
             }
+            if (input is int) {
+              return KeyMaps.mouseButtonsMap[input] == physicalKey;
+            }
+            return false;
+          });
+        }
+
+        void handleQuickAnswer(LogicalKeyboardKey key) {
+          if (!(config?.enableQuickAnswer ?? false) ||
+              currentDetail.isChecked) {
+            return;
+          }
+
+          final label = key.keyLabel.toUpperCase();
+          if (label.length == 1 && label.contains(RegExp(r'[A-Z]'))) {
+            final index = label.codeUnitAt(0) - 65;
+            final answers = currentDetail.question.target?.answers ?? [];
+            if (index < answers.length) {
+              container
+                  .read(
+                    learningSessionDetailProvider(currentDetail.id).notifier,
+                  )
+                  .toggleAnswer(currentDetail.id, answers[index]);
+              ref.invalidate(watchLearningSessionProvider(sessionId));
+            }
+          }
+        }
+
+        void handleInput(dynamic input) {
+          if (isActionTriggered(ShortcutAction.checkQuestion, input)) {
+            handleCheckAction();
+          } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
+            // Thêm logic nhảy trang tới
+            jumpToPage(session.currentIndex + 1);
+          } else if (isActionTriggered(
+            ShortcutAction.previousQuestion,
+            input,
+          )) {
+            // Thêm logic nhảy trang lui
+            jumpToPage(session.currentIndex - 1);
+          } else if (input is LogicalKeyboardKey) {
+            handleQuickAnswer(input);
           }
         }
 
@@ -165,6 +187,7 @@ class StudyPage extends HookConsumerWidget {
         }, [sessionId]);
 
         final (eosHeader, fontSize, fontFamily) = useEosHeader(
+          ref: ref,
           info: LearningStrings.generateStudyHeader(
             quizName: session.quiz.target?.name ?? "N/A",
           ),
