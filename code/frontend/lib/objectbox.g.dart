@@ -20,6 +20,7 @@ import 'features/library/models/answer.dart';
 import 'features/library/models/question.dart';
 import 'features/library/models/quiz.dart';
 import 'features/library/models/subject.dart';
+import 'features/setting/models/app_config.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -379,6 +380,52 @@ final _entities = <obx_int.ModelEntity>[
       ),
     ],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(16, 8389683534816014055),
+    name: 'AppConfig',
+    lastPropertyId: const obx_int.IdUid(6, 3902663401136427737),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 4858525117380522530),
+        name: 'id',
+        type: 6,
+        flags: 129,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 6109453532299970361),
+        name: 'fontFamily',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 8079069329336756909),
+        name: 'fontSize',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 6047167473738186567),
+        name: 'enableQuickAnswer',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 3813912160679431242),
+        name: 'isMouseEnabled',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 3902663401136427737),
+        name: 'internalKeyBindings',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -424,7 +471,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(14, 4024975291499176318),
+    lastEntityId: const obx_int.IdUid(16, 8389683534816014055),
     lastIndexId: const obx_int.IdUid(20, 4906833056168862516),
     lastRelationId: const obx_int.IdUid(7, 8362246070475913355),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -437,6 +484,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       4920760139726279388,
       8150576158054074434,
       1763644831287437937,
+      6666508573204862373,
     ],
     retiredIndexUids: const [
       7347700586798717336,
@@ -566,6 +614,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
       2626478897613327985,
       2866774429764172645,
       6849748057573735533,
+      4223561616545082578,
+      1121915151140772739,
+      5219982983962142832,
+      6502654617316206455,
+      3904131708249950806,
+      411770755522709919,
     ],
     retiredRelationUids: const [
       604733439351293478,
@@ -1089,6 +1143,74 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    AppConfig: obx_int.EntityDefinition<AppConfig>(
+      model: _entities[6],
+      toOneRelations: (AppConfig object) => [],
+      toManyRelations: (AppConfig object) => {},
+      getId: (AppConfig object) => object.id,
+      setId: (AppConfig object, int id) {
+        object.id = id;
+      },
+      objectToFB: (AppConfig object, fb.Builder fbb) {
+        final fontFamilyOffset = fbb.writeString(object.fontFamily);
+        final internalKeyBindingsOffset = fbb.writeString(
+          object.internalKeyBindings,
+        );
+        fbb.startTable(7);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, fontFamilyOffset);
+        fbb.addFloat64(2, object.fontSize);
+        fbb.addBool(3, object.enableQuickAnswer);
+        fbb.addBool(4, object.isMouseEnabled);
+        fbb.addOffset(5, internalKeyBindingsOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final fontFamilyParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final fontSizeParam = const fb.Float64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          8,
+          0,
+        );
+        final enableQuickAnswerParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          10,
+          false,
+        );
+        final isMouseEnabledParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          false,
+        );
+        final internalKeyBindingsParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 14, '');
+        final object = AppConfig(
+          id: idParam,
+          fontFamily: fontFamilyParam,
+          fontSize: fontSizeParam,
+          enableQuickAnswer: enableQuickAnswerParam,
+          isMouseEnabled: isMouseEnabledParam,
+          internalKeyBindings: internalKeyBindingsParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -1335,4 +1457,37 @@ class LearningSession_ {
       obx.QueryBacklinkToMany<LearningSessionDetail, LearningSession>(
         LearningSessionDetail_.learningSession,
       );
+}
+
+/// [AppConfig] entity fields to define ObjectBox queries.
+class AppConfig_ {
+  /// See [AppConfig.id].
+  static final id = obx.QueryIntegerProperty<AppConfig>(
+    _entities[6].properties[0],
+  );
+
+  /// See [AppConfig.fontFamily].
+  static final fontFamily = obx.QueryStringProperty<AppConfig>(
+    _entities[6].properties[1],
+  );
+
+  /// See [AppConfig.fontSize].
+  static final fontSize = obx.QueryDoubleProperty<AppConfig>(
+    _entities[6].properties[2],
+  );
+
+  /// See [AppConfig.enableQuickAnswer].
+  static final enableQuickAnswer = obx.QueryBooleanProperty<AppConfig>(
+    _entities[6].properties[3],
+  );
+
+  /// See [AppConfig.isMouseEnabled].
+  static final isMouseEnabled = obx.QueryBooleanProperty<AppConfig>(
+    _entities[6].properties[4],
+  );
+
+  /// See [AppConfig.internalKeyBindings].
+  static final internalKeyBindings = obx.QueryStringProperty<AppConfig>(
+    _entities[6].properties[5],
+  );
 }

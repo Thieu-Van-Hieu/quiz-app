@@ -21,6 +21,10 @@ class AppStrings {
   // Dialog Common
   static const String confirmTitle = "Xác nhận";
   static const String deleteConfirmTitle = "Xác nhận xóa?";
+
+  static const String defaultFontFamily = "Microsoft Sans Serif";
+  static const double defaultFontSize = 14.0;
+
   static const List<String> fonts = [
     "Microsoft Sans Serif",
     "Arial",
