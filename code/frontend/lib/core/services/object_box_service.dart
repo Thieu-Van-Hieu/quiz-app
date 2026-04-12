@@ -7,6 +7,7 @@ import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/models/subject.dart'; // File generated bởi ObjectBox
+import 'package:frontend/features/setting/models/app_config.dart';
 import 'package:frontend/objectbox.g.dart';
 
 class ObjectBoxService {
@@ -40,6 +41,7 @@ class ObjectBoxService {
     register<Subject>();
     register<LearningSession>();
     register<LearningSessionDetail>();
+    register<AppConfig>();
   }
 
   /// Hàm đăng ký generic
