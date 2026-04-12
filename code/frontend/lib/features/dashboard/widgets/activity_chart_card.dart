@@ -90,7 +90,9 @@ class ActivityChartCard extends StatelessWidget {
                     index,
                     data[index] ?? 0,
                     // Highlight cột hôm nay (index cuối cùng)
-                    index == 6 ? Colors.blue : Colors.blue.withOpacity(0.3),
+                    index == 6
+                        ? Colors.blue
+                        : Colors.blue.withValues(alpha: 0.3),
                     displayMaxY,
                   );
                 }),
