@@ -33,6 +33,7 @@ dependencies:
   screen_capturer: ^0.2.3
   auto_updater: ^1.0.0
   fl_chart: ^1.2.0
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

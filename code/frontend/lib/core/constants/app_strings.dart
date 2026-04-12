@@ -25,6 +25,19 @@ class AppStrings {
   static const String defaultFontFamily = "Microsoft Sans Serif";
   static const double defaultFontSize = 14.0;
 
+  static const String githubRepoUrl =
+      "https://github.com/Thieu-Van-Hieu/quiz-app";
+  static const String githubReleasesUrl =
+      "https://github.com/Thieu-Van-Hieu/quiz-app/releases";
+  static const String quizJsonUrl =
+      "https://github.com/Thieu-Van-Hieu/quiz-app/tree/main/quizzes/current";
+  static const String quizBinaryUrl =
+      "https://github.com/Thieu-Van-Hieu/quiz-app/tree/main/quizzes/legacy";
+  static const String authorName = "Thiều Văn Hiếu";
+  static const String authorEmail = "thieuefvanwhieues@gmail.com";
+  static const String authorNickname = "Mr.NoBody";
+  static const String supportEmail = "quiz.fpt@gmail.com";
+
   static const List<String> fonts = [
     "Microsoft Sans Serif",
     "Arial",

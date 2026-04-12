@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:frontend/features/dashboard/routes/dashboard_routes.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
+import 'package:frontend/features/setting/routes/setting_routes.dart';
 import 'package:frontend/routes/types.dart';
 
 // Hàm xử lý hiện Dialog thoát
@@ -45,6 +46,7 @@ class AppRouteConfig {
     DashboardRoutes.config,
     LibraryRoutes.config,
     LearningRoutes.config,
+    SettingRoutes.config,
     AppRouteItem(
       title: 'Thoát',
       icon: Icons.logout_rounded,
