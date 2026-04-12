@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/pages/exam_page.dart';
+import 'package:frontend/features/learning/pages/learning_session_detail_page.dart';
 import 'package:frontend/features/learning/pages/practice_page.dart';
 import 'package:frontend/features/learning/pages/study_page.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -69,9 +70,7 @@ class LearningPage extends HookConsumerWidget {
         // 1. Đã xong -> Review
         if (session.isCompleted) {
           // Bạn sẽ tạo file này sau
-          return Center(
-            child: Text("Trang kết quả cho session: ${session.id}"),
-          );
+          return LearningSessionDetailPage(sessionId: sessionId);
         }
 
         // 2. Đang học -> Theo Mode
