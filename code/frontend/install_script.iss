@@ -1,4 +1,4 @@
-#define MyAppVersion "0.1.2"
+#define MyAppVersion "1.0.0"
 #define MyAppExeName "QuizApp.exe"
 
 [Setup]
