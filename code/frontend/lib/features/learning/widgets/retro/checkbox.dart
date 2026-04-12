@@ -2,14 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/learning/constants/learning_colors.dart';
 
-class EosRetroCheckbox extends StatelessWidget {
+class RetroCheckbox extends StatelessWidget {
   final String label;
   final bool value;
   final ValueChanged<bool?>?
   onChanged; // Đổi thành nullable để hỗ trợ disabled state
   final Color? color;
 
-  const EosRetroCheckbox({
+  const RetroCheckbox({
     super.key,
     required this.label,
     required this.value,

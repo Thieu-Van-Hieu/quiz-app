@@ -64,7 +64,7 @@ class EosAnswerColumn extends StatelessWidget {
               }
             }
 
-            return EosRetroCheckbox(
+            return RetroCheckbox(
               label: String.fromCharCode(65 + index),
               value: isSelected,
               // Nếu bị khóa thì onChanged là null -> Checkbox sẽ disabled

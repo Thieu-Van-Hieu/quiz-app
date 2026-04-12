@@ -17,6 +17,7 @@ import 'package:frontend/features/learning/widgets/eos/feedback_column.dart';
 import 'package:frontend/features/learning/widgets/eos/progress_row.dart';
 import 'package:frontend/features/learning/widgets/eos/question_content_column.dart';
 import 'package:frontend/features/learning/widgets/retro/button.dart';
+import 'package:frontend/features/learning/widgets/retro/checkbox.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -272,18 +273,10 @@ class ExamPage extends HookConsumerWidget {
                 EosBottomBar(
                   bgColor: const Color(0xFFD4D0C8),
                   leftActions: [
-                    Checkbox(
+                    RetroCheckbox(
                       value: isConfirmedFinish.value,
-                      activeColor: primaryBlue,
                       onChanged: (v) => isConfirmedFinish.value = v ?? false,
-                    ),
-                    const Text(
-                      "I want to finish the exam.",
-                      style: TextStyle(
-                        color: primaryBlue,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      label: 'I want to finish the exam.',
                     ),
                     const SizedBox(width: 10),
                     RetroButton(
