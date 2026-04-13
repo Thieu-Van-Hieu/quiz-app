@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/learning/enums/learning_mode.dart';
+import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:intl/intl.dart';
 
 class RecentSessionItem extends StatelessWidget {
-  final String quizName;
-  final DateTime date;
-  final int accuracy;
-  final int totalQuestions;
+  final LearningSession session;
   final VoidCallback onTap;
 
   const RecentSessionItem({
     super.key,
-    required this.quizName,
-    required this.date,
-    required this.accuracy,
-    required this.totalQuestions,
+    required this.session,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isPractice = session.learningModeEnum == LearningMode.practice;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -37,12 +34,14 @@ class RecentSessionItem extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getAccuracyColor(accuracy).withValues(alpha: 0.1),
+                  color: _getAccuracyColor(
+                    session.accuracyRate,
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.description_outlined,
-                  color: _getAccuracyColor(accuracy),
+                  color: _getAccuracyColor(session.accuracyRate),
                 ),
               ),
               const SizedBox(width: 16),
@@ -51,7 +50,7 @@ class RecentSessionItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      quizName,
+                      session.quiz.target?.name ?? "N/A",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -60,7 +59,7 @@ class RecentSessionItem extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      "${DateFormat('dd/MM').format(date)} • $totalQuestions câu",
+                      "${DateFormat('dd/MM').format(session.startTime)} • ${session.learningSessionDetails.length} câu",
                       style: const TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                   ],
@@ -70,15 +69,15 @@ class RecentSessionItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "$accuracy%",
+                    "${session.accuracyRate}%",
                     style: TextStyle(
-                      color: _getAccuracyColor(accuracy),
+                      color: _getAccuracyColor(session.accuracyRate),
                       fontWeight: FontWeight.w900,
                       fontSize: 16,
                     ),
                   ),
-                  const Text(
-                    "Đúng",
+                  Text(
+                    isPractice ? "Đã xem" : "Đúng",
                     style: TextStyle(color: Colors.grey, fontSize: 10),
                   ),
                 ],

@@ -117,6 +117,13 @@ class LearningSession with LearningSessionMappable {
   }
 
   int get accuracyRate {
+    if (learningMode == LearningMode.practice.toValue()) {
+      // Chỉ tính câu đã trả lời đã xem
+      final totalSeen = this.totalSeen;
+      final totalAnswer = learningSessionDetails.length;
+      if (totalSeen == 0) return 0;
+      return ((totalSeen / totalAnswer) * 100).round();
+    }
     final totalAnswered = totalCorrect + totalWrong;
     if (totalAnswered == 0) return 0;
     return ((totalCorrect / totalAnswered) * 100).round();

@@ -162,7 +162,7 @@ class LearningResultItem extends StatelessWidget {
               const Spacer(),
 
               // 4. Thống kê (Chỉ hiện khi đã xong)
-              if (isCompleted && !isPracticeMode) ...[
+              if (isCompleted) ...[
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
@@ -173,11 +173,19 @@ class LearningResultItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildStatBox(
-                        "Đúng",
-                        "${session.totalCorrect}",
+                        isPracticeMode ? "Xem" : "Đúng",
+                        isPracticeMode
+                            ? "${session.totalSeen}"
+                            : "${session.totalCorrect}",
                         Colors.green,
                       ),
-                      _buildStatBox("Sai", "${session.totalWrong}", Colors.red),
+                      _buildStatBox(
+                        isPracticeMode ? "Chưa xem" : "Sai",
+                        isPracticeMode
+                            ? "${session.learningSessionDetails.length - session.totalSeen}"
+                            : "${session.totalWrong}",
+                        Colors.red,
+                      ),
                       _buildStatBox(
                         "Tổng",
                         "${details.length}",

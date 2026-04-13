@@ -116,10 +116,7 @@ class DashboardPage extends HookConsumerWidget {
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final session = sessions[index];
                     return RecentSessionItem(
-                      quizName: session.quiz.target?.name ?? "N/A",
-                      date: session.startTime,
-                      accuracy: session.accuracyRate.toInt(),
-                      totalQuestions: session.learningSessionDetails.length,
+                      session: session,
                       onTap: () =>
                           context.go(LearningRoutes.sessionPath(session.id)),
                     );
