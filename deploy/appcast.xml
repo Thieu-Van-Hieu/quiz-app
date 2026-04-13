@@ -4,12 +4,12 @@
 		<title>QuizApp Updates</title>
 		<language>vi</language>
 		<item>
-			<title>QuizApp v1.0.0 đã sẵn sàng!</title>
-			<sparkle:releaseNotesLink>https://github.com/Thieu-Van-Hieu/quiz-app/releases/tag/v1.0.0
+			<title>QuizApp v1.0.1 đã sẵn sàng!</title>
+			<sparkle:releaseNotesLink>https://github.com/Thieu-Van-Hieu/quiz-app/releases/tag/v1.0.1
 			</sparkle:releaseNotesLink>
 			<enclosure
-					url="https://github.com/Thieu-Van-Hieu/quiz-app/releases/download/v1.0.0/QuizApp_Setup_v1.0.0.exe"
-					sparkle:version="1.0.0"
+					url="https://github.com/Thieu-Van-Hieu/quiz-app/releases/download/v1.0.1/QuizApp_Setup_v1.0.1.exe"
+					sparkle:version="1.0.1"
 					os="windows"
 					type="application/octet-stream"/>
 		</item>
