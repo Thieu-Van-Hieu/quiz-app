@@ -5,7 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   auto_updater_windows
   objectbox_flutter_libs
-  screen_capturer_windows
   url_launcher_windows
 )
 
