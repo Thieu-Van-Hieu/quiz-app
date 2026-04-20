@@ -356,7 +356,13 @@ class QuestionItem extends HookWidget {
           Row(
             children: [
               TextButton(
-                onPressed: () => isEditing.value = false,
+                onPressed: () {
+                  if (question.isDraft) {
+                    onDelete();
+                  } else {
+                    isEditing.value = false;
+                  }
+                },
                 style: TextButton.styleFrom(
                   enabledMouseCursor: SystemMouseCursors.click,
                 ),
@@ -364,7 +370,12 @@ class QuestionItem extends HookWidget {
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: onSaveAction,
+                onPressed: () {
+                  if (question.isDraft) {
+                    question.setAsNew();
+                  }
+                  onSaveAction();
+                },
                 style: ElevatedButton.styleFrom(
                   enabledMouseCursor: SystemMouseCursors.click,
                 ),

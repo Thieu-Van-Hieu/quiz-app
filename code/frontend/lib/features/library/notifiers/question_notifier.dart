@@ -1,6 +1,7 @@
 import 'package:frontend/features/library/data/question_repository.dart';
 import 'package:frontend/features/library/data/quiz_repository.dart';
 import 'package:frontend/features/library/models/question.dart';
+import 'package:frontend/features/library/services/quiz_convert_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'question_notifier.g.dart';
@@ -14,6 +15,14 @@ class QuestionNotifier extends _$QuestionNotifier {
     // Lấy dữ liệu thực tế từ database khi khởi tạo
     final initialQuestions = await repo.getQuestionsByQuiz(quizId);
     return initialQuestions;
+  }
+
+  // Trong QuestionNotifier
+  Future<void> importFromOcr(String editedText) async {
+    final questions = QuizConverterService.convertRawOcrToQuestions(editedText);
+    for (var q in questions) {
+      addQuestion(q);
+    }
   }
 
   Future<void> refresh() async {

@@ -67,6 +67,16 @@ class Question with QuestionMappable {
   @MappableField(key: 'answersList')
   List<Answer> get answersList => answers.toList();
 
+  bool get isDraft => id == -1;
+
+  void setAsDraft() {
+    id = -1;
+  }
+
+  void setAsNew() {
+    id = 0;
+  }
+
   // --- Helper Methods ---
   static Question fromMap(Map<String, dynamic> map) =>
       QuestionMapper.fromMap(map);
