@@ -18,22 +18,26 @@ class LearningResultPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 1. Khởi tạo Params (Giống SubjectPage, mặc định trang 0, size 12)
-    final params = useState(LearningSessionSearchParams(page: 0, size: 10));
+    final searchParamsNotifier = useState(
+      LearningSessionSearchParams(page: 0, size: 10),
+    );
 
     // 2. Watch dữ liệu (Stream cho list và Future/Stream cho tổng trang)
     final sessionsAsync = ref.watch(
-      watchLearningSessionsProvider(params.value),
+      watchLearningSessionsProvider(searchParamsNotifier.value),
     );
 
     // Giả sử phen có provider này để lấy tổng số trang từ ObjectBox
     final totalPagesAsync = ref.watch(
-      watchLearningSessionTotalPagesProvider(params.value),
+      watchLearningSessionTotalPagesProvider(searchParamsNotifier.value),
     );
 
     // Trong build của LearningHistoryPage
     useEffect(() {
       // Cứ mỗi lần build (vào trang), ép provider xoá cache cũ và lấy cái mới nhất từ DB
-      void _ = ref.refresh(watchLearningSessionsProvider(params.value));
+      void _ = ref.refresh(
+        watchLearningSessionsProvider(searchParamsNotifier.value),
+      );
       return null;
     }, []); // Mảng rỗng để chỉ chạy 1 lần khi init trang
 
@@ -64,8 +68,9 @@ class LearningResultPage extends HookConsumerWidget {
 
             // SEARCH BAR: Khi gõ sẽ reset về trang 0
             AppSearchBar(
-              onSearch: (v) =>
-                  params.value = params.value.copyWith(keyword: v, page: 0),
+              onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
+                  .value
+                  .copyWith(keyword: v, page: 0),
             ),
             const SizedBox(height: 32),
 
@@ -112,8 +117,13 @@ class LearningResultPage extends HookConsumerWidget {
                                       session.id,
                                     )
                                   : null,
-                              onDelete: () =>
-                                  _handleDelete(context, ref, session),
+                              onDelete: () => _handleDelete(
+                                context,
+                                ref,
+                                session,
+                                sessions,
+                                searchParamsNotifier,
+                              ),
                             );
                           },
                         ),
@@ -124,10 +134,12 @@ class LearningResultPage extends HookConsumerWidget {
                       // Chỗ này phen gắn totalPages từ provider vào
                       totalPagesAsync.maybeWhen(
                         data: (total) => AppPagination(
-                          currentPage: params.value.page,
+                          currentPage: searchParamsNotifier.value.page,
                           totalPages: total,
                           onPageChange: (newPage) {
-                            params.value = params.value.copyWith(page: newPage);
+                            searchParamsNotifier.value = searchParamsNotifier
+                                .value
+                                .copyWith(page: newPage);
                           },
                         ),
                         orElse: () => const SizedBox.shrink(),
@@ -187,32 +199,42 @@ class LearningResultPage extends HookConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     LearningSession session,
+    List<LearningSession> currentSessions,
+    // Nhận vào danh sách để kiểm tra length
+    ValueNotifier<LearningSessionSearchParams> paramsNotifier,
+    // Nhận notifier để set page
   ) async {
-    // itemName = subjectName + quizName, nếu không có thì lấy "Phiên học"
-    String itemName = "";
+    // (Giữ nguyên logic lấy tên item của phen)
+    String itemName = "Phiên học";
     final quiz = session.quiz.target;
     if (quiz != null) {
       final subject = quiz.subject.target;
-      if (subject != null) {
-        itemName = "${subject.name} - ${quiz.name}";
-      } else {
-        itemName = quiz.name;
-      }
+      itemName = subject != null ? "${subject.name} - ${quiz.name}" : quiz.name;
     }
-    if (itemName.isEmpty) {
-      itemName = "Phiên học";
-    }
+
     final sessionId = session.id;
+
     showDialog(
       context: context,
       builder: (context) => DeleteConfirmDialog(
         itemName: itemName,
         onDelete: () async {
+          // 1. Thực hiện xóa
           await ref
               .read(learningSessionProvider.notifier)
               .deleteSession(sessionId)
               .withToast(context);
-          ref.invalidate(watchLearningSessionProvider);
+
+          // 2. LOGIC QUAY TRANG:
+          // Nếu xóa item cuối cùng của trang hiện tại (và không phải trang 0)
+          if (currentSessions.length == 1 && paramsNotifier.value.page > 0) {
+            paramsNotifier.value = paramsNotifier.value.copyWith(
+              page: paramsNotifier.value.page - 1,
+            );
+          } else {
+            // Nếu không phải trang cuối hoặc vẫn còn item, chỉ cần làm mới provider
+            ref.invalidate(watchLearningSessionsProvider(paramsNotifier.value));
+          }
         },
       ),
     );
