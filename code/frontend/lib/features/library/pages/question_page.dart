@@ -340,14 +340,74 @@ class QuestionPage extends HookConsumerWidget {
         ),
         const SizedBox(width: 16),
         _HeaderButton(
-          onPressed: () => notifier.refresh(),
+          onPressed: () async {
+            try {
+              // 1. Chờ hàm refresh thực hiện xong
+              await notifier.refresh();
+
+              // 2. Thông báo thành công
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Đã làm mới dữ liệu!"),
+                    backgroundColor: LibraryColors.accentColor,
+                    // Dùng màu chủ đạo của Library
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            } catch (e) {
+              // 3. Thông báo lỗi nếu có
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Lỗi khi tải lại: $e"),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            }
+          },
           icon: Icons.refresh_rounded,
           label: "Tải lại",
           color: LibraryColors.secondaryText,
         ),
         const SizedBox(width: 16),
         _HeaderButton(
-          onPressed: () => notifier.saveToDb(),
+          onPressed: () async {
+            try {
+              // 1. Chờ hàm saveToDb thực hiện xong
+              await notifier.saveToDb();
+
+              // 2. Kiểm tra context.mounted trước khi dùng context (best practice)
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Lưu thành công!"),
+                    backgroundColor: AppColors.success,
+                    // Dùng màu success đã có trong app của bạn
+                    behavior: SnackBarBehavior.floating,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            } catch (e) {
+              // 3. Xử lý trường hợp lưu lỗi
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Lỗi khi lưu: $e"),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            }
+          },
           icon: Icons.cloud_upload_outlined,
           label: "Lưu DB",
           color: AppColors.success,
