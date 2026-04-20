@@ -20,16 +20,15 @@ class QuestionRepository {
   final _questionBox = ObjectBoxService.instance.get<Question>();
   final _quizBox = ObjectBoxService.instance.get<Quiz>();
 
-  /// 1. Theo dõi danh sách câu hỏi của một Quiz (Real-time)
-  /// Watch danh sách có lọc và phân trang
+  // 1. Theo dõi danh sách câu hỏi của một Quiz (Real-time)
+  // Watch danh sách có lọc và phân trang
 
   Stream<List<Question>> watchQuestions(QuestionSearchParams params) {
-    // Lắng nghe sự thay đổi từ cả 2 bảng Question và Answer
-    // Lưu ý: Nếu không dùng rxdart, bạn có thể lắng nghe questionBox nhưng
-    // chấp nhận rủi ro khi Answer thay đổi thì UI không update ngay.
-
+    // Chỉ lắng nghe bảng Question.
+    // Vì chúng ta sẽ "Touch" (update) bảng Question khi có thay đổi Answer,
+    // nên không cần lắng nghe bảng Answer làm gì cho tốn tài nguyên.
     return _questionBox.query().watch(triggerImmediately: true).map((_) {
-      // 1. Khởi tạo QueryBuilder (Chưa build)
+      // 1. Khởi tạo QueryBuilder
       final questionContentQb = _questionBox.query(
         Question_.quiz
             .equals(params.quizId)
@@ -51,24 +50,40 @@ class QuestionRepository {
       final combineIds = {...questionContentIds, ...answerContentIds}.toList();
 
       final pagedIds = combineIds.paged(params.page, params.size);
-      return _questionBox.getMany(pagedIds).whereType<Question>().toList();
+      final questions = _questionBox
+          .getMany(pagedIds)
+          .whereType<Question>()
+          .toList();
+
+      // 3. SORT DỮ LIỆU (Pure Dart, không cần thư viện)
+      for (var q in questions) {
+        q.answers.sort((a, b) => a.indexOrder.compareTo(b.indexOrder));
+      }
+
+      return questions;
     });
   }
 
-  /// 2. Lấy danh sách câu hỏi theo Quiz (Async)
+  // 2. Lấy danh sách câu hỏi theo Quiz (Async)
   Future<List<Question>> getQuestionsByQuiz(int quizId) async {
     final query = _questionBox.query(Question_.quiz.equals(quizId)).build();
-    final result = await query.findAsync();
+    final questions = await query.findAsync();
     query.close();
-    return result;
+
+    // Sắp xếp các answers theo indexOrder trước khi trả về cho UI
+    for (var q in questions) {
+      q.answers.sort((a, b) => a.indexOrder.compareTo(b.indexOrder));
+    }
+
+    return questions;
   }
 
-  /// 3. Lấy câu hỏi theo ID
+  // 3. Lấy câu hỏi theo ID
   Future<Question?> getQuestionById(int id) {
     return _questionBox.getAsync(id);
   }
 
-  /// 4. Lưu hoặc cập nhật câu hỏi
+  // 4. Lưu hoặc cập nhật câu hỏi
   Future<void> saveQuestion(int quizId, Question question) async {
     final quiz = await _quizBox.getAsync(quizId);
     if (quiz == null) {
@@ -78,7 +93,7 @@ class QuestionRepository {
     await _questionBox.putAsync(question);
   }
 
-  /// 5. Xóa một câu hỏi
+  // 5. Xóa một câu hỏi
   Future<void> deleteQuestion(int questionId) async {
     final success = await _questionBox.removeAsync(questionId);
     if (!success) {
@@ -86,7 +101,7 @@ class QuestionRepository {
     }
   }
 
-  /// 6. Xóa tất cả câu hỏi của một Quiz (Batch Delete)
+  // 6. Xóa tất cả câu hỏi của một Quiz (Batch Delete)
   Future<void> deleteQuestionsByQuiz(int quizId) async {
     final query = _questionBox.query(Question_.quiz.equals(quizId)).build();
     await query.removeAsync();

@@ -32,7 +32,9 @@ class QuestionNotifier extends _$QuestionNotifier {
   void updateQuestion(int index, Question updatedQuestion) {
     final currentList = state.value;
     if (currentList != null) {
-      state = AsyncValue.data(List<Question>.from(currentList));
+      final newList = List<Question>.from(currentList);
+      newList[index] = updatedQuestion; // Phải thay thế phần tử tại index
+      state = AsyncValue.data(newList);
     }
   }
 

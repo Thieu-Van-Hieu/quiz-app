@@ -23,8 +23,8 @@ class AnswerItem extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Controller riêng cho từng option để gõ mượt, không bị lag
     final controller = useTextEditingController(text: initialValue);
+
     useEffect(() {
       if (controller.text != initialValue) {
         controller.text = initialValue;
@@ -36,6 +36,30 @@ class AnswerItem extends HookWidget {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
         children: [
+          // 1. Thêm Handle icon để báo hiệu có thể kéo thả
+          MouseRegion(
+            cursor: SystemMouseCursors.move, // Ép con trỏ ở tầng cao hơn
+            child: ReorderableDragStartListener(
+              index: index,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors
+                      .transparent, // Tạo vùng đệm để nhận diện chuột tốt hơn
+                ),
+                child: const Icon(
+                  Icons.drag_indicator,
+                  color: Colors.grey,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+
           Checkbox(
             value: isCorrect,
             activeColor: Colors.green,
@@ -43,7 +67,8 @@ class AnswerItem extends HookWidget {
             onChanged: (val) => onToggleCorrect(val ?? false),
             mouseCursor: SystemMouseCursors.click,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
+
           Expanded(
             child: TextFormField(
               controller: controller,
@@ -71,6 +96,7 @@ class AnswerItem extends HookWidget {
               onChanged: onChanged,
             ),
           ),
+
           if (canDelete)
             IconButton(
               icon: const Icon(
@@ -79,6 +105,7 @@ class AnswerItem extends HookWidget {
                 size: 20,
               ),
               onPressed: onDelete,
+              mouseCursor: SystemMouseCursors.click,
             ),
         ],
       ),

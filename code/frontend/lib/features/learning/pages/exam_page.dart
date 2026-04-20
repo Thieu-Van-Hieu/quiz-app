@@ -183,7 +183,6 @@ class ExamPage extends HookConsumerWidget {
         );
 
         final (feedbackColWidth, feedbackColSplitter) = useEosResizable();
-        const primaryBlue = Color(0xFF110CDD);
 
         return KeyboardListener(
           focusNode: focusNode,

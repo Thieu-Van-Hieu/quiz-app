@@ -34,6 +34,14 @@ class AnswerMapper extends ClassMapperBase<Answer> {
     opt: true,
     def: false,
   );
+  static int _$indexOrder(Answer v) => v.indexOrder;
+  static const Field<Answer, int> _f$indexOrder = Field(
+    'indexOrder',
+    _$indexOrder,
+    key: r'index_order',
+    opt: true,
+    def: 0,
+  );
   static int _$questionTargetId(Answer v) => v.questionTargetId;
   static const Field<Answer, int> _f$questionTargetId = Field(
     'questionTargetId',
@@ -62,6 +70,7 @@ class AnswerMapper extends ClassMapperBase<Answer> {
     #id: _f$id,
     #content: _f$content,
     #isCorrect: _f$isCorrect,
+    #indexOrder: _f$indexOrder,
     #questionTargetId: _f$questionTargetId,
     #question: _f$question,
     #sessionDetails: _f$sessionDetails,
@@ -72,6 +81,7 @@ class AnswerMapper extends ClassMapperBase<Answer> {
       id: data.dec(_f$id),
       content: data.dec(_f$content),
       isCorrect: data.dec(_f$isCorrect),
+      indexOrder: data.dec(_f$indexOrder),
       questionTargetId: data.dec(_f$questionTargetId),
     );
   }

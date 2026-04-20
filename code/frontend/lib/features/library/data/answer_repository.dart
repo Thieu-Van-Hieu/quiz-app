@@ -21,6 +21,7 @@ class AnswerRepository {
   Stream<List<Answer>> watchAnswersByQuestion(int questionId) {
     return _answerBox
         .query(Answer_.question.equals(questionId))
+        .order(Answer_.indexOrder)
         .watch(triggerImmediately: true)
         .map((q) => q.find());
   }

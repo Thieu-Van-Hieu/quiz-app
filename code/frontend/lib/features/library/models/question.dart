@@ -53,6 +53,12 @@ class Question with QuestionMappable {
     }
   }
 
+  List<Answer> get sortedAnswers {
+    final list = answers.toList();
+    list.sort((a, b) => a.indexOrder.compareTo(b.indexOrder));
+    return list;
+  }
+
   // 4. MappableField: Để lấy ID hiện tại ra khi copyWith
   @MappableField(key: 'quizTargetId')
   int get quizTargetId => quiz.targetId;

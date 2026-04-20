@@ -36,7 +36,7 @@ class ShortcutTile extends StatelessWidget {
               (key) => InputChip(
                 mouseCursor: SystemMouseCursors.click,
                 label: Text(
-                  key.name,
+                  key.readableName,
                   style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,

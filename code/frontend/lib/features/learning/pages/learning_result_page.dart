@@ -212,6 +212,7 @@ class LearningResultPage extends HookConsumerWidget {
               .read(learningSessionProvider.notifier)
               .deleteSession(sessionId)
               .withToast(context);
+          ref.invalidate(watchLearningSessionProvider);
         },
       ),
     );

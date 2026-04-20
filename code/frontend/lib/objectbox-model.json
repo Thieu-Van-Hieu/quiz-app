@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:7299001762337608636",
-      "lastPropertyId": "5:8111846479549212992",
+      "lastPropertyId": "6:7090975204764991018",
       "name": "Answer",
       "properties": [
         {
@@ -35,6 +35,11 @@
         {
           "id": "5:8111846479549212992",
           "name": "questionTargetId",
+          "type": 6
+        },
+        {
+          "id": "6:7090975204764991018",
+          "name": "indexOrder",
           "type": 6
         }
       ],

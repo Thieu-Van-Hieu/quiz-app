@@ -16,6 +16,7 @@ class Answer with AnswerMappable {
 
   String content;
   bool isCorrect;
+  int indexOrder;
 
   // 1. ToOne: Để ngoài constructor để ObjectBox không bị lú
   final question = ToOne<Question>();
@@ -28,6 +29,7 @@ class Answer with AnswerMappable {
     this.id = 0,
     required this.content,
     this.isCorrect = false,
+    this.indexOrder = 0,
     // 3. VIRTUAL PARAMETER: Để copyWith có thể thay đổi question quan hệ
     int? questionTargetId,
   }) {

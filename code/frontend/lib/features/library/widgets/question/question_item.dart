@@ -39,10 +39,14 @@ class QuestionItem extends HookWidget {
       explanationController.text = question.explanation;
 
       if (question.answers.isNotEmpty) {
+        // NOTE: Tạo bản sao của danh sách đáp án để chỉnh sửa mà không ảnh hưởng đến dữ liệu gốc
         localAnswers.value = question.answers
             .map(
-              (a) =>
-                  Answer(content: a.content, isCorrect: a.isCorrect)..id = a.id,
+              (a) => Answer(
+                content: a.content,
+                isCorrect: a.isCorrect,
+                indexOrder: a.indexOrder,
+              )..id = a.id,
             )
             .toList();
       } else {
@@ -60,6 +64,27 @@ class QuestionItem extends HookWidget {
       }
       return null;
     }, []);
+
+    // Hàm xử lý thay đổi thứ tự câu trả lời
+    void onReorder(int oldIndex, int newIndex) {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+
+      // 1. Tạo danh sách mới để thay đổi thứ tự
+      final newList = List<Answer>.from(localAnswers.value);
+      final item = newList.removeAt(oldIndex);
+      newList.insert(newIndex, item);
+
+      // 2. CẬP NHẬT indexOrder cho TẤT CẢ các item trong list mới
+      // Việc này rất quan trọng để khi hàm Save gọi, data đã sẵn sàng
+      for (int i = 0; i < newList.length; i++) {
+        newList[i].indexOrder = i;
+      }
+
+      // 3. Cập nhật state (đủ để UI render lại đúng thứ tự)
+      localAnswers.value = newList;
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -81,7 +106,6 @@ class QuestionItem extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header giữ cố định phía trên
           _buildHeader(isEditing, startEditing, () {
             question.content = contentController.text.trim();
             question.explanation = explanationController.text.trim();
@@ -92,11 +116,8 @@ class QuestionItem extends HookWidget {
             isEditing.value = false;
           }),
           const SizedBox(height: 16),
-
-          // Phần nội dung có khả năng cuộn để tránh Overflow
           Expanded(
             child: SingleChildScrollView(
-              // Physics giúp cuộn mượt hơn trên Desktop
               physics: const BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,30 +138,53 @@ class QuestionItem extends HookWidget {
                       prefixIcon: Icons.lightbulb_outline,
                     ),
                     const SizedBox(height: 20),
-                    ...localAnswers.value.asMap().entries.map((entry) {
-                      final i = entry.key;
-                      final ans = entry.value;
-                      return AnswerItem(
-                        key: ObjectKey(ans),
-                        index: i,
-                        initialValue: ans.content,
-                        isCorrect: ans.isCorrect,
-                        canDelete: localAnswers.value.length > 2,
-                        onChanged: (val) {
-                          ans.content = val;
-                        },
-                        onToggleCorrect: (val) {
-                          final newList = List<Answer>.from(localAnswers.value);
-                          newList[i].isCorrect = val;
-                          localAnswers.value = newList;
-                        },
-                        onDelete: () {
-                          final newList = List<Answer>.from(localAnswers.value)
-                            ..removeAt(i);
-                          localAnswers.value = newList;
-                        },
-                      );
-                    }),
+
+                    // Phần Kéo thả câu trả lời
+                    ReorderableListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: localAnswers.value.length,
+                      onReorder: onReorder,
+                      buildDefaultDragHandles: false,
+                      // Tắt icon 2 gạch mặc định
+                      proxyDecorator: (child, index, animation) {
+                        return Material(
+                          type: MaterialType.transparency,
+                          // Xóa màu nền tím/xám mặc định
+                          child:
+                              child, // Giữ nguyên style của AnswerItem khi đang kéo
+                        );
+                      },
+                      itemBuilder: (context, i) {
+                        final ans = localAnswers.value[i];
+                        return AnswerItem(
+                          // Quan trọng: Key giúp ReorderableListView xác định widget
+                          key: ValueKey(ans.hashCode),
+                          index: i,
+                          initialValue: ans.content,
+                          isCorrect: ans.isCorrect,
+                          canDelete: localAnswers.value.length > 2,
+                          onChanged: (val) {
+                            ans.content = val;
+                          },
+                          onToggleCorrect: (val) {
+                            final newList = List<Answer>.from(
+                              localAnswers.value,
+                            );
+                            newList[i].isCorrect = val;
+                            localAnswers.value = newList;
+                          },
+                          onDelete: () {
+                            final newList = List<Answer>.from(
+                              localAnswers.value,
+                            )..removeAt(i);
+                            localAnswers.value = newList;
+                          },
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 8),
                     TextButton.icon(
                       onPressed: () {
                         localAnswers.value = [
@@ -165,7 +209,6 @@ class QuestionItem extends HookWidget {
                       splashColor: Colors.transparent,
                       child: Container(
                         constraints: const BoxConstraints(maxHeight: 150),
-                        // Giới hạn chiều cao vùng text câu hỏi
                         width: double.infinity,
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),

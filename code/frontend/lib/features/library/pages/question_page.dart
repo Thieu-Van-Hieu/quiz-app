@@ -139,8 +139,12 @@ class QuestionPage extends HookConsumerWidget {
                                       1,
                                   question: question,
                                   isNew: question.content.isEmpty,
-                                  onSave: (updated) => questionActions
-                                      .updateQuestion(realIndex, updated),
+                                  onSave: (updated) {
+                                    questionActions.updateQuestion(
+                                      realIndex,
+                                      updated,
+                                    );
+                                  },
                                   onDelete: () =>
                                       questionActions.deleteQuestion(realIndex),
                                 );

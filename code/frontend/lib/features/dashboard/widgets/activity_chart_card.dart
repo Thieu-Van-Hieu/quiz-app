@@ -2,19 +2,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class ActivityChartCard extends StatelessWidget {
-  final Map<int, double> data; // Nhận data từ DashboardPage
+  final Map<int, double> data;
 
   const ActivityChartCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
-    // Lấy giá trị lớn nhất trong Map dữ liệu
     double maxQuestions = 0;
     if (data.isNotEmpty) {
       maxQuestions = data.values.reduce((a, b) => a > b ? a : b);
     }
 
-    // Nếu tất cả bằng 0, ta để mặc định là 10 để biểu đồ không bị lỗi hiển thị
     double displayMaxY = maxQuestions > 0 ? maxQuestions : 10;
 
     return Container(
@@ -24,6 +22,13 @@ class ActivityChartCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.05),
+            spreadRadius: 5,
+            blurRadius: 15,
+          ),
+        ],
         border: Border.all(color: Colors.grey.shade100),
       ),
       child: Column(
@@ -31,21 +36,49 @@ class ActivityChartCard extends StatelessWidget {
         children: [
           const Text(
             "Hoạt động 7 ngày qua",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2D3142), // Màu chữ đậm hiện đại
+            ),
           ),
           const SizedBox(height: 30),
           Expanded(
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                // Gán maxY bằng giá trị lớn nhất
                 maxY: displayMaxY,
-                barTouchData: BarTouchData(enabled: true),
+                // --- PHẦN SỬA TOOLTIP ---
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => Colors.blueAccent,
+                    // Màu nền tooltip
+                    tooltipBorderRadius: BorderRadius.all(Radius.circular(8)),
+                    tooltipPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    tooltipMargin: 8,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        rod.toY.toStringAsFixed(1),
+                        const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // ------------------------
                 titlesData: FlTitlesData(
                   show: true,
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
+                      reservedSize: 30,
                       getTitlesWidget: (value, meta) {
                         final now = DateTime.now();
                         final date = now.subtract(
@@ -60,13 +93,16 @@ class ActivityChartCard extends StatelessWidget {
                           'T7',
                           'CN',
                         ];
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+
+                        return SideTitleWidget(
+                          meta: meta,
+                          space: 8,
                           child: Text(
                             weekdays[date.weekday - 1],
-                            style: const TextStyle(
-                              color: Colors.grey,
+                            style: TextStyle(
+                              color: Colors.grey.shade500,
                               fontSize: 12,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         );
@@ -86,14 +122,15 @@ class ActivityChartCard extends StatelessWidget {
                 gridData: const FlGridData(show: false),
                 borderData: FlBorderData(show: false),
                 barGroups: List.generate(7, (index) {
+                  final isToday = index == 6;
                   return _makeGroupData(
                     index,
                     data[index] ?? 0,
-                    // Highlight cột hôm nay (index cuối cùng)
-                    index == 6
-                        ? Colors.blue
-                        : Colors.blue.withValues(alpha: 0.3),
+                    isToday
+                        ? Colors.blueAccent
+                        : Colors.blueAccent.withValues(alpha: 0.2),
                     displayMaxY,
+                    isToday,
                   );
                 }),
               ),
@@ -104,21 +141,29 @@ class ActivityChartCard extends StatelessWidget {
     );
   }
 
-  BarChartGroupData _makeGroupData(int x, double y, Color color, double maxY) {
+  BarChartGroupData _makeGroupData(
+    int x,
+    double y,
+    Color color,
+    double maxY,
+    bool isToday,
+  ) {
     return BarChartGroupData(
       x: x,
       barRods: [
         BarChartRodData(
           toY: y,
-          color: color,
-          width: 18,
+          gradient: LinearGradient(
+            colors: [color, color.withValues(alpha: 0.7)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
+          width: 20,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: maxY,
-            color: Colors
-                .grey
-                .shade50, // Vẫn giữ bóng mờ để thấy cái "khung" của các ngày khác
+            color: Colors.grey.shade50,
           ),
         ),
       ],
