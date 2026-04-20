@@ -7,7 +7,7 @@ import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
 import 'package:frontend/features/library/notifiers/question_notifier.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
-import 'package:frontend/features/library/services/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
 import 'package:frontend/features/library/widgets/question/ocr_loading_overlay.dart';
 import 'package:frontend/features/library/widgets/question/question_filter_bar.dart';
 import 'package:frontend/features/library/widgets/question/question_grid_view.dart';

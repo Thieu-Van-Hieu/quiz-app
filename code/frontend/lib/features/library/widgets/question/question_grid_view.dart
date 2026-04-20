@@ -3,7 +3,7 @@ import 'package:frontend/core/widgets/pagination.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
-import 'package:frontend/features/library/services/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
 import 'package:frontend/features/library/widgets/question/question_item.dart';
 
 class QuestionGridView extends StatelessWidget {
@@ -29,7 +29,7 @@ class QuestionGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final errorQuestions = allQuestions.where(
-      (q) => q.explanation.contains(QuizConverterService.errorFlag),
+      (q) => q.explanation.contains(QuizTextParser.errorFlag),
     );
 
     if (showOnlyErrors && errorQuestions.isEmpty) {

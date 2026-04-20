@@ -16,7 +16,7 @@ import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/models/search_params/quiz_search_params.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
-import 'package:frontend/features/library/services/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
 import 'package:frontend/features/library/widgets/quiz/add_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_header.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_item.dart';

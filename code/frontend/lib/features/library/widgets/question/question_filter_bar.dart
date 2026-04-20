@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/search_bar.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/question.dart';
-import 'package:frontend/features/library/services/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
 
 class QuestionFilterBar extends StatelessWidget {
   final List<Question> questions;
@@ -21,7 +21,7 @@ class QuestionFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final errorCount = questions
-        .where((q) => q.explanation.contains(QuizConverterService.errorFlag))
+        .where((q) => q.explanation.contains(QuizTextParser.errorFlag))
         .length;
 
     return Row(
