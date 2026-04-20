@@ -23,9 +23,7 @@ class SubjectNotifier extends _$SubjectNotifier {
   // --- HÀM SAVE VỚI BUSINESS LOGIC ---
   Future<void> saveSubject(Subject subject) async {
     // 1. Clean data & Basic Validation
-    final trimmedCode = subject.code
-        .trim()
-        .toUpperCase(); // Mã môn thường viết hoa
+    final trimmedCode = subject.code.trim();
     final trimmedName = subject.name.trim();
 
     if (trimmedCode.isEmpty) {

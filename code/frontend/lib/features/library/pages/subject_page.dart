@@ -10,7 +10,7 @@ import 'package:frontend/features/library/models/search_params/subject_search_pa
 import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/notifiers/subject_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
-import 'package:frontend/features/library/widgets/subject/add_dialog.dart';
+import 'package:frontend/features/library/widgets/subject/subject_header.dart';
 import 'package:frontend/features/library/widgets/subject/subject_item.dart';
 import 'package:frontend/features/library/widgets/subject/update_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -22,11 +22,17 @@ class SubjectPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 1. Khởi tạo Params (Mặc định trang 0, mỗi trang 12 môn)
-    final params = useState(SubjectSearchParams(size: 12, page: 0));
+    final searchParamsNotifier = useState(
+      SubjectSearchParams(size: 12, page: 0),
+    );
 
-    // 2. Watch data theo params hiện tại
-    final subjectsAsync = ref.watch(subjectProvider(params.value));
-    final totalPagesAsync = ref.watch(subjectTotalPagesProvider(params.value));
+    // 2. Watch data theo searchParamsNotifier hiện tại
+    final subjectsAsync = ref.watch(
+      subjectProvider(searchParamsNotifier.value),
+    );
+    final totalPagesAsync = ref.watch(
+      subjectTotalPagesProvider(searchParamsNotifier.value),
+    );
 
     return Material(
       color: LibraryColors.background,
@@ -35,13 +41,34 @@ class SubjectPage extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context, ref, params.value),
+            // Trong SubjectPage.dart
+            SubjectHeader(
+              params: searchParamsNotifier.value,
+              onAddSuccess: () async {
+                // 1. Refresh lại data để lấy tổng số trang mới nhất từ server
+                ref.invalidate(
+                  subjectTotalPagesProvider(searchParamsNotifier.value),
+                );
+
+                // 2. Chờ một chút để dữ liệu được cập nhật hoặc dùng Future để lấy giá trị mới
+                final totalPages = await ref.read(
+                  subjectTotalPagesProvider(searchParamsNotifier.value).future,
+                );
+
+                // 3. Nhảy tới trang cuối cùng (totalPages - 1 vì index bắt đầu từ 0)
+                if (totalPages > 0) {
+                  searchParamsNotifier.value = searchParamsNotifier.value
+                      .copyWith(page: totalPages - 1);
+                }
+              },
+            ),
             const SizedBox(height: 40),
 
             // 3. Search Bar: Khi gõ sẽ cập nhật keyword và reset về trang đầu tiên
             AppSearchBar(
-              onSearch: (v) =>
-                  params.value = params.value.copyWith(keyword: v, page: 0),
+              onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
+                  .value
+                  .copyWith(keyword: v, page: 0),
             ),
             const SizedBox(height: 32),
 
@@ -76,13 +103,13 @@ class SubjectPage extends HookConsumerWidget {
                               context,
                               ref,
                               list[index],
-                              params.value,
+                              searchParamsNotifier.value,
                             ),
                             onDelete: () => _confirmDelete(
                               context,
                               ref,
                               list[index],
-                              params.value,
+                              searchParamsNotifier,
                             ),
                           ),
                         ),
@@ -92,11 +119,13 @@ class SubjectPage extends HookConsumerWidget {
                       const SizedBox(height: 24),
                       totalPagesAsync.maybeWhen(
                         data: (total) => AppPagination(
-                          currentPage: params.value.page,
+                          currentPage: searchParamsNotifier.value.page,
                           totalPages: total,
                           activeColor: LibraryColors.accentColor,
                           onPageChange: (newPage) {
-                            params.value = params.value.copyWith(page: newPage);
+                            searchParamsNotifier.value = searchParamsNotifier
+                                .value
+                                .copyWith(page: newPage);
                           },
                         ),
                         orElse: () => const SizedBox.shrink(),
@@ -115,76 +144,6 @@ class SubjectPage extends HookConsumerWidget {
   }
 
   // --- PRIVATE UI HELPERS & LOGIC DIALOGS ---
-
-  Widget _buildHeader(
-    BuildContext context,
-    WidgetRef ref,
-    SubjectSearchParams currentParams,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              LibraryStrings.title,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w800,
-                color: LibraryColors.primaryText,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              LibraryStrings.subtitle,
-              style: TextStyle(
-                color: LibraryColors.secondaryText,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-        ElevatedButton.icon(
-          onPressed: () => _showAddDialog(context, ref, currentParams),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: LibraryColors.accentColor,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            enabledMouseCursor: SystemMouseCursors.click,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          icon: const Icon(Icons.add_rounded),
-          label: const Text(
-            LibraryStrings.btnAdd,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showAddDialog(
-    BuildContext context,
-    WidgetRef ref,
-    SubjectSearchParams currentParams,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AddSubjectDialog(
-        onSave: (name, code) {
-          final newSubject = Subject(code: code, name: name);
-          ref
-              .read(subjectProvider(currentParams).notifier)
-              .saveSubject(newSubject)
-              .withToast(context);
-        },
-      ),
-    );
-  }
-
   void _showUpdateDialog(
     BuildContext context,
     WidgetRef ref,
@@ -212,17 +171,44 @@ class SubjectPage extends HookConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     Subject subject,
-    SubjectSearchParams currentParams,
+    ValueNotifier<SubjectSearchParams> searchParamsNotifier,
   ) {
     showDialog(
       context: context,
       builder: (context) => DeleteConfirmDialog(
         itemName: subject.name,
-        onDelete: () {
-          ref
+        onDelete: () async {
+          final currentParams = searchParamsNotifier.value;
+          // 1. Thực hiện xóa và đợi kết quả
+          await ref
               .read(subjectProvider(currentParams).notifier)
               .deleteSubject(subject.id)
               .withToast(context);
+
+          // 2. Invalidate provider để lấy dữ liệu mới nhất
+          ref.invalidate(subjectTotalPagesProvider(currentParams));
+
+          // 3. Lấy tổng số trang sau khi xóa
+          final newTotalPages = await ref.read(
+            subjectTotalPagesProvider(currentParams).future,
+          );
+
+          // 4. Kiểm tra logic lùi trang
+          // Nếu trang hiện tại >= tổng số trang mới (nghĩa là trang đó đã bị rỗng)
+          // và trang hiện tại > 0 thì lùi về trang trước.
+          if (currentParams.page >= newTotalPages && currentParams.page > 0) {
+            // params ở đây chính là biến 'params' trong Widget build
+            // dùng 'ref' hoặc truyền tham chiếu để cập nhật
+            // Với cách bạn dùng useState, hãy cập nhật như sau:
+            final newPage = newTotalPages > 0 ? newTotalPages - 1 : 0;
+
+            // Cập nhật lại params của state
+            // Lưu ý: Nếu hàm này nằm trong SubjectPage, bạn có thể gọi trực tiếp:
+            searchParamsNotifier.value = searchParamsNotifier.value.copyWith(
+              page: newPage,
+            );
+            // (Để làm được điều này, hãy truyền 'params' vào _confirmDelete)
+          }
         },
       ),
     );

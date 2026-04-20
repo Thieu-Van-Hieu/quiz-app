@@ -54,8 +54,8 @@ class SubjectItem extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: onEdit,
-                        constraints:
-                            const BoxConstraints(), // Thu gọn padding mặc định
+                        constraints: const BoxConstraints(),
+                        // Thu gọn padding mặc định
                         padding: const EdgeInsets.all(8),
                         icon: const Icon(
                           Icons.edit_note_rounded,
@@ -84,7 +84,7 @@ class SubjectItem extends StatelessWidget {
               // --- CONTENT: Code (Headline) & Name (Subtitle) ---
               // 1. Mã môn học làm tiêu đề chính
               Text(
-                subject.code.toUpperCase(),
+                subject.code,
                 style: const TextStyle(
                   color: LibraryColors.primaryText,
                   fontWeight: FontWeight.w900, // Đậm hơn để nổi bật
