@@ -50,7 +50,7 @@ final class QuizNotifierProvider
   }
 }
 
-String _$quizNotifierHash() => r'15d679fa011149c1bfdce95fe6464945b033c2db';
+String _$quizNotifierHash() => r'6675f434706cc74838ddfc6a789c90179eb4b41c';
 
 final class QuizNotifierFamily extends $Family
     with
@@ -98,29 +98,29 @@ abstract class _$QuizNotifier extends $StreamNotifier<List<Quiz>> {
   }
 }
 
-@ProviderFor(quizTotalPages)
-final quizTotalPagesProvider = QuizTotalPagesFamily._();
+@ProviderFor(watchQuizTotalPages)
+final watchQuizTotalPagesProvider = WatchQuizTotalPagesFamily._();
 
-final class QuizTotalPagesProvider
+final class WatchQuizTotalPagesProvider
     extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
     with $FutureModifier<int>, $StreamProvider<int> {
-  QuizTotalPagesProvider._({
-    required QuizTotalPagesFamily super.from,
+  WatchQuizTotalPagesProvider._({
+    required WatchQuizTotalPagesFamily super.from,
     required QuizSearchParams super.argument,
   }) : super(
          retry: null,
-         name: r'quizTotalPagesProvider',
+         name: r'watchQuizTotalPagesProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$quizTotalPagesHash();
+  String debugGetCreateSourceHash() => _$watchQuizTotalPagesHash();
 
   @override
   String toString() {
-    return r'quizTotalPagesProvider'
+    return r'watchQuizTotalPagesProvider'
         ''
         '($argument)';
   }
@@ -133,12 +133,12 @@ final class QuizTotalPagesProvider
   @override
   Stream<int> create(Ref ref) {
     final argument = this.argument as QuizSearchParams;
-    return quizTotalPages(ref, argument);
+    return watchQuizTotalPages(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is QuizTotalPagesProvider && other.argument == argument;
+    return other is WatchQuizTotalPagesProvider && other.argument == argument;
   }
 
   @override
@@ -147,24 +147,25 @@ final class QuizTotalPagesProvider
   }
 }
 
-String _$quizTotalPagesHash() => r'b8622f26ce4cdf279899ca9f3fe31048ec41efaf';
+String _$watchQuizTotalPagesHash() =>
+    r'a04b82adb03cb8da0ee35b1c861906258224f1fc';
 
-final class QuizTotalPagesFamily extends $Family
+final class WatchQuizTotalPagesFamily extends $Family
     with $FunctionalFamilyOverride<Stream<int>, QuizSearchParams> {
-  QuizTotalPagesFamily._()
+  WatchQuizTotalPagesFamily._()
     : super(
         retry: null,
-        name: r'quizTotalPagesProvider',
+        name: r'watchQuizTotalPagesProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  QuizTotalPagesProvider call(QuizSearchParams params) =>
-      QuizTotalPagesProvider._(argument: params, from: this);
+  WatchQuizTotalPagesProvider call(QuizSearchParams params) =>
+      WatchQuizTotalPagesProvider._(argument: params, from: this);
 
   @override
-  String toString() => r'quizTotalPagesProvider';
+  String toString() => r'watchQuizTotalPagesProvider';
 }
 
 @ProviderFor(watchQuiz)
@@ -234,4 +235,78 @@ final class WatchQuizFamily extends $Family
 
   @override
   String toString() => r'watchQuizProvider';
+}
+
+@ProviderFor(watchQuizzes)
+final watchQuizzesProvider = WatchQuizzesFamily._();
+
+final class WatchQuizzesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Quiz>>,
+          List<Quiz>,
+          Stream<List<Quiz>>
+        >
+    with $FutureModifier<List<Quiz>>, $StreamProvider<List<Quiz>> {
+  WatchQuizzesProvider._({
+    required WatchQuizzesFamily super.from,
+    required QuizSearchParams super.argument,
+  }) : super(
+         retry: null,
+         name: r'watchQuizzesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$watchQuizzesHash();
+
+  @override
+  String toString() {
+    return r'watchQuizzesProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Quiz>> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Quiz>> create(Ref ref) {
+    final argument = this.argument as QuizSearchParams;
+    return watchQuizzes(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is WatchQuizzesProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$watchQuizzesHash() => r'5942aed2317db724a4a90d860878a6611a9f319b';
+
+final class WatchQuizzesFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Quiz>>, QuizSearchParams> {
+  WatchQuizzesFamily._()
+    : super(
+        retry: null,
+        name: r'watchQuizzesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  WatchQuizzesProvider call(QuizSearchParams params) =>
+      WatchQuizzesProvider._(argument: params, from: this);
+
+  @override
+  String toString() => r'watchQuizzesProvider';
 }

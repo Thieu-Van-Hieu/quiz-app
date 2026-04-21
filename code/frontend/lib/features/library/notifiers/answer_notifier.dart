@@ -7,10 +7,7 @@ part 'answer_notifier.g.dart';
 @riverpod
 class AnswerNotifier extends _$AnswerNotifier {
   @override
-  Stream<List<Answer>> build(int questionId) {
-    final repo = ref.watch(answerRepositoryProvider);
-    return repo.watchAnswersByQuestion(questionId);
-  }
+  void build() {}
 
   void addAnswer(int questionId, Answer answer) async {
     final repo = ref.read(answerRepositoryProvider);
@@ -34,4 +31,10 @@ class AnswerNotifier extends _$AnswerNotifier {
     final repo = ref.read(answerRepositoryProvider);
     await repo.deleteAnswersByQuestion(questionId);
   }
+}
+
+@riverpod
+Stream<List<Answer>> watchAnswersByQuestion(Ref ref, int questionId) {
+  final repo = ref.watch(answerRepositoryProvider);
+  return repo.watchAnswersByQuestion(questionId);
 }

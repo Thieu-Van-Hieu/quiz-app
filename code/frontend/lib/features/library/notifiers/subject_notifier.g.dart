@@ -10,38 +10,104 @@ part of 'subject_notifier.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(SubjectNotifier)
-final subjectProvider = SubjectNotifierFamily._();
+final subjectProvider = SubjectNotifierProvider._();
 
 final class SubjectNotifierProvider
-    extends $StreamNotifierProvider<SubjectNotifier, List<Subject>> {
-  SubjectNotifierProvider._({
-    required SubjectNotifierFamily super.from,
+    extends $NotifierProvider<SubjectNotifier, void> {
+  SubjectNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'subjectProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$subjectNotifierHash();
+
+  @$internal
+  @override
+  SubjectNotifier create() => SubjectNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$subjectNotifierHash() => r'90d399e52cccb83d6cdb306d87b1e8cd36ef661c';
+
+abstract class _$SubjectNotifier extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(watchSubjects)
+final watchSubjectsProvider = WatchSubjectsFamily._();
+
+final class WatchSubjectsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Subject>>,
+          List<Subject>,
+          Stream<List<Subject>>
+        >
+    with $FutureModifier<List<Subject>>, $StreamProvider<List<Subject>> {
+  WatchSubjectsProvider._({
+    required WatchSubjectsFamily super.from,
     required SubjectSearchParams super.argument,
   }) : super(
          retry: null,
-         name: r'subjectProvider',
+         name: r'watchSubjectsProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$subjectNotifierHash();
+  String debugGetCreateSourceHash() => _$watchSubjectsHash();
 
   @override
   String toString() {
-    return r'subjectProvider'
+    return r'watchSubjectsProvider'
         ''
         '($argument)';
   }
 
   @$internal
   @override
-  SubjectNotifier create() => SubjectNotifier();
+  $StreamProviderElement<List<Subject>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Subject>> create(Ref ref) {
+    final argument = this.argument as SubjectSearchParams;
+    return watchSubjects(ref, argument);
+  }
 
   @override
   bool operator ==(Object other) {
-    return other is SubjectNotifierProvider && other.argument == argument;
+    return other is WatchSubjectsProvider && other.argument == argument;
   }
 
   @override
@@ -50,77 +116,49 @@ final class SubjectNotifierProvider
   }
 }
 
-String _$subjectNotifierHash() => r'e96da10260ee806316c2eeb15aeb0feafca84ced';
+String _$watchSubjectsHash() => r'a14abd9a7bcfadd6d0d91d1b76148fabf5a615de';
 
-final class SubjectNotifierFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          SubjectNotifier,
-          AsyncValue<List<Subject>>,
-          List<Subject>,
-          Stream<List<Subject>>,
-          SubjectSearchParams
-        > {
-  SubjectNotifierFamily._()
+final class WatchSubjectsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Subject>>, SubjectSearchParams> {
+  WatchSubjectsFamily._()
     : super(
         retry: null,
-        name: r'subjectProvider',
+        name: r'watchSubjectsProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  SubjectNotifierProvider call(SubjectSearchParams params) =>
-      SubjectNotifierProvider._(argument: params, from: this);
+  WatchSubjectsProvider call(SubjectSearchParams params) =>
+      WatchSubjectsProvider._(argument: params, from: this);
 
   @override
-  String toString() => r'subjectProvider';
+  String toString() => r'watchSubjectsProvider';
 }
 
-abstract class _$SubjectNotifier extends $StreamNotifier<List<Subject>> {
-  late final _$args = ref.$arg as SubjectSearchParams;
-  SubjectSearchParams get params => _$args;
+@ProviderFor(watchSubjectTotalPages)
+final watchSubjectTotalPagesProvider = WatchSubjectTotalPagesFamily._();
 
-  Stream<List<Subject>> build(SubjectSearchParams params);
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Subject>>, List<Subject>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Subject>>, List<Subject>>,
-              AsyncValue<List<Subject>>,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, () => build(_$args));
-  }
-}
-
-@ProviderFor(subjectTotalPages)
-final subjectTotalPagesProvider = SubjectTotalPagesFamily._();
-
-final class SubjectTotalPagesProvider
+final class WatchSubjectTotalPagesProvider
     extends $FunctionalProvider<AsyncValue<int>, int, Stream<int>>
     with $FutureModifier<int>, $StreamProvider<int> {
-  SubjectTotalPagesProvider._({
-    required SubjectTotalPagesFamily super.from,
+  WatchSubjectTotalPagesProvider._({
+    required WatchSubjectTotalPagesFamily super.from,
     required SubjectSearchParams super.argument,
   }) : super(
          retry: null,
-         name: r'subjectTotalPagesProvider',
+         name: r'watchSubjectTotalPagesProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$subjectTotalPagesHash();
+  String debugGetCreateSourceHash() => _$watchSubjectTotalPagesHash();
 
   @override
   String toString() {
-    return r'subjectTotalPagesProvider'
+    return r'watchSubjectTotalPagesProvider'
         ''
         '($argument)';
   }
@@ -133,12 +171,13 @@ final class SubjectTotalPagesProvider
   @override
   Stream<int> create(Ref ref) {
     final argument = this.argument as SubjectSearchParams;
-    return subjectTotalPages(ref, argument);
+    return watchSubjectTotalPages(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is SubjectTotalPagesProvider && other.argument == argument;
+    return other is WatchSubjectTotalPagesProvider &&
+        other.argument == argument;
   }
 
   @override
@@ -147,22 +186,23 @@ final class SubjectTotalPagesProvider
   }
 }
 
-String _$subjectTotalPagesHash() => r'37e2dd0726e29805453b1dc79f9cd2c2289a2a1d';
+String _$watchSubjectTotalPagesHash() =>
+    r'b66b8ecf21c68c5d03f4a772e5c99eb49ba125c1';
 
-final class SubjectTotalPagesFamily extends $Family
+final class WatchSubjectTotalPagesFamily extends $Family
     with $FunctionalFamilyOverride<Stream<int>, SubjectSearchParams> {
-  SubjectTotalPagesFamily._()
+  WatchSubjectTotalPagesFamily._()
     : super(
         retry: null,
-        name: r'subjectTotalPagesProvider',
+        name: r'watchSubjectTotalPagesProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  SubjectTotalPagesProvider call(SubjectSearchParams params) =>
-      SubjectTotalPagesProvider._(argument: params, from: this);
+  WatchSubjectTotalPagesProvider call(SubjectSearchParams params) =>
+      WatchSubjectTotalPagesProvider._(argument: params, from: this);
 
   @override
-  String toString() => r'subjectTotalPagesProvider';
+  String toString() => r'watchSubjectTotalPagesProvider';
 }

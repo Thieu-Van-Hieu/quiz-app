@@ -10,30 +10,23 @@ part of 'learning_session_detail_notifier.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(LearningSessionDetailNotifier)
-final learningSessionDetailProvider = LearningSessionDetailNotifierFamily._();
+final learningSessionDetailProvider = LearningSessionDetailNotifierProvider._();
 
 final class LearningSessionDetailNotifierProvider
     extends $NotifierProvider<LearningSessionDetailNotifier, void> {
-  LearningSessionDetailNotifierProvider._({
-    required LearningSessionDetailNotifierFamily super.from,
-    required int super.argument,
-  }) : super(
-         retry: null,
-         name: r'learningSessionDetailProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  LearningSessionDetailNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'learningSessionDetailProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$learningSessionDetailNotifierHash();
-
-  @override
-  String toString() {
-    return r'learningSessionDetailProvider'
-        ''
-        '($argument)';
-  }
 
   @$internal
   @override
@@ -46,52 +39,13 @@ final class LearningSessionDetailNotifierProvider
       providerOverride: $SyncValueProvider<void>(value),
     );
   }
-
-  @override
-  bool operator ==(Object other) {
-    return other is LearningSessionDetailNotifierProvider &&
-        other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
 }
 
 String _$learningSessionDetailNotifierHash() =>
-    r'efe42c0f4fbfc589cd5b279df6198249fde81b8e';
-
-final class LearningSessionDetailNotifierFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          LearningSessionDetailNotifier,
-          void,
-          void,
-          void,
-          int
-        > {
-  LearningSessionDetailNotifierFamily._()
-    : super(
-        retry: null,
-        name: r'learningSessionDetailProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
-
-  LearningSessionDetailNotifierProvider call(int detailId) =>
-      LearningSessionDetailNotifierProvider._(argument: detailId, from: this);
-
-  @override
-  String toString() => r'learningSessionDetailProvider';
-}
+    r'17547a39f7553db62569175eef04cb4c67ee7731';
 
 abstract class _$LearningSessionDetailNotifier extends $Notifier<void> {
-  late final _$args = ref.$arg as int;
-  int get detailId => _$args;
-
-  void build(int detailId);
+  void build();
   @$mustCallSuper
   @override
   void runBuild() {
@@ -104,7 +58,7 @@ abstract class _$LearningSessionDetailNotifier extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(_$args));
+    element.handleCreate(ref, build);
   }
 }
 

@@ -106,7 +106,7 @@ class PracticePage extends HookConsumerWidget {
 
           isShowingAnswer.value = !isShowingAnswer.value;
           container
-              .read(learningSessionDetailProvider(currentDetail.id).notifier)
+              .read(learningSessionDetailProvider.notifier)
               .toggleCheckStatus(currentDetail.id);
         }
 
@@ -251,7 +251,6 @@ class PracticePage extends HookConsumerWidget {
                           await container
                               .read(learningSessionProvider.notifier)
                               .completeSession(sessionId);
-                          container.invalidate(watchLearningSessionsProvider);
                           if (context.mounted) {
                             context.go(LearningRoutes.sessionPath(sessionId));
                           }

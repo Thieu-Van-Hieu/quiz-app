@@ -50,7 +50,7 @@ final class QuestionNotifierProvider
   }
 }
 
-String _$questionNotifierHash() => r'1c83d8f9a63fed098bdd0424351c7dd0e67007ee';
+String _$questionNotifierHash() => r'de95bb1cb194ae27d88fd677affc4b3ac775d9dd';
 
 final class QuestionNotifierFamily extends $Family
     with

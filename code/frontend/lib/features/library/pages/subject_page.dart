@@ -28,10 +28,10 @@ class SubjectPage extends HookConsumerWidget {
 
     // 2. Watch data theo searchParamsNotifier hiện tại
     final subjectsAsync = ref.watch(
-      subjectProvider(searchParamsNotifier.value),
+      watchSubjectsProvider(searchParamsNotifier.value),
     );
     final totalPagesAsync = ref.watch(
-      subjectTotalPagesProvider(searchParamsNotifier.value),
+      watchSubjectTotalPagesProvider(searchParamsNotifier.value),
     );
 
     return Material(
@@ -45,17 +45,14 @@ class SubjectPage extends HookConsumerWidget {
             SubjectHeader(
               params: searchParamsNotifier.value,
               onAddSuccess: () async {
-                // 1. Refresh lại data để lấy tổng số trang mới nhất từ server
-                ref.invalidate(
-                  subjectTotalPagesProvider(searchParamsNotifier.value),
-                );
-
-                // 2. Chờ một chút để dữ liệu được cập nhật hoặc dùng Future để lấy giá trị mới
+                // Chờ một chút để dữ liệu được cập nhật hoặc dùng Future để lấy giá trị mới
                 final totalPages = await ref.read(
-                  subjectTotalPagesProvider(searchParamsNotifier.value).future,
+                  watchSubjectTotalPagesProvider(
+                    searchParamsNotifier.value,
+                  ).future,
                 );
 
-                // 3. Nhảy tới trang cuối cùng (totalPages - 1 vì index bắt đầu từ 0)
+                // Nhảy tới trang cuối cùng (totalPages - 1 vì index bắt đầu từ 0)
                 if (totalPages > 0) {
                   searchParamsNotifier.value = searchParamsNotifier.value
                       .copyWith(page: totalPages - 1);
@@ -64,7 +61,7 @@ class SubjectPage extends HookConsumerWidget {
             ),
             const SizedBox(height: 40),
 
-            // 3. Search Bar: Khi gõ sẽ cập nhật keyword và reset về trang đầu tiên
+            // Search Bar: Khi gõ sẽ cập nhật keyword và reset về trang đầu tiên
             AppSearchBar(
               onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
                   .value
@@ -159,7 +156,7 @@ class SubjectPage extends HookConsumerWidget {
             ..name = newName
             ..code = newCode;
           ref
-              .read(subjectProvider(currentParams).notifier)
+              .read(subjectProvider.notifier)
               .saveSubject(subject)
               .withToast(context);
         },
@@ -181,19 +178,16 @@ class SubjectPage extends HookConsumerWidget {
           final currentParams = searchParamsNotifier.value;
           // 1. Thực hiện xóa và đợi kết quả
           await ref
-              .read(subjectProvider(currentParams).notifier)
+              .read(subjectProvider.notifier)
               .deleteSubject(subject.id)
               .withToast(context);
 
-          // 2. Invalidate provider để lấy dữ liệu mới nhất
-          ref.invalidate(subjectTotalPagesProvider(currentParams));
-
-          // 3. Lấy tổng số trang sau khi xóa
+          // 2. Lấy tổng số trang sau khi xóa
           final newTotalPages = await ref.read(
-            subjectTotalPagesProvider(currentParams).future,
+            watchSubjectTotalPagesProvider(currentParams).future,
           );
 
-          // 4. Kiểm tra logic lùi trang
+          // 3. Kiểm tra logic lùi trang
           // Nếu trang hiện tại >= tổng số trang mới (nghĩa là trang đó đã bị rỗng)
           // và trang hiện tại > 0 thì lùi về trang trước.
           if (currentParams.page >= newTotalPages && currentParams.page > 0) {

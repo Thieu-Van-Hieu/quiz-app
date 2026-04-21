@@ -10,38 +10,105 @@ part of 'answer_notifier.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AnswerNotifier)
-final answerProvider = AnswerNotifierFamily._();
+final answerProvider = AnswerNotifierProvider._();
 
 final class AnswerNotifierProvider
-    extends $StreamNotifierProvider<AnswerNotifier, List<Answer>> {
-  AnswerNotifierProvider._({
-    required AnswerNotifierFamily super.from,
+    extends $NotifierProvider<AnswerNotifier, void> {
+  AnswerNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'answerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$answerNotifierHash();
+
+  @$internal
+  @override
+  AnswerNotifier create() => AnswerNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$answerNotifierHash() => r'490b792ab1f344f2fee9ab8be1430c31f0a00af9';
+
+abstract class _$AnswerNotifier extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(watchAnswersByQuestion)
+final watchAnswersByQuestionProvider = WatchAnswersByQuestionFamily._();
+
+final class WatchAnswersByQuestionProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Answer>>,
+          List<Answer>,
+          Stream<List<Answer>>
+        >
+    with $FutureModifier<List<Answer>>, $StreamProvider<List<Answer>> {
+  WatchAnswersByQuestionProvider._({
+    required WatchAnswersByQuestionFamily super.from,
     required int super.argument,
   }) : super(
          retry: null,
-         name: r'answerProvider',
+         name: r'watchAnswersByQuestionProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$answerNotifierHash();
+  String debugGetCreateSourceHash() => _$watchAnswersByQuestionHash();
 
   @override
   String toString() {
-    return r'answerProvider'
+    return r'watchAnswersByQuestionProvider'
         ''
         '($argument)';
   }
 
   @$internal
   @override
-  AnswerNotifier create() => AnswerNotifier();
+  $StreamProviderElement<List<Answer>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Answer>> create(Ref ref) {
+    final argument = this.argument as int;
+    return watchAnswersByQuestion(ref, argument);
+  }
 
   @override
   bool operator ==(Object other) {
-    return other is AnswerNotifierProvider && other.argument == argument;
+    return other is WatchAnswersByQuestionProvider &&
+        other.argument == argument;
   }
 
   @override
@@ -50,50 +117,23 @@ final class AnswerNotifierProvider
   }
 }
 
-String _$answerNotifierHash() => r'ad2efb206ee5b3cc69fc137fba20e9c958392ad6';
+String _$watchAnswersByQuestionHash() =>
+    r'c0fb481e28e0f9a452249cd1056cf9eae9657b7d';
 
-final class AnswerNotifierFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          AnswerNotifier,
-          AsyncValue<List<Answer>>,
-          List<Answer>,
-          Stream<List<Answer>>,
-          int
-        > {
-  AnswerNotifierFamily._()
+final class WatchAnswersByQuestionFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Answer>>, int> {
+  WatchAnswersByQuestionFamily._()
     : super(
         retry: null,
-        name: r'answerProvider',
+        name: r'watchAnswersByQuestionProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  AnswerNotifierProvider call(int questionId) =>
-      AnswerNotifierProvider._(argument: questionId, from: this);
+  WatchAnswersByQuestionProvider call(int questionId) =>
+      WatchAnswersByQuestionProvider._(argument: questionId, from: this);
 
   @override
-  String toString() => r'answerProvider';
-}
-
-abstract class _$AnswerNotifier extends $StreamNotifier<List<Answer>> {
-  late final _$args = ref.$arg as int;
-  int get questionId => _$args;
-
-  Stream<List<Answer>> build(int questionId);
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Answer>>, List<Answer>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Answer>>, List<Answer>>,
-              AsyncValue<List<Answer>>,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, () => build(_$args));
-  }
+  String toString() => r'watchAnswersByQuestionProvider';
 }

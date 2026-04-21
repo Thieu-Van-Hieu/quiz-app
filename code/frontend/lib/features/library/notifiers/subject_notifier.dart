@@ -9,10 +9,7 @@ part 'subject_notifier.g.dart';
 @riverpod
 class SubjectNotifier extends _$SubjectNotifier {
   @override
-  Stream<List<Subject>> build(SubjectSearchParams params) {
-    final repo = ref.watch(subjectRepositoryProvider);
-    return repo.watchSubjects(params);
-  }
+  void build() {}
 
   // --- HÀM GET THEO ID ---
   Future<Subject?> getSubject(int id) async {
@@ -50,6 +47,9 @@ class SubjectNotifier extends _$SubjectNotifier {
       ..name = trimmedName;
 
     await repo.saveSubject(subject);
+    if (!ref.mounted) return;
+    ref.invalidate(watchSubjectsProvider);
+    ref.invalidate(watchSubjectTotalPagesProvider);
   }
 
   // --- HÀM DELETE ---
@@ -60,10 +60,18 @@ class SubjectNotifier extends _$SubjectNotifier {
     // Nếu có thì ném lỗi không cho xóa để đảm bảo Referential Integrity (Ràng buộc tham chiếu)
 
     await repo.deleteSubject(id);
+    if (!ref.mounted) return;
+    ref.invalidate(watchSubjectsProvider);
+    ref.invalidate(watchSubjectTotalPagesProvider);
   }
 }
 
 @riverpod
-Stream<int> subjectTotalPages(Ref ref, SubjectSearchParams params) {
+Stream<List<Subject>> watchSubjects(Ref ref, SubjectSearchParams params) {
+  return ref.watch(subjectRepositoryProvider).watchSubjects(params);
+}
+
+@riverpod
+Stream<int> watchSubjectTotalPages(Ref ref, SubjectSearchParams params) {
   return ref.watch(subjectRepositoryProvider).watchTotalPages(params);
 }

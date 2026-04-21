@@ -38,7 +38,7 @@ class QuizPage extends HookConsumerWidget {
     );
     final quizzesAsync = ref.watch(quizProvider(searchParamsNotifier.value));
     final totalPagesAsync = ref.watch(
-      quizTotalPagesProvider(searchParamsNotifier.value),
+      watchQuizTotalPagesProvider(searchParamsNotifier.value),
     );
 
     // --- LOGIC XỬ LÝ DỮ LIỆU ---
@@ -342,7 +342,7 @@ class QuizPage extends HookConsumerWidget {
           // 2. Lấy số trang mới nhất sau khi lưu
           // Lưu ý: ref.read(provider.future) giúp lấy giá trị mới nhất từ provider
           final newTotalPages = await ref.read(
-            quizTotalPagesProvider(paramsNotifier.value).future,
+            watchQuizTotalPagesProvider(paramsNotifier.value).future,
           );
 
           // 3. Nhảy tới trang cuối cùng
@@ -412,8 +412,5 @@ class QuizPage extends HookConsumerWidget {
     QuizSearchParams currentParams,
   ) async {
     await context.push(LibraryRoutes.getQuizDetailPath(subjectId, quiz.id));
-
-    // Bây giờ đã có currentParams để dùng
-    ref.invalidate(quizProvider(currentParams));
   }
 }

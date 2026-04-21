@@ -79,7 +79,9 @@ class QuestionNotifier extends _$QuestionNotifier {
       await quizRepo.updateQuizQuestions(quizId, questionsToSave);
 
       // Refresh lại dữ liệu từ DB để lấy ID mới nhất
-      ref.invalidate(questionRepositoryProvider);
+      if (ref.mounted) {
+        ref.invalidate(questionRepositoryProvider);
+      }
       final repo = ref.read(questionRepositoryProvider);
       final freshData = await repo.getQuestionsByQuiz(quizId);
 

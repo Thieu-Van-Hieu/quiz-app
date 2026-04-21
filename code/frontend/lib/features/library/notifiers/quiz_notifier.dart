@@ -49,22 +49,37 @@ class QuizNotifier extends _$QuizNotifier {
     // 3. Thực thi lưu dữ liệu
     quiz.name = trimmedName; // Cập nhật tên đã được trim
     await repo.saveQuiz(subjectId, quiz);
+
+    if (!ref.mounted) return;
+    // 4. Invalidate để làm mới danh sách (xóa cache tất cả các params)
+    ref.invalidate(watchQuizzesProvider);
+    ref.invalidate(watchQuizTotalPagesProvider);
+    ref.invalidate(watchQuizProvider);
   }
 
   Future<void> deleteQuiz(int id) async {
     final repo = ref.read(quizRepositoryProvider);
     await repo.deleteQuiz(id);
+    if (!ref.mounted) return;
+    // Invalidate để làm mới danh sách (xóa cache tất cả các params)
+    ref.invalidate(watchQuizzesProvider);
+    ref.invalidate(watchQuizTotalPagesProvider);
   }
 }
 
 // --- PROVIDER BỔ TRỢ ĐỂ TÍNH TỔNG SỐ TRANG ---
 // Provider này tách biệt để tránh việc UI phải re-build cả danh sách chỉ để cập nhật số trang
 @riverpod
-Stream<int> quizTotalPages(Ref ref, QuizSearchParams params) {
+Stream<int> watchQuizTotalPages(Ref ref, QuizSearchParams params) {
   return ref.watch(quizRepositoryProvider).watchTotalPages(params);
 }
 
 @riverpod
 Stream<Quiz?> watchQuiz(Ref ref, int id) {
   return ref.watch(quizRepositoryProvider).watchQuiz(id);
+}
+
+@riverpod
+Stream<List<Quiz>> watchQuizzes(Ref ref, QuizSearchParams params) {
+  return ref.watch(quizRepositoryProvider).watchQuizzes(params);
 }

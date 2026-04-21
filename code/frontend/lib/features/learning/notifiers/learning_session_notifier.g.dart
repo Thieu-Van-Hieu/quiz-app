@@ -20,7 +20,7 @@ final class LearningSessionNotifierProvider
         argument: null,
         retry: null,
         name: r'learningSessionProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -42,7 +42,7 @@ final class LearningSessionNotifierProvider
 }
 
 String _$learningSessionNotifierHash() =>
-    r'bb406f5d0af3b86a49dbbcfe4880ec61d7fe2d26';
+    r'4a136c990d497fd774c738f46375ff701a3b32a4';
 
 abstract class _$LearningSessionNotifier extends $Notifier<void> {
   void build();

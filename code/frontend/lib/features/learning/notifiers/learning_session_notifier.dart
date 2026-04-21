@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'learning_session_notifier.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class LearningSessionNotifier extends _$LearningSessionNotifier {
   // Không còn build(params) nữa, build trả về void hoặc giá trị mặc định
   @override
@@ -19,22 +19,40 @@ class LearningSessionNotifier extends _$LearningSessionNotifier {
     required LearningSetting setting,
   }) async {
     final repo = ref.read(learningSessionRepositoryProvider);
-    return await repo.createSession(quizId: quizId, setting: setting);
+    final result = await repo.createSession(quizId: quizId, setting: setting);
+    ref.container.invalidate(watchLearningSessionsProvider);
+    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
+    return result;
   }
 
   Future<LearningSession> retakeSession(int oldSessionId) async {
     final repo = ref.read(learningSessionRepositoryProvider);
-    return await repo.retakeSession(oldSessionId);
+    final result = await repo.retakeSession(oldSessionId);
+
+    // Invalidate để làm mới danh sách (xóa cache tất cả các params)
+    ref.container.invalidate(watchLearningSessionsProvider);
+    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
+
+    return result;
   }
 
   Future<LearningSession> createMistakeSession(int oldSessionId) async {
     final repo = ref.read(learningSessionRepositoryProvider);
-    return await repo.createMistakeSession(oldSessionId);
+    final result = await repo.createMistakeSession(oldSessionId);
+
+    // Invalidate sau khi thực hiện xong
+    ref.container.invalidate(watchLearningSessionsProvider);
+    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
+
+    return result;
   }
 
   Future<void> completeSession(int id) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     await repo.completeSession(id);
+
+    // Invalidate sau khi update xong
+    ref.container.invalidate(watchLearningSessionsProvider);
   }
 
   // Hàm update cực kỳ quan trọng, giờ gọi rất dễ
@@ -46,6 +64,9 @@ class LearningSessionNotifier extends _$LearningSessionNotifier {
   Future<void> deleteSession(int id) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     await repo.deleteSession(id);
+    ref.container.invalidate(watchLearningSessionProvider);
+    ref.container.invalidate(watchLearningSessionsProvider);
+    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
   }
 }
 

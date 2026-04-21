@@ -233,7 +233,6 @@ class LearningResultPage extends HookConsumerWidget {
             );
           } else {
             // Nếu không phải trang cuối hoặc vẫn còn item, chỉ cần làm mới provider
-            ref.invalidate(watchLearningSessionsProvider(paramsNotifier.value));
           }
         },
       ),

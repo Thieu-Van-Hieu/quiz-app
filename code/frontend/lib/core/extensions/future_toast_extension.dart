@@ -9,6 +9,7 @@ extension FutureToastExtension<T> on Future<T> {
     try {
       return await this;
     } catch (error) {
+      debugPrint('Error in Future withToast: $error');
       String message = "Đã có lỗi xảy ra!";
       Color iconColor = AppColors.toastError; // Dùng Colors cho nhanh
       IconData icon = Icons.error_outline_rounded;
@@ -60,8 +61,8 @@ extension FutureToastExtension<T> on Future<T> {
                     child: Text(
                       message,
                       style: const TextStyle(
-                        color: AppColors
-                            .toastText, // Dùng Hex cho text để màu sâu hơn đen thường
+                        color: AppColors.toastText,
+                        // Dùng Hex cho text để màu sâu hơn đen thường
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),

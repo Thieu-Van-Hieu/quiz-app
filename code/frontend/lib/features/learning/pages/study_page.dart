@@ -112,9 +112,8 @@ class StudyPage extends HookConsumerWidget {
           } else {
             // Nếu chưa check thì thực hiện check
             ref
-                .read(learningSessionDetailProvider(currentDetail.id).notifier)
+                .read(learningSessionDetailProvider.notifier)
                 .checkQuestion(currentDetail.id);
-            ref.invalidate(watchLearningSessionProvider(sessionId));
             // Lưu trạng thái ngay khi check
             session.studyTime = elapsedSeconds.value;
             container
@@ -150,11 +149,8 @@ class StudyPage extends HookConsumerWidget {
             final answers = currentDetail.question.target?.answers ?? [];
             if (index < answers.length) {
               container
-                  .read(
-                    learningSessionDetailProvider(currentDetail.id).notifier,
-                  )
+                  .read(learningSessionDetailProvider.notifier)
                   .toggleAnswer(currentDetail.id, answers[index]);
-              ref.invalidate(watchLearningSessionProvider(sessionId));
             }
           }
         }
@@ -183,7 +179,10 @@ class StudyPage extends HookConsumerWidget {
             const Duration(seconds: 1),
             (t) => elapsedSeconds.value++,
           );
-          return () => timer.cancel();
+          return () {
+            timer.cancel();
+            if (!isFinishingRef.value) performSave();
+          };
         }, [sessionId]);
 
         final (eosHeader, fontSize, fontFamily) = useEosHeader(
@@ -244,14 +243,9 @@ class StudyPage extends HookConsumerWidget {
                                   if (currentDetail.isChecked) return;
                                   ref
                                       .read(
-                                        learningSessionDetailProvider(
-                                          currentDetail.id,
-                                        ).notifier,
+                                        learningSessionDetailProvider.notifier,
                                       )
                                       .toggleAnswer(currentDetail.id, answer);
-                                  ref.invalidate(
-                                    watchLearningSessionProvider(sessionId),
-                                  );
                                 },
                                 actions: [
                                   RetroButton(
@@ -317,7 +311,6 @@ class StudyPage extends HookConsumerWidget {
                           await container
                               .read(learningSessionProvider.notifier)
                               .completeSession(sessionId);
-                          container.invalidate(watchLearningSessionsProvider);
                           if (context.mounted) {
                             context.go(LearningRoutes.sessionPath(sessionId));
                           }

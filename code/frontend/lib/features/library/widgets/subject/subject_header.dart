@@ -67,7 +67,7 @@ class SubjectHeader extends ConsumerWidget {
         onSave: (name, code) async {
           final newSubject = Subject(code: code, name: name);
           await ref
-              .read(subjectProvider(params).notifier)
+              .read(subjectProvider.notifier)
               .saveSubject(newSubject)
               .withToast(context);
 
