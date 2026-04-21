@@ -47,3 +47,4 @@ app.*.map.json
 /deploy/windows/
 /deploy/appcast.xml.tmpl
 /code/frontend/Taskfile.yaml
+/todo.md
