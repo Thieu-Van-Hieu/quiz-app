@@ -1,7 +1,7 @@
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-enum ButtonVariant { brand, slate, danger }
+enum ButtonVariant { brand, brandOutlined, slate, slateOutlined, danger }
 
 enum ButtonSize { small, medium, big }
 
@@ -37,32 +37,46 @@ class _AppButtonState extends State<AppButton> {
   Widget build(BuildContext context) {
     Color bgColor;
     Color shadowColor;
-    Color fgColor; // Màu chữ và icon
+    Color fgColor; 
+    Border? border;
 
-    // Cấu hình màu sắc thông minh chống chói mắt
+    // Phối màu thông minh cho cả hệ đặc (Solid) và hệ viền nổi (Outlined)
     switch (widget.variant) {
       case ButtonVariant.brand:
         bgColor = widget.isLoading
             ? AppColors.brandDark
             : (_isHovered ? AppColors.brandDark : AppColors.brand);
         shadowColor = AppColors.brandShadow;
-        // FIX: Màu xanh rừng già đậm/Xám đậm để tương phản hoàn hảo với nền Mint nhạt
-        fgColor = const Color(0xFF2B5B34);
+        fgColor = const Color(0xFF2B5B34); // Xanh rừng già tương phản Mint
         break;
+
+      case ButtonVariant.brandOutlined: // 🆕 Nền trắng, viền và chữ màu Mint
+        bgColor = _isHovered ? const Color(0xFFF2FBF7) : Colors.white;
+        shadowColor = const Color(0xFFCBD5E1); // Đổ bóng xám nhẹ cơ học
+        fgColor = const Color(0xFF2B5B34);
+        border = Border.all(color: AppColors.brand, width: 2.5); // Viền dày dặn 3D
+        break;
+
       case ButtonVariant.slate:
         bgColor = widget.isLoading
             ? AppColors.slateDark
             : (_isHovered ? AppColors.slateDark : AppColors.slate);
         shadowColor = AppColors.slateShadow;
-        // Nền xám đậm thì chữ trắng sẽ rất nổi bật và dễ đọc
         fgColor = AppColors.textWhite;
         break;
+
+      case ButtonVariant.slateOutlined: // 🆕 Nền trắng, viền và chữ màu xám đá
+        bgColor = _isHovered ? const Color(0xFFF8FAFC) : Colors.white;
+        shadowColor = const Color(0xFFE2E8F0);
+        fgColor = const Color(0xFF475569);
+        border = Border.all(color: const Color(0xFFCBD5E1), width: 2.5);
+        break;
+
       case ButtonVariant.danger:
         bgColor = widget.isLoading
             ? AppColors.orangeDark
             : (_isHovered ? AppColors.orangeDark : AppColors.orange);
         shadowColor = AppColors.orangeShadow;
-        // Nền cam đào nhạt thì chữ đỏ gạch đậm nhìn sẽ cực sang
         fgColor = const Color(0xFF7E4B31);
         break;
     }
@@ -89,6 +103,7 @@ class _AppButtonState extends State<AppButton> {
         break;
     }
 
+    // Logic tính toán độ lún cơ học khi Click
     final bool effectivelyDisabled =
         widget.isDisabled || widget.isLoading || widget.onPressed == null;
     final double topOffset = (effectivelyDisabled && !widget.isLoading)
@@ -105,18 +120,14 @@ class _AppButtonState extends State<AppButton> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
-        onTapDown: effectivelyDisabled
-            ? null
-            : (_) => setState(() => _isPressed = true),
+        onTapDown: effectivelyDisabled ? null : (_) => setState(() => _isPressed = true),
         onTapUp: effectivelyDisabled
             ? null
             : (_) {
                 setState(() => _isPressed = false);
                 widget.onPressed?.call();
               },
-        onTapCancel: effectivelyDisabled
-            ? null
-            : () => setState(() => _isPressed = false),
+        onTapCancel: effectivelyDisabled ? null : () => setState(() => _isPressed = false),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 100),
           opacity: widget.isDisabled ? 0.4 : (widget.isLoading ? 0.8 : 1.0),
@@ -125,6 +136,7 @@ class _AppButtonState extends State<AppButton> {
             margin: EdgeInsets.only(top: topOffset, bottom: 4 - topOffset),
             decoration: BoxDecoration(
               color: bgColor,
+              border: border, // 🆕 Áp dụng viền khối nổi
               borderRadius: BorderRadius.circular(16),
               boxShadow: bottomShadowHeight > 0
                   ? [
@@ -139,7 +151,7 @@ class _AppButtonState extends State<AppButton> {
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
-                vertical: verticalPadding,
+                vertical: verticalPadding - (border != null ? 2.5 : 0), // Cân bằng lại padding khi có viền
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -183,7 +195,7 @@ class _AppButtonState extends State<AppButton> {
                           style: TextStyle(
                             color: fgColor,
                             fontSize: fontSize,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800, // Tăng lên hẳn w800 nhìn mộc mạc và sắc nét cực kỳ
                           ),
                         ),
                       ],

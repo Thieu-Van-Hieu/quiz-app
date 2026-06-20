@@ -11,7 +11,7 @@ import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/notifiers/subject_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/widgets/subject/subject_header.dart';
-import 'package:frontend/features/library/widgets/subject/subject_item.dart';
+import 'package:frontend/features/library/widgets/subject/subject_card.dart';
 import 'package:frontend/features/library/widgets/subject/update_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -89,7 +89,7 @@ class SubjectPage extends HookConsumerWidget {
                                 mainAxisSpacing: 24,
                               ),
                           itemCount: list.length,
-                          itemBuilder: (context, index) => SubjectItem(
+                          itemBuilder: (context, index) => SubjectCard(
                             subject: list[index],
                             onTap: () => context.go(
                               LibraryRoutes.getSubjectDetailPath(

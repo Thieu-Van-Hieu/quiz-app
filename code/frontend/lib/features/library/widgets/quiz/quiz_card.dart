@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/widgets/button/action_button.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
@@ -23,9 +24,71 @@ class QuizCard extends StatelessWidget {
     required this.onExportQuizlet,
   });
 
+  // --- HÀM HELPER HIỂN THỊ MENU EXPORT CHUẨN TỌA ĐỘ BẬT TỪ APP_ACTION_BUTTON ---
+  void _showExportMenu(BuildContext context, BuildContext buttonContext) {
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(
+          Offset(0, button.size.height + 6),
+          ancestor: overlay,
+        ),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<int>(
+      context: context,
+      position: position,
+      elevation: 0,
+      color: Colors.white,
+      constraints: const BoxConstraints(minWidth: 180),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFE2E8F0), width: 2.0),
+      ),
+      items: [
+        const PopupMenuItem(
+          value: 0,
+          child: ListTile(
+            dense: true,
+            leading: Icon(Icons.data_object_rounded, size: 18),
+            title: Text(
+              "Xuất file JSON",
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+        const PopupMenuItem(
+          value: 1,
+          child: ListTile(
+            dense: true,
+            leading: Icon(Icons.content_paste_go_rounded, size: 18),
+            title: Text(
+              "Copy cho Quizlet",
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == null) return;
+      if (value == 0) onExportJson();
+      if (value == 1) onExportQuizlet();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      // Đồng bộ hiệu ứng khối nổi cho chính chiếc Card theo vibe chung của app
       decoration: BoxDecoration(
         color: LibraryColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
@@ -37,63 +100,71 @@ class QuizCard extends StatelessWidget {
           ),
         ],
       ),
-      // Dùng Material để InkWell hiển thị hiệu ứng gợn sóng (ripple) chuẩn
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           hoverColor: Colors.transparent,
-          // Bỏ màu nền khi di chuột qua
           splashColor: Colors.transparent,
-          // Bỏ hiệu ứng gợn sóng khi click
           highlightColor: Colors.transparent,
-          // Bỏ hiệu ứng đổi màu khi giữ chuột
           overlayColor: WidgetStateProperty.all(Colors.transparent),
-          // Chắc chắn bỏ mọi lớp phủ
           onTap: onTap,
-          // InkWell tự xử lý cursor, không cần MouseRegion bao ngoài nữa
           mouseCursor: SystemMouseCursors.click,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- HÀNG TRÊN: Icon mô tả & Các nút thao tác ---
+                // --- HÀNG TRÊN: Icon mô tả & Toàn bộ hệ thống AppActionButton 3D ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: LibraryColors.accentLight,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.description_rounded,
-                        color: LibraryColors.quizIcon,
-                        size: 22,
-                      ),
+                    const Icon(
+                      Icons.description_rounded,
+                      color: LibraryColors.quizIcon,
+                      size: 22,
                     ),
-                    // Các IconButton bên trong vẫn sẽ có cursor riêng của chúng
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildExportMenu(),
-                        _buildActionButton(
+                        // 1. NÚT XUẤT BỘ ĐỀ (Bọc Builder để tính tọa độ menu thả xuống chuẩn pixel)
+                        Builder(
+                          builder: (buttonContext) {
+                            return AppActionButton(
+                              icon: Icons.file_upload_outlined,
+                              tooltip: "Xuất bộ đề",
+                              onTap: () =>
+                                  _showExportMenu(context, buttonContext),
+                              actionType: ActionType.export,
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 8),
+
+                        // 2. NÚT BẮT ĐẦU HỌC
+                        AppActionButton(
                           icon: Icons.school_outlined,
                           tooltip: "Bắt đầu học",
-                          onPressed: onLearn,
+                          onTap: onLearn,
+                          actionType: ActionType.info,
                         ),
-                        _buildActionButton(
+                        const SizedBox(width: 8),
+
+                        // 3. NÚT SỬA BỘ ĐỀ
+                        AppActionButton(
                           icon: Icons.edit_note_rounded,
                           tooltip: "Sửa",
-                          onPressed: onEdit,
+                          onTap: onEdit,
+                          actionType: ActionType.edit,
                         ),
-                        _buildActionButton(
+                        const SizedBox(width: 8),
+
+                        // 4. NÚT XÓA (Truyền màu Danger/Delete đặc thù của hệ thống)
+                        AppActionButton(
                           icon: Icons.delete_outline_rounded,
                           tooltip: "Xóa",
-                          onPressed: onDelete,
-                          color: LibraryColors.deleteButton,
+                          onTap: onDelete,
+                          actionType: ActionType.delete,
                         ),
                       ],
                     ),
@@ -136,64 +207,6 @@ class QuizCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  // Helper để code gọn hơn và đảm bảo mọi nút đều có cursor click
-  Widget _buildActionButton({
-    required IconData icon,
-    required String tooltip,
-    required VoidCallback onPressed,
-    Color color = LibraryColors.accentColor,
-  }) {
-    return IconButton(
-      onPressed: onPressed,
-      constraints: const BoxConstraints(),
-      padding: const EdgeInsets.all(6),
-      tooltip: tooltip,
-      mouseCursor: SystemMouseCursors.click,
-      icon: Icon(icon, color: color, size: 20),
-    );
-  }
-
-  Widget _buildExportMenu() {
-    return PopupMenuButton<int>(
-      tooltip: "Xuất bộ đề",
-      icon: const Icon(
-        Icons.file_upload_outlined,
-        color: LibraryColors.accentColor,
-        size: 20,
-      ),
-      padding: const EdgeInsets.all(6),
-      constraints: const BoxConstraints(),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      style: ElevatedButton.styleFrom(
-        enabledMouseCursor: SystemMouseCursors.click,
-      ),
-      onSelected: (value) {
-        if (value == 0) onExportJson();
-        if (value == 1) onExportQuizlet();
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(
-          value: 0,
-          child: ListTile(
-            leading: Icon(Icons.data_object, size: 20),
-            title: Text("Xuất file JSON"),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-        const PopupMenuItem(
-          value: 1,
-          child: ListTile(
-            leading: Icon(Icons.content_paste_go_rounded, size: 20),
-            title: Text("Copy cho Quizlet"),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-          ),
-        ),
-      ],
     );
   }
 }

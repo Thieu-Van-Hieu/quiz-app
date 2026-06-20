@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_strings.dart';
+import 'package:frontend/core/widgets/button/action_button.dart';
+import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/answer.dart';
@@ -39,7 +40,6 @@ class QuestionCard extends HookWidget {
       explanationController.text = question.explanation;
 
       if (question.answers.isNotEmpty) {
-        // NOTE: Tạo bản sao của danh sách đáp án để chỉnh sửa mà không ảnh hưởng đến dữ liệu gốc
         localAnswers.value = question.answers
             .map(
               (a) => Answer(
@@ -65,24 +65,19 @@ class QuestionCard extends HookWidget {
       return null;
     }, []);
 
-    // Hàm xử lý thay đổi thứ tự câu trả lời
     void onReorder(int oldIndex, int newIndex) {
       if (oldIndex < newIndex) {
         newIndex -= 1;
       }
 
-      // 1. Tạo danh sách mới để thay đổi thứ tự
       final newList = List<Answer>.from(localAnswers.value);
       final item = newList.removeAt(oldIndex);
       newList.insert(newIndex, item);
 
-      // 2. CẬP NHẬT indexOrder cho TẤT CẢ các item trong list mới
-      // Việc này rất quan trọng để khi hàm Save gọi, data đã sẵn sàng
       for (int i = 0; i < newList.length; i++) {
         newList[i].indexOrder = i;
       }
 
-      // 3. Cập nhật state (đủ để UI render lại đúng thứ tự)
       localAnswers.value = newList;
     }
 
@@ -93,176 +88,197 @@ class QuestionCard extends HookWidget {
         color: LibraryColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
         border: isEditing.value
-            ? Border.all(color: AppColors.infoBlue, width: 2)
+            ? Border.all(color: LibraryColors.editBorder, width: 2.5)
             : null,
         boxShadow: const [
           BoxShadow(
-            color: AppColors.toastShadow,
+            color: LibraryColors.cardShadow,
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(isEditing, startEditing, () {
-            question.content = contentController.text.trim();
-            question.explanation = explanationController.text.trim();
-            question.answers.clear();
-            question.answers.addAll(localAnswers.value);
-            question.syncAnswers();
-            onSave(question);
-            isEditing.value = false;
-          }),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isEditing.value) ...[
-                    _buildCustomTextField(
-                      controller: contentController,
-                      hintText: LibraryStrings.hintEnterQuestion,
-                      autofocus: question.content.isEmpty,
-                      isBold: true,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildCustomTextField(
-                      controller: explanationController,
-                      hintText: "Add explanation (optional)...",
-                      fontSize: 14,
-                      maxLines: 2,
-                      prefixIcon: Icons.lightbulb_outline,
-                    ),
-                    const SizedBox(height: 20),
+      // ✅ GIẢI PHÁP: Sử dụng SingleChildScrollView bọc ngoài Column nội dung chính
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // --- HEADER CARD ---
+            _buildHeader(isEditing, startEditing, () {
+              question.content = contentController.text.trim();
+              question.explanation = explanationController.text.trim();
+              question.answers.clear();
+              question.answers.addAll(localAnswers.value);
+              question.syncAnswers();
+              onSave(question);
+              isEditing.value = false;
+            }),
+            const SizedBox(height: 16),
 
-                    // Phần Kéo thả câu trả lời
-                    ReorderableListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: localAnswers.value.length,
-                      onReorder: onReorder,
-                      buildDefaultDragHandles: false,
-                      // Tắt icon 2 gạch mặc định
-                      proxyDecorator: (child, index, animation) {
-                        return Material(
-                          type: MaterialType.transparency,
-                          // Xóa màu nền tím/xám mặc định
-                          child:
-                              child, // Giữ nguyên style của AnswerItem khi đang kéo
-                        );
-                      },
-                      itemBuilder: (context, i) {
-                        final ans = localAnswers.value[i];
-                        return AnswerCard(
-                          // Quan trọng: Key giúp ReorderableListView xác định widget
-                          key: ValueKey(ans.hashCode),
-                          index: i,
-                          initialValue: ans.content,
-                          isCorrect: ans.isCorrect,
-                          canDelete: localAnswers.value.length > 2,
-                          onChanged: (val) {
-                            ans.content = val;
-                          },
-                          onToggleCorrect: (val) {
-                            final newList = List<Answer>.from(
-                              localAnswers.value,
-                            );
-                            newList[i].isCorrect = val;
-                            localAnswers.value = newList;
-                          },
-                          onDelete: () {
-                            final newList = List<Answer>.from(
-                              localAnswers.value,
-                            )..removeAt(i);
-                            localAnswers.value = newList;
-                          },
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 8),
-                    TextButton.icon(
-                      onPressed: () {
-                        localAnswers.value = [
-                          ...localAnswers.value,
-                          Answer(content: "", isCorrect: false),
-                        ];
-                      },
-                      icon: const Icon(
-                        Icons.add_circle_outline,
-                        color: AppColors.infoBlue,
-                      ),
-                      label: const Text(
-                        LibraryStrings.btnAddOption,
-                        style: TextStyle(color: AppColors.infoBlue),
-                      ),
-                    ),
-                  ] else ...[
-                    // View Mode
-                    InkWell(
-                      onDoubleTap: startEditing,
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      child: Container(
-                        constraints: const BoxConstraints(maxHeight: 150),
-                        width: double.infinity,
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Text(
-                            question.content.isEmpty
-                                ? LibraryStrings.noContent
-                                : question.content,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.toastText,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ...question.answers.map((ans) => _buildAnswerView(ans)),
-                    if (question.explanation.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      _buildExplanationView(),
-                    ],
-                  ],
-                ],
+            // --- BODY NỘI DUNG THAY ĐỔI THEO TRẠNG THÁI ---
+            if (isEditing.value) ...[
+              _buildCustomTextField(
+                controller: contentController,
+                hintText: LibraryStrings.hintEnterQuestion,
+                autofocus: question.content.isEmpty,
+                isBold: true,
               ),
-            ),
-          ),
-        ],
+              const SizedBox(height: 12),
+              _buildCustomTextField(
+                controller: explanationController,
+                hintText: "Thêm giải thích (không bắt buộc)...",
+                fontSize: 14,
+                maxLines: 2,
+                prefixIcon: Icons.lightbulb_outline_rounded,
+              ),
+              const SizedBox(height: 20),
+
+              ReorderableListView.builder(
+                shrinkWrap: true,
+                physics:
+                    const NeverScrollableScrollPhysics(), // Vô hiệu hóa scroll riêng của List kéo thả để dùng chung trục scroll cha
+                itemCount: localAnswers.value.length,
+                onReorder: onReorder,
+                buildDefaultDragHandles: false,
+                proxyDecorator: (child, index, animation) {
+                  return Material(
+                    type: MaterialType.transparency,
+                    child: child,
+                  );
+                },
+                itemBuilder: (context, i) {
+                  final ans = localAnswers.value[i];
+                  return AnswerCard(
+                    key: ValueKey(ans.hashCode),
+                    index: i,
+                    initialValue: ans.content,
+                    isCorrect: ans.isCorrect,
+                    canDelete: localAnswers.value.length > 2,
+                    onChanged: (val) {
+                      ans.content = val;
+                    },
+                    onToggleCorrect: (val) {
+                      final newList = List<Answer>.from(localAnswers.value);
+                      newList[i].isCorrect = val;
+                      localAnswers.value = newList;
+                    },
+                    onDelete: () {
+                      final newList = List<Answer>.from(localAnswers.value)
+                        ..removeAt(i);
+                      localAnswers.value = newList;
+                    },
+                  );
+                },
+              ),
+
+              const SizedBox(height: 12),
+              AppButton(
+                onPressed: () {
+                  localAnswers.value = [
+                    ...localAnswers.value,
+                    Answer(content: "", isCorrect: false),
+                  ];
+                },
+                icon: Icons.add_circle_outline_rounded,
+                label: LibraryStrings.btnAddOption,
+                variant: ButtonVariant.brandOutlined,
+                size: ButtonSize.small,
+              ),
+            ] else ...[
+              // --- CHẾ ĐỘ XEM TRỰC QUAN (VIEW MODE) ---
+              InkWell(
+                onDoubleTap: startEditing,
+                hoverColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    question.content.isEmpty
+                        ? LibraryStrings.noContent
+                        : question.content,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: LibraryColors.primaryText,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...question.answers.map((ans) => _buildAnswerView(ans)),
+              if (question.explanation.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _buildExplanationView(),
+              ],
+            ],
+          ],
+        ),
       ),
     );
   }
 
-  // --- WIDGETS PHỤ ---
+  // --- CÁC WIDGET THÀNH PHẦN PHỤ ---
 
   Widget _buildAnswerView(Answer ans) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: ans.isCorrect ? AppColors.successLight : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        // Thay đổi màu nền: Đáp án đúng dùng màu lục trong trẻo, đáp án thường dùng màu trắng tinh để không bị đì nền
+        color: ans.isCorrect ? LibraryColors.correctBackground : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: ans.isCorrect
+              ? LibraryColors.correct.withValues(
+                  alpha: 0.6,
+                ) // Tăng nhẹ alpha cho viền xanh sắc nét
+              : const Color(0xFFE2E8F0).withValues(
+                  alpha: 0.7,
+                ), // Làm dịu viền xám để tiệp vào background tổng thể
+          width: ans.isCorrect
+              ? 1.5
+              : 1.2, // Đáp án thường dùng viền mảnh hơn để tăng độ thanh thoát
+        ),
+        // Thêm chút shadow cực nhẹ cho đáp án thường để nổi bật trên nền layout tổng thể
+        boxShadow: !ans.isCorrect
+            ? [
+                BoxShadow(
+                  color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
       child: Row(
         children: [
           Icon(
-            ans.isCorrect ? Icons.check_circle : Icons.radio_button_off_rounded,
-            size: 18,
-            color: ans.isCorrect ? AppColors.success : AppColors.secondaryText,
+            ans.isCorrect
+                ? Icons.check_circle_rounded
+                : Icons.radio_button_off_rounded,
+            size: 20,
+            color: ans.isCorrect
+                ? LibraryColors.correct
+                : const Color(
+                    0xFF94A3B8,
+                  ), // Đổi màu icon rỗng sang màu Slate nhẹ nhàng, không bị tối cũ kỹ
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               ans.content,
-              style: const TextStyle(color: AppColors.toastText),
+              style: TextStyle(
+                color: ans.isCorrect
+                    ? LibraryColors.primaryText
+                    : const Color(
+                        0xFF334155,
+                      ), // Màu chữ xám Slate đậm giúp đọc rõ chữ và không bị đì tương phản
+                fontWeight: FontWeight.w500,
+                fontSize: 14.5,
+              ),
             ),
           ),
         ],
@@ -272,19 +288,30 @@ class QuestionCard extends HookWidget {
 
   Widget _buildExplanationView() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.infoBlue.withValues(alpha: 0.05),
+        color: const Color(0xFFF0FDF4),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFDCFCE7), width: 1.5),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lightbulb, size: 18, color: AppColors.infoBlue),
-          const SizedBox(width: 8),
+          const Icon(
+            Icons.lightbulb_rounded,
+            size: 20,
+            color: Color(0xFF3B82F6),
+          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               question.explanation,
-              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+              style: const TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: Color(0xFF334155),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -306,16 +333,24 @@ class QuestionCard extends HookWidget {
       maxLines: maxLines,
       autofocus: autofocus,
       style: TextStyle(
-        fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+        fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
         fontSize: fontSize,
+        color: LibraryColors.primaryText,
       ),
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20) : null,
+        hintStyle: const TextStyle(color: LibraryColors.disabledText),
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, size: 20, color: LibraryColors.secondaryText)
+            : null,
         filled: true,
-        fillColor: AppColors.textFieldFill,
+        fillColor: LibraryColors.inputBackground,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
       ),
@@ -333,29 +368,34 @@ class QuestionCard extends HookWidget {
         Text(
           "${LibraryStrings.labelQuestionNumber} $index",
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.infoBlue,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+            color: Color(0xFF93C5FD),
+            letterSpacing: 0.3,
           ),
         ),
         if (!isEditing.value)
           Row(
             children: [
-              IconButton(
-                onPressed: onEdit,
-                mouseCursor: SystemMouseCursors.click,
-                icon: const Icon(Icons.edit, color: AppColors.infoBlue),
+              AppActionButton(
+                onTap: onEdit,
+                actionType: ActionType.edit,
+                style: ActionButtonStyle.tonal,
+                tooltip: "Chỉnh sửa câu hỏi",
               ),
-              IconButton(
-                onPressed: onDelete,
-                mouseCursor: SystemMouseCursors.click,
-                icon: const Icon(Icons.delete, color: AppColors.toastError),
+              const SizedBox(width: 8),
+              AppActionButton(
+                onTap: onDelete,
+                actionType: ActionType.delete,
+                style: ActionButtonStyle.tonal,
+                tooltip: "Xóa câu hỏi",
               ),
             ],
           )
         else
           Row(
             children: [
-              TextButton(
+              AppButton(
                 onPressed: () {
                   if (question.isDraft) {
                     onDelete();
@@ -363,23 +403,21 @@ class QuestionCard extends HookWidget {
                     isEditing.value = false;
                   }
                 },
-                style: TextButton.styleFrom(
-                  enabledMouseCursor: SystemMouseCursors.click,
-                ),
-                child: const Text(AppStrings.btnCancel),
+                label: AppStrings.btnCancel,
+                variant: ButtonVariant.slateOutlined,
+                size: ButtonSize.small,
               ),
               const SizedBox(width: 8),
-              ElevatedButton(
+              AppButton(
                 onPressed: () {
                   if (question.isDraft) {
                     question.setAsNew();
                   }
                   onSaveAction();
                 },
-                style: ElevatedButton.styleFrom(
-                  enabledMouseCursor: SystemMouseCursors.click,
-                ),
-                child: const Text(AppStrings.btnDone),
+                label: AppStrings.btnDone,
+                variant: ButtonVariant.brand,
+                size: ButtonSize.small,
               ),
             ],
           ),

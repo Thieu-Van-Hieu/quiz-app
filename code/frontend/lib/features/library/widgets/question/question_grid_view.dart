@@ -4,7 +4,7 @@ import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
 import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
-import 'package:frontend/features/library/widgets/question/question_item.dart';
+import 'package:frontend/features/library/widgets/question/question_card.dart';
 
 class QuestionGridView extends StatelessWidget {
   final List<Question> allQuestions;
@@ -67,14 +67,14 @@ class QuestionGridView extends StatelessWidget {
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 600,
-              mainAxisExtent: 520,
+              mainAxisExtent: 540,
               crossAxisSpacing: 24,
               mainAxisSpacing: 24,
             ),
             itemCount: pagedList.length,
             itemBuilder: (context, index) {
               final question = pagedList[index];
-              return QuestionItem(
+              return QuestionCard(
                 key: ObjectKey(question),
                 index: (params.page * params.size) + index + 1,
                 question: question,

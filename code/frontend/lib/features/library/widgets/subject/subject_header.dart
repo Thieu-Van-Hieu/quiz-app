@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
+import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/search_params/subject_search_params.dart';
@@ -40,21 +41,14 @@ class SubjectHeader extends ConsumerWidget {
             ),
           ],
         ),
-        ElevatedButton.icon(
+        // Áp dụng AppButton phong cách 3D mới tại đây
+        AppButton(
           onPressed: () => _showAddDialog(context, ref),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: LibraryColors.accentColor,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          icon: const Icon(Icons.add_rounded),
-          label: const Text(
-            LibraryStrings.btnAdd,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          label: LibraryStrings.btnAdd,
+          icon: Icons.add_rounded,
+          variant: ButtonVariant.brand, // Tông màu nhấn 3D nổi bật
+          size: ButtonSize
+              .medium, // Tự động ăn theo padding chuẩn py-3.5 của React ban nãy
         ),
       ],
     );

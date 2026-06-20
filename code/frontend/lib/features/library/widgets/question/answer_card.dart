@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:frontend/core/widgets/button/action_button.dart'; // Import nút action_button hệ thống
 
 class AnswerCard extends HookWidget {
   final int index;
@@ -36,9 +37,9 @@ class AnswerCard extends HookWidget {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
         children: [
-          // 1. Thêm Handle icon để báo hiệu có thể kéo thả
+          // 1. Handle icon kéo thả mượt mà
           MouseRegion(
-            cursor: SystemMouseCursors.move, // Ép con trỏ ở tầng cao hơn
+            cursor: SystemMouseCursors.move,
             child: ReorderableDragStartListener(
               index: index,
               child: Container(
@@ -46,10 +47,7 @@ class AnswerCard extends HookWidget {
                   horizontal: 8,
                   vertical: 10,
                 ),
-                decoration: BoxDecoration(
-                  color: Colors
-                      .transparent, // Tạo vùng đệm để nhận diện chuột tốt hơn
-                ),
+                decoration: const BoxDecoration(color: Colors.transparent),
                 child: const Icon(
                   Icons.drag_indicator,
                   color: Colors.grey,
@@ -60,15 +58,19 @@ class AnswerCard extends HookWidget {
           ),
           const SizedBox(width: 4),
 
+          // 2. Checkbox đáp án đúng
           Checkbox(
             value: isCorrect,
-            activeColor: Colors.green,
+            activeColor: const Color(
+              0xFF22C55E,
+            ), // Xanh lục mướt chuẩn thiết kế mới
             shape: const CircleBorder(),
             onChanged: (val) => onToggleCorrect(val ?? false),
             mouseCursor: SystemMouseCursors.click,
           ),
           const SizedBox(width: 4),
 
+          // 3. Ô nhập nội dung đáp án
           Expanded(
             child: TextFormField(
               controller: controller,
@@ -81,32 +83,36 @@ class AnswerCard extends HookWidget {
                   vertical: 12,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
                 ),
                 enabledBorder: isCorrect
                     ? OutlineInputBorder(
                         borderSide: const BorderSide(
-                          color: Colors.green,
+                          color: Color(0xFF22C55E),
                           width: 1.5,
                         ),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(10),
                       )
-                    : null,
+                    : OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
               ),
               onChanged: onChanged,
             ),
           ),
 
-          if (canDelete)
-            IconButton(
-              icon: const Icon(
-                Icons.remove_circle_outline,
-                color: Colors.redAccent,
-                size: 20,
-              ),
-              onPressed: onDelete,
-              mouseCursor: SystemMouseCursors.click,
+          // 4. Áp dụng AppActionButton đồng bộ với hệ thống nút của Card mẹ
+          if (canDelete) ...[
+            const SizedBox(width: 8),
+            AppActionButton(
+              onTap: onDelete,
+              actionType: ActionType.delete,
+              style: ActionButtonStyle.tonal,
+              tooltip: "Xóa đáp án này",
             ),
+          ],
         ],
       ),
     );

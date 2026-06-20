@@ -19,7 +19,7 @@ import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
 import 'package:frontend/features/library/widgets/quiz/add_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_header.dart';
-import 'package:frontend/features/library/widgets/quiz/quiz_item.dart';
+import 'package:frontend/features/library/widgets/quiz/quiz_card.dart';
 import 'package:frontend/features/library/widgets/quiz/quizlet_export_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/quizlet_import_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/update_dialog.dart';
@@ -242,7 +242,7 @@ class QuizPage extends HookConsumerWidget {
                                   crossAxisSpacing: 24,
                                   mainAxisSpacing: 24,
                                 ),
-                            itemBuilder: (context, index) => QuizItem(
+                            itemBuilder: (context, index) => QuizCard(
                               quiz: quizzes[index],
                               onTap: () => _onQuizTap(
                                 context,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/widgets/button/action_button.dart';
+import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:intl/intl.dart';
@@ -35,11 +37,9 @@ class LearningResultCard extends StatelessWidget {
       subjectName = quiz.subject.target?.name ?? "Môn học";
     }
 
-    // Logic lấy phạm vi câu hỏi
+    // Logic lấy phạm vi câu hỏi dựa trên vị trí (index) trong Quiz
     final List<int> allQuestionIdsInQuiz =
         quiz?.questions.map((q) => q.id).toList() ?? [];
-
-    // 2. Logic lấy phạm vi câu hỏi dựa trên vị trí (index) trong Quiz
     final details = session.learningSessionDetails;
     String rangeText = "N/A";
 
@@ -47,7 +47,6 @@ class LearningResultCard extends StatelessWidget {
       final List<int> currentSessionIndices = details
           .map((d) {
             final qId = d.question.target?.id ?? 0;
-            // Tìm vị trí của câu hỏi này trong danh sách tổng của Quiz (index + 1 = STT)
             final index = allQuestionIdsInQuiz.indexOf(qId);
             return index != -1 ? index + 1 : -1;
           })
@@ -63,190 +62,180 @@ class LearningResultCard extends StatelessWidget {
 
     final isPracticeMode =
         session.learningMode == LearningMode.practice.toValue();
-    final isStudyMode = session.learningMode == LearningMode.study.toValue();
     final isExamMode = session.learningMode == LearningMode.exam.toValue();
 
     final durationText = _formatTime(
       isExamMode ? (session.timeLimit ?? 0) * 60 : session.studyTime,
     );
+
     return Card(
       elevation: 0,
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
       ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         mouseCursor: SystemMouseCursors.click,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Header: Ngày & Trạng thái
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    formattedDate,
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  _buildBadge(
-                    isCompleted ? "HOÀN THÀNH" : "ĐANG LÀM",
-                    isCompleted ? Colors.green : Colors.orange,
-                  ),
-                  IconButton(
-                    onPressed: onDelete,
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: Colors.redAccent,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                    style: IconButton.styleFrom(
-                      enabledMouseCursor: SystemMouseCursors.click,
-                      disabledMouseCursor: SystemMouseCursors.forbidden,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // 2. Tên Môn học (Phụ) & Tên Quiz (Chính)
-              Text(
-                subjectName.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
-                  letterSpacing: 0.5,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                quizName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16,
-                  color: Color(0xFF1A1C1E),
-                ),
-              ),
-              const Divider(height: 24, thickness: 0.5),
-
-              // 3. Thông tin chi tiết
-              _buildInfoRow(Icons.tag, "Phạm vi:", rangeText),
-              _buildInfoRow(
-                Icons.layers_outlined,
-                "Chế độ:",
-                session.learningModeEnum.label,
-              ),
-              _buildInfoRow(Icons.timer_outlined, "Thời gian:", durationText),
-
-              if (session.shuffleQuestions || session.shuffleAnswers)
-                _buildInfoRow(
-                  Icons.tune,
-                  "Cấu hình:",
-                  "${session.shuffleQuestions ? 'Trộn câu' : ''}${session.shuffleQuestions && session.shuffleAnswers ? ', ' : ''}${session.shuffleAnswers ? 'Trộn đáp án' : ''}",
-                ),
-
-              const Spacer(),
-
-              // 4. Thống kê (Chỉ hiện khi đã xong)
-              if (isCompleted) ...[
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatBox(
-                        isPracticeMode ? "Xem" : "Đúng",
-                        isPracticeMode
-                            ? "${session.totalSeen}"
-                            : "${session.totalCorrect}",
-                        Colors.green,
-                      ),
-                      _buildStatBox(
-                        isPracticeMode ? "Chưa xem" : "Sai",
-                        isPracticeMode
-                            ? "${session.learningSessionDetails.length - session.totalSeen}"
-                            : "${session.totalWrong}",
-                        Colors.red,
-                      ),
-                      _buildStatBox(
-                        "Tổng",
-                        "${details.length}",
-                        Colors.blueGrey,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              // 5. Nút bấm Actions
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: onRetake,
-                      icon: const Icon(Icons.refresh, size: 14),
-                      label: const Text(
-                        "Làm lại",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.blue.shade700,
-                        side: BorderSide(color: Colors.blue.shade100),
-                        enabledMouseCursor: SystemMouseCursors.click,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        minimumSize: const Size(0, 36),
+        // ✅ GIẢI PHÁP: Bọc IntrinsicHeight giúp Column nhận biết được chiều cao tối đa để sử dụng Spacer() hợp lệ
+        child: IntrinsicHeight(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Header: Ngày & Trạng thái & Nút Xóa
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      formattedDate,
+                      style: const TextStyle(
+                        color: Color(0xFF94A3B8),
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  if (isCompleted &&
-                      session.totalWrong > 0 &&
-                      !isPracticeMode) ...[
+                    const Spacer(),
+                    _buildBadge(
+                      isCompleted ? "HOÀN THÀNH" : "ĐANG LÀM",
+                      isCompleted
+                          ? const Color(0xFF22C55E)
+                          : const Color(0xFFF97316),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: onCreateMistakeSession,
-                        icon: const Icon(Icons.error_outline, size: 14),
-                        label: const Text(
-                          "Câu sai",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade50,
-                          foregroundColor: Colors.red.shade700,
-                          elevation: 0,
-                          enabledMouseCursor: SystemMouseCursors.click,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          minimumSize: const Size(0, 36),
-                        ),
-                      ),
+                    AppActionButton(
+                      onTap: onDelete,
+                      actionType: ActionType.delete,
+                      style: ActionButtonStyle.tonal,
+                      tooltip: "Xóa lượt học này",
                     ),
                   ],
+                ),
+                const SizedBox(height: 12),
+
+                // 2. Tên Môn học & Tên Quiz
+                Text(
+                  subjectName.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1D4ED8),
+                    letterSpacing: 0.5,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  quizName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+                const Divider(
+                  height: 24,
+                  thickness: 0.5,
+                  color: Color(0xFFE2E8F0),
+                ),
+
+                // 3. Thông tin chi tiết
+                _buildInfoRow(Icons.tag, "Phạm vi:", rangeText),
+                _buildInfoRow(
+                  Icons.layers_outlined,
+                  "Chế độ:",
+                  session.learningModeEnum.label,
+                ),
+                _buildInfoRow(Icons.timer_outlined, "Thời gian:", durationText),
+
+                if (session.shuffleQuestions || session.shuffleAnswers)
+                  _buildInfoRow(
+                    Icons.tune,
+                    "Cấu hình:",
+                    "${session.shuffleQuestions ? 'Trộn câu' : ''}${session.shuffleQuestions && session.shuffleAnswers ? ', ' : ''}${session.shuffleAnswers ? 'Trộn đáp án' : ''}",
+                  ),
+
+                const SizedBox(height: 12),
+
+                // 4. Thống kê (Chỉ hiện khi đã xong)
+                if (isCompleted) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFF1F5F9)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatBox(
+                          isPracticeMode ? "Xem" : "Đúng",
+                          isPracticeMode
+                              ? "${session.totalSeen}"
+                              : "${session.totalCorrect}",
+                          const Color(0xFF22C55E),
+                        ),
+                        _buildStatBox(
+                          isPracticeMode ? "Chưa xem" : "Sai",
+                          isPracticeMode
+                              ? "${session.learningSessionDetails.length - session.totalSeen}"
+                              : "${session.totalWrong}",
+                          const Color(0xFFEF4444),
+                        ),
+                        _buildStatBox(
+                          "Tổng",
+                          "${details.length}",
+                          const Color(0xFF64748B),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-            ],
+
+                // ✅ THAY ĐỔI CỐT LÕI: Đẩy toàn bộ các nút bấm Actions xuống đáy tuyệt đối của Card
+                const Spacer(),
+                const SizedBox(height: 12),
+
+                // 5. Nút bấm Actions cố định dưới đáy
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        onPressed: onRetake,
+                        label: "Làm lại",
+                        icon: Icons.refresh,
+                        variant: ButtonVariant.brandOutlined,
+                        size: ButtonSize.small,
+                      ),
+                    ),
+                    if (isCompleted &&
+                        session.totalWrong > 0 &&
+                        !isPracticeMode) ...[
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: AppButton(
+                          onPressed: onCreateMistakeSession,
+                          label: "Câu sai",
+                          icon: Icons.error_outline,
+                          variant: ButtonVariant.danger,
+                          size: ButtonSize.small,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -258,11 +247,11 @@ class LearningResultCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          Icon(icon, size: 14, color: Colors.grey.shade400),
+          Icon(icon, size: 14, color: const Color(0xFF94A3B8)),
           const SizedBox(width: 8),
           Text(
             label,
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
           ),
           const SizedBox(width: 4),
           Expanded(
@@ -271,7 +260,7 @@ class LearningResultCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: Color(0xFF334155),
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -295,9 +284,9 @@ class LearningResultCard extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey.shade500,
-            fontSize: 9,
+          style: const TextStyle(
+            color: Color(0xFF94A3B8),
+            fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -307,7 +296,7 @@ class LearningResultCard extends StatelessWidget {
 
   Widget _buildBadge(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -318,6 +307,7 @@ class LearningResultCard extends StatelessWidget {
           color: color,
           fontSize: 9,
           fontWeight: FontWeight.w900,
+          letterSpacing: 0.3,
         ),
       ),
     );

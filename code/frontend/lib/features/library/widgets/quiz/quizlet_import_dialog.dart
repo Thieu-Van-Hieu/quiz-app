@@ -140,10 +140,16 @@ class QuizletImportDialog extends HookWidget {
         TextButton.icon(
           icon: const Icon(Icons.paste),
           label: const Text("Dán thủ công"),
+          style: TextButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           onPressed: isLoading.value ? null : handlePaste,
         ),
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           child: const Text("Hủy"),
         ),
         ElevatedButton(
@@ -154,6 +160,9 @@ class QuizletImportDialog extends HookWidget {
                   'termDef': termDefSep.text,
                   'row': rowSep.text,
                 }),
+          style: ElevatedButton.styleFrom(
+            enabledMouseCursor: SystemMouseCursors.click,
+          ),
           child: const Text("Phân tích"),
         ),
       ],
