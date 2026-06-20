@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 
 class DashboardColors {
-  // --- SIDEBAR (Dùng Colors.blue làm gốc + withValues) ---
-  static const Color sidebarHeader = Color(0xFF9FB6D3); // Màu xanh xám đặc thù, giữ Hex
-  
-  // 0x33 tương đương 20% alpha
-  static final Color sidebarBorder = Colors.blue.withValues(alpha: 0.2); 
-  
-  // 0x26 tương đương 15% alpha
-  static final Color sidebarActive = Colors.blue.withValues(alpha: 0.15);
-  
-  // 0x1A tương đương 10% alpha
-  static final Color sidebarHover = Colors.blue.withValues(alpha: 0.1);
+  // --- SIDEBAR (Tông Xanh Dương Pastel Nhẹ Nhàng) ---
+  static const Color sidebarHeader = Color(
+    0xFFD6E4F0,
+  ); // Xanh xám pastel dịu mát (thay cho màu xám cũ)
 
-  // --- NỀN & NỘI DUNG ---
-  static const Color backgroundContent = Color(0xFFF5F7F9); // Màu nền đặc thù, giữ Hex
-  
+  // Viền sidebar: Dùng màu xanh pastel trong suốt nhẹ
+  static final Color sidebarBorder = const Color(
+    0xFF74B9FF,
+  ).withValues(alpha: 0.25);
+
+  // Trạng thái đang chọn (Active): Màu nền xanh pastel mướt mắt
+  static final Color sidebarActive = const Color(
+    0xFF74B9FF,
+  ).withValues(alpha: 0.18);
+
+  // Trạng thái lướt qua (Hover): Cực kỳ nhẹ để tạo hiệu ứng mượt
+  static final Color sidebarHover = const Color(
+    0xFF74B9FF,
+  ).withValues(alpha: 0.08);
+
+  // --- NỀN & NỘI DUNG (PASTEL STYLE) ---
+  static const Color backgroundContent = Color(
+    0xFFF9FBFC,
+  ); // Trắng sữa pha chút xanh pastel rất sạch và sáng
+
   // --- TEXT ---
-  static const Color textPrimary = Color(0xFF2D2D2D); // Màu xám đậm sâu, giữ Hex
+  static const Color textPrimary = Color(
+    0xFF34495E,
+  ); // Xám xanh đá đậm (vừa đủ độ tương phản, vừa đúng điệu pastel)
 }

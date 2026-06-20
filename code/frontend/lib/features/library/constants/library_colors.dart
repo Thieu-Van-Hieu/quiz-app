@@ -1,47 +1,68 @@
 import 'package:flutter/material.dart';
 
 class LibraryColors {
-  // --- NỀN & THẺ (SURFACES) ---
-  static const Color background = Color(0xFFF8F9FA);
+  // --- NỀN & THẺ (SURFACES - PASTEL) ---
+  static const Color background = Color(0xFFF7F9FA); // Trắng xám dịu mát
   static const Color cardBackground = Colors.white;
-  static const Color divider = Color(0xFFE0E0E0);
-  static const Color shadow = Color(0x0A000000); // 4% Black
+  static const Color divider = Color(
+    0xFFEDF1F5,
+  ); // Đường kẻ nhạt hơn, tiệp với pastel
+  static const Color shadow = Color(0x06000000); // Giảm còn 2.3% cho mượt
   static const Color cardShadow = Color(
-    0x14000000,
-  ); // 8% Black cho nổi khối hơn
+    0x0B000000,
+  ); // Giảm còn 4.3% cho nổi khối nhẹ nhàng
 
   // --- CHỮ (TYPOGRAPHY) ---
-  static const Color primaryText = Color(0xFF2D3436);
-  static const Color secondaryText = Color(0xFF636E72);
-  static const Color disabledText = Color(0xFFB2BEC3);
+  static const Color primaryText = Color(
+    0xFF2C3E50,
+  ); // Xám xanh navy đậm (sang và dịu mắt hơn đen)
+  static const Color secondaryText = Color(0xFF7F8C8D); // Xám pastel vừa
+  static const Color disabledText = Color(
+    0xFFBDC3C7,
+  ); // Xám pastel nhạt cho trạng thái tắt
 
-  // --- MÀU NHẤN & ICON (ACCENT) ---
-  static const Color accentColor = Colors.blue;
-  // Xanh cực nhạt cho nền highlight (thay cho opacity 0.1)
-  static const Color accentLight = Color(0xFFE3F2FD);
-  // Xanh nhạt vừa cho Border khi Edit
-  static const Color editBorder = Color(0xFF90CAF9);
+  // --- MÀU NHẤN & ICON (ACCENT - PASTEL BLUE) ---
+  static const Color accentColor = Color(0xFF74B9FF); // Xanh dương pastel sáng
+  static const Color accentLight = Color(
+    0xFFEBF5FF,
+  ); // Xanh cực nhạt, mướt mắt cho highlight
+  static const Color editBorder = Color(
+    0xFFADCEDD,
+  ); // Viền xanh xám pastel nhẹ khi chỉnh sửa
 
-  static const Color folderIcon = Color(0xFFFAB1A0); // Cam san hô
-  static const Color quizIcon = Colors.blue;
-  static const Color quizHighlight = Color(0xFFE3F2FD);
+  static const Color folderIcon = Color(
+    0xFFFFB8B1,
+  ); // Cam san hô pastel nguyên bản nhạt
+  static const Color quizIcon = Color(
+    0xFF81ECEC,
+  ); // Xanh Mint/Cyan pastel cho bộ câu hỏi
+  static const Color quizHighlight = Color(
+    0xFFE8FFFF,
+  ); // Nền highlight xanh mint siêu nhạt
 
-  // --- TRẠNG THÁI CÂU HỎI (QUIZ STATES) ---
-  // Xanh lá cho đáp án đúng
-  static const Color correct = Colors.green;
-  // Nền xanh lá cực nhạt (Solid) cho item đúng
-  static const Color correctBackground = Color(0xFFE8F5E9);
+  // --- TRẠNG THÁI CÂU HỎI (QUIZ STATES - PASTEL) ---
+  static const Color correct = Color(0xFF55EFC4); // Xanh lá pastel (Đúng)
+  static const Color correctBackground = Color(
+    0xFFE8FDF7,
+  ); // Nền xanh lá siêu nhạt cho câu đúng
 
   // --- HÀNH ĐỘNG (ACTIONS) ---
-  static const Color deleteButton = Color(0xFFFF7675); // Đỏ pastel
-  // Nền đỏ nhạt (Solid) cho nút xóa
-  static const Color deleteLight = Color(0xFFFFEBEE);
+  static const Color deleteButton = Color(
+    0xFFFF7675,
+  ); // Đỏ hồng pastel nhạt thời thượng
+  static const Color deleteLight = Color(
+    0xFFFFF0F0,
+  ); // Nền đỏ pastel siêu nhạt cho nút xóa
 
-  // Màu bổ sung cho các button/icon khác
-  static const Color editButton = Colors.blue;
-  static const Color infoIcon = Color(0xFF74B9FF);
+  static const Color editButton = Color(
+    0xFFFAB1A0,
+  ); // Đổi sang màu cam đào pastel cho nút sửa
+  static const Color infoIcon = Color(
+    0xFFA29BFE,
+  ); // Tím pastel mộng mơ cho icon thông tin
 
   // --- INPUTS ---
-  // Màu nền cho TextField khi không focus (thay cho opacity)
-  static const Color inputBackground = Color(0xFFF1F3F5);
+  static const Color inputBackground = Color(
+    0xFFF1F2F6,
+  ); // Nền input xám mịn pastel
 }
