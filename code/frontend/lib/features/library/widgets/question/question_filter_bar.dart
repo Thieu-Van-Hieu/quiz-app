@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/widgets/search_bar.dart';
+import 'package:frontend/core/widgets/input/search_bar.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
@@ -41,6 +41,7 @@ class QuestionFilterBar extends StatelessWidget {
             backgroundColor: Colors.red.shade50,
             selectedColor: Colors.red.shade100,
             checkmarkColor: Colors.red,
+            mouseCursor: SystemMouseCursors.click,
             labelStyle: TextStyle(
               color: showOnlyErrors ? Colors.red : Colors.red.shade700,
               fontWeight: FontWeight.bold,

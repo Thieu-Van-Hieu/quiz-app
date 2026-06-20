@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:frontend/core/widgets/breadcrumb_bar.dart';
-import 'package:frontend/core/widgets/sidebar_button.dart';
-import 'package:frontend/core/widgets/sidebar_header.dart';
+import 'package:frontend/core/widgets/layout/breadcrumb_bar.dart';
+import 'package:frontend/core/widgets/layout/sidebar_button.dart';
+import 'package:frontend/core/widgets/layout/sidebar_header.dart';
 import 'package:frontend/features/dashboard/constants/dashboard_colors.dart';
 import 'package:frontend/routes/app_route_config.dart';
 import 'package:go_router/go_router.dart';

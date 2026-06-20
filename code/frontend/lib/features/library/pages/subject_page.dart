@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
-import 'package:frontend/core/widgets/delete_confirm_dialog.dart';
-import 'package:frontend/core/widgets/pagination.dart'; // Import Widget phân trang của bạn
-import 'package:frontend/core/widgets/search_bar.dart';
+import 'package:frontend/core/widgets/input/delete_confirm_dialog.dart';
+import 'package:frontend/core/widgets/layout/pagination.dart'; // Import Widget phân trang của bạn
+import 'package:frontend/core/widgets/input/search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/search_params/subject_search_params.dart';

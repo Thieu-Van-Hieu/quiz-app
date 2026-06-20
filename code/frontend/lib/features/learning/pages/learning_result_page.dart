@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
-import 'package:frontend/core/widgets/delete_confirm_dialog.dart';
-import 'package:frontend/core/widgets/pagination.dart'; // Widget Phân trang của phen
-import 'package:frontend/core/widgets/search_bar.dart'; // Widget Search của phen
+import 'package:frontend/core/widgets/input/delete_confirm_dialog.dart';
+import 'package:frontend/core/widgets/layout/pagination.dart'; // Widget Phân trang của phen
+import 'package:frontend/core/widgets/input/search_bar.dart'; // Widget Search của phen
 import 'package:frontend/features/learning/models/search_params/learning_session_search_params.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
