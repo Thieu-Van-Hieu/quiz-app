@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class AnswerItem extends HookWidget {
+class AnswerCard extends HookWidget {
   final int index;
   final String initialValue;
   final bool isCorrect;
@@ -10,7 +10,7 @@ class AnswerItem extends HookWidget {
   final Function(bool) onToggleCorrect;
   final VoidCallback onDelete;
 
-  const AnswerItem({
+  const AnswerCard({
     super.key,
     required this.index,
     required this.initialValue,

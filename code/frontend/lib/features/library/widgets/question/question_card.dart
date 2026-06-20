@@ -6,16 +6,16 @@ import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
-import 'package:frontend/features/library/widgets/question/answer_item.dart';
+import 'package:frontend/features/library/widgets/question/answer_card.dart';
 
-class QuestionItem extends HookWidget {
+class QuestionCard extends HookWidget {
   final int index;
   final bool isNew;
   final Question question;
   final Function(Question) onSave;
   final VoidCallback onDelete;
 
-  const QuestionItem({
+  const QuestionCard({
     super.key,
     required this.index,
     this.isNew = false,
@@ -157,7 +157,7 @@ class QuestionItem extends HookWidget {
                       },
                       itemBuilder: (context, i) {
                         final ans = localAnswers.value[i];
-                        return AnswerItem(
+                        return AnswerCard(
                           // Quan trọng: Key giúp ReorderableListView xác định widget
                           key: ValueKey(ans.hashCode),
                           index: i,

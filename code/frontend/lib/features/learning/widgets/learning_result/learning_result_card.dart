@@ -3,14 +3,14 @@ import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:intl/intl.dart';
 
-class LearningResultItem extends StatelessWidget {
+class LearningResultCard extends StatelessWidget {
   final LearningSession session;
   final VoidCallback onTap;
   final VoidCallback onRetake;
   final VoidCallback? onCreateMistakeSession;
   final VoidCallback onDelete;
 
-  const LearningResultItem({
+  const LearningResultCard({
     super.key,
     required this.session,
     required this.onTap,

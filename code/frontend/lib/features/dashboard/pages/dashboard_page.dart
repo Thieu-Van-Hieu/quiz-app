@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/features/dashboard/widgets/activity_chart_card.dart';
 import 'package:frontend/features/dashboard/widgets/overall_statistic_grid.dart';
-import 'package:frontend/features/dashboard/widgets/recent_session_item.dart';
+import 'package:frontend/features/dashboard/widgets/recent_session_card.dart';
 import 'package:frontend/features/learning/models/search_params/learning_session_search_params.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
@@ -115,7 +115,7 @@ class DashboardPage extends HookConsumerWidget {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final session = sessions[index];
-                    return RecentSessionItem(
+                    return RecentSessionCard(
                       session: session,
                       onTap: () =>
                           context.go(LearningRoutes.sessionPath(session.id)),

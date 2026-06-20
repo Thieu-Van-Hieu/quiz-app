@@ -3,7 +3,7 @@ import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 
-class QuizItem extends StatelessWidget {
+class QuizCard extends StatelessWidget {
   final Quiz quiz;
   final VoidCallback onTap;
   final VoidCallback onEdit;
@@ -12,7 +12,7 @@ class QuizItem extends StatelessWidget {
   final VoidCallback onExportJson;
   final VoidCallback onExportQuizlet;
 
-  const QuizItem({
+  const QuizCard({
     super.key,
     required this.quiz,
     required this.onTap,
@@ -167,6 +167,9 @@ class QuizItem extends StatelessWidget {
       padding: const EdgeInsets.all(6),
       constraints: const BoxConstraints(),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      style: ElevatedButton.styleFrom(
+        enabledMouseCursor: SystemMouseCursors.click,
+      ),
       onSelected: (value) {
         if (value == 0) onExportJson();
         if (value == 1) onExportQuizlet();

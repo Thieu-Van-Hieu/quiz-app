@@ -8,7 +8,7 @@ import 'package:frontend/features/learning/models/search_params/learning_session
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
-import 'package:frontend/features/learning/widgets/learning_result/learning_result_item.dart';
+import 'package:frontend/features/learning/widgets/learning_result/learning_result_card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -93,14 +93,14 @@ class LearningResultPage extends HookConsumerWidget {
                               const SliverGridDelegateWithMaxCrossAxisExtent(
                                 maxCrossAxisExtent:
                                     350, // Mỗi card rộng tối đa 350px
-                                mainAxisExtent: 340, // Chiều cao cố định
+                                mainAxisExtent: 350, // Chiều cao cố định
                                 crossAxisSpacing: 24,
                                 mainAxisSpacing: 24,
                               ),
                           itemCount: sessions.length,
                           itemBuilder: (context, index) {
                             final session = sessions[index];
-                            return LearningResultItem(
+                            return LearningResultCard(
                               key: ValueKey(
                                 '${session.id}_${session.isCompleted}',
                               ),

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/widgets/button/action_button.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/subject.dart';
 
-class SubjectItem extends StatelessWidget {
+class SubjectCard extends StatelessWidget {
   final Subject subject;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const SubjectItem({
+  const SubjectCard({
     super.key,
     required this.subject,
     required this.onTap,
@@ -48,32 +49,24 @@ class SubjectItem extends StatelessWidget {
                     color: LibraryColors.folderIcon,
                     size: 28,
                   ),
-                  // Gộp nhóm nút bấm lại một cụm
+                  // Gộp nhóm nút bấm sử dụng AppActionButton mới
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        onPressed: onEdit,
-                        constraints: const BoxConstraints(),
-                        // Thu gọn padding mặc định
-                        padding: const EdgeInsets.all(8),
-                        icon: const Icon(
-                          Icons.edit_note_rounded,
-                          color: LibraryColors.accentColor,
-                          size: 22,
-                        ),
-                        mouseCursor: SystemMouseCursors.click,
+                      AppActionButton(
+                        actionType: ActionType.edit,
+                        style: ActionButtonStyle
+                            .tonal, // Nền mờ, chữ đậm pastel tinh tế
+                        onTap: onEdit,
                       ),
-                      IconButton(
-                        onPressed: onDelete,
-                        constraints: const BoxConstraints(),
-                        padding: const EdgeInsets.all(8),
-                        icon: const Icon(
-                          Icons.delete_outline_rounded,
-                          color: LibraryColors.deleteButton,
-                          size: 20,
-                        ),
-                        mouseCursor: SystemMouseCursors.click,
+                      const SizedBox(
+                        width: 6,
+                      ), // Khoảng cách nhẹ giữa 2 nút tròn
+                      AppActionButton(
+                        actionType: ActionType.delete,
+                        style: ActionButtonStyle
+                            .tonal, // Đồng bộ phong cách kẹo ngọt
+                        onTap: onDelete,
                       ),
                     ],
                   ),
@@ -82,12 +75,11 @@ class SubjectItem extends StatelessWidget {
               const Spacer(),
 
               // --- CONTENT: Code (Headline) & Name (Subtitle) ---
-              // 1. Mã môn học làm tiêu đề chính
               Text(
                 subject.code,
                 style: const TextStyle(
                   color: LibraryColors.primaryText,
-                  fontWeight: FontWeight.w900, // Đậm hơn để nổi bật
+                  fontWeight: FontWeight.w900,
                   fontSize: 18,
                   letterSpacing: 1.2,
                 ),
@@ -95,7 +87,6 @@ class SubjectItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              // 2. Tên môn học cho xuống dưới làm phụ đề
               Text(
                 subject.name,
                 style: const TextStyle(
