@@ -4,6 +4,7 @@ import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/core/widgets/button/switch.dart';
 import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
 import 'package:frontend/core/widgets/input/text_field.dart';
+import 'package:frontend/core/widgets/input/dropdown.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/learning_setting.dart';
 
@@ -39,7 +40,7 @@ class LearningSettingDialog extends HookWidget {
     );
     final timeLimitController = useTextEditingController(text: '15');
 
-    const labelStyle = TextStyle(
+    const itemStyle = TextStyle(
       fontWeight: FontWeight.w600,
       color: Colors.black87,
       fontSize: 14,
@@ -53,17 +54,15 @@ class LearningSettingDialog extends HookWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 8),
-            DropdownButtonFormField<LearningMode>(
-              value: settingsNotifier.value.learningMode,
-              decoration: const InputDecoration(
-                labelText: "Chế độ",
-                labelStyle: labelStyle,
-                border: OutlineInputBorder(),
-              ),
+
+            // --- THAY THẾ DROP DOWN GỐC THÀNH APP_DROPDOWN 3D MỘC MẠC ---
+            AppDropdown<LearningMode>(
+              label: "Chế độ học",
+              initialValue: settingsNotifier.value.learningMode,
               items: LearningMode.values.map((m) {
                 return DropdownMenuItem(
                   value: m,
-                  child: Text(m.label, style: labelStyle),
+                  child: Text(m.label, style: itemStyle),
                 );
               }).toList(),
               onChanged: (val) {
