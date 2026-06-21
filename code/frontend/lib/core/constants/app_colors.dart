@@ -19,6 +19,17 @@ class AppColors {
   static const Color slateDark = Color(0xFF9EAEB4);
   static const Color slateShadow = Color(0xFF839298);
 
+  // --- INDIGO VARIANT (MÀU TÍM HOA CÀ / XANH CHÀM PASTEL - MỚI 🆕) ---
+  static const Color indigo = Color(
+    0xFFC7D2FE,
+  ); // Tím chàm nhạt cực dịu (Ăn nhập hoàn toàn với palette pastel)
+  static const Color indigoDark = Color(
+    0xFFB4C2F9,
+  ); // Tông sẫm hơn một chút cho hiệu ứng Hover/Loading
+  static const Color indigoShadow = Color(
+    0xFF9AA9E5,
+  ); // Khối đế 3D đổ bóng vững chãi, trầm mịn
+
   // --- ORANGE/CORAL VARIANT (Màu Cam Đào Pastel mịn) ---
   static const Color orange = Color(
     0xFFFFD1BA,

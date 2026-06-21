@@ -1,7 +1,14 @@
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-enum ButtonVariant { brand, brandOutlined, slate, slateOutlined, danger }
+enum ButtonVariant {
+  brand,
+  brandOutlined,
+  slate,
+  slateOutlined,
+  indigo,
+  danger,
+}
 
 enum ButtonSize { small, medium, big }
 
@@ -37,7 +44,7 @@ class _AppButtonState extends State<AppButton> {
   Widget build(BuildContext context) {
     Color bgColor;
     Color shadowColor;
-    Color fgColor; 
+    Color fgColor;
     Border? border;
 
     // Phối màu thông minh cho cả hệ đặc (Solid) và hệ viền nổi (Outlined)
@@ -50,11 +57,11 @@ class _AppButtonState extends State<AppButton> {
         fgColor = const Color(0xFF2B5B34); // Xanh rừng già tương phản Mint
         break;
 
-      case ButtonVariant.brandOutlined: // 🆕 Nền trắng, viền và chữ màu Mint
+      case ButtonVariant.brandOutlined:
         bgColor = _isHovered ? const Color(0xFFF2FBF7) : Colors.white;
-        shadowColor = const Color(0xFFCBD5E1); // Đổ bóng xám nhẹ cơ học
+        shadowColor = const Color(0xFFCBD5E1);
         fgColor = const Color(0xFF2B5B34);
-        border = Border.all(color: AppColors.brand, width: 2.5); // Viền dày dặn 3D
+        border = Border.all(color: AppColors.brand, width: 2.5);
         break;
 
       case ButtonVariant.slate:
@@ -65,11 +72,21 @@ class _AppButtonState extends State<AppButton> {
         fgColor = AppColors.textWhite;
         break;
 
-      case ButtonVariant.slateOutlined: // 🆕 Nền trắng, viền và chữ màu xám đá
+      case ButtonVariant.slateOutlined:
         bgColor = _isHovered ? const Color(0xFFF8FAFC) : Colors.white;
         shadowColor = const Color(0xFFE2E8F0);
         fgColor = const Color(0xFF475569);
         border = Border.all(color: const Color(0xFFCBD5E1), width: 2.5);
+        break;
+
+      case ButtonVariant.indigo:
+        bgColor = widget.isLoading
+            ? AppColors.indigoDark
+            : (_isHovered ? AppColors.indigoDark : AppColors.indigo);
+        shadowColor = AppColors.indigoShadow;
+        fgColor = const Color(
+          0xFF3730A3,
+        ); // Chữ màu Indigo đậm tương phản cao trên nền nhạt
         break;
 
       case ButtonVariant.danger:
@@ -120,14 +137,18 @@ class _AppButtonState extends State<AppButton> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
-        onTapDown: effectivelyDisabled ? null : (_) => setState(() => _isPressed = true),
+        onTapDown: effectivelyDisabled
+            ? null
+            : (_) => setState(() => _isPressed = true),
         onTapUp: effectivelyDisabled
             ? null
             : (_) {
                 setState(() => _isPressed = false);
                 widget.onPressed?.call();
               },
-        onTapCancel: effectivelyDisabled ? null : () => setState(() => _isPressed = false),
+        onTapCancel: effectivelyDisabled
+            ? null
+            : () => setState(() => _isPressed = false),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 100),
           opacity: widget.isDisabled ? 0.4 : (widget.isLoading ? 0.8 : 1.0),
@@ -136,7 +157,7 @@ class _AppButtonState extends State<AppButton> {
             margin: EdgeInsets.only(top: topOffset, bottom: 4 - topOffset),
             decoration: BoxDecoration(
               color: bgColor,
-              border: border, // 🆕 Áp dụng viền khối nổi
+              border: border,
               borderRadius: BorderRadius.circular(16),
               boxShadow: bottomShadowHeight > 0
                   ? [
@@ -151,7 +172,7 @@ class _AppButtonState extends State<AppButton> {
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
-                vertical: verticalPadding - (border != null ? 2.5 : 0), // Cân bằng lại padding khi có viền
+                vertical: verticalPadding - (border != null ? 2.5 : 0),
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -195,7 +216,7 @@ class _AppButtonState extends State<AppButton> {
                           style: TextStyle(
                             color: fgColor,
                             fontSize: fontSize,
-                            fontWeight: FontWeight.w800, // Tăng lên hẳn w800 nhìn mộc mạc và sắc nét cực kỳ
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                       ],

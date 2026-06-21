@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
 
 class AppPagination extends StatelessWidget {
   final int currentPage; // Chỉ số trang hiện tại (0-indexed)
@@ -58,7 +60,7 @@ class AppPagination extends StatelessWidget {
   Widget build(BuildContext context) {
     if (totalPages <= 1) return const SizedBox.shrink();
 
-    // ✅ ĐÃ ĐỔI: Sử dụng màu Xanh Lam Nhạt dịu mắt (Màu Blue/Sky nhẹ nhàng)
+    // Sử dụng màu Xanh Lam Nhạt dịu mắt (Màu Blue/Sky nhẹ nhàng)
     final Color themeColor = activeColor ?? const Color(0xFF3B82F6);
     final List<dynamic> pageList = _generatePageNumbers();
 
@@ -228,70 +230,50 @@ class AppPagination extends StatelessWidget {
     );
   }
 
-  /// Dialog nhập số trang cơ học đồng bộ màu xanh lam nhẹ
+  /// ✅ ĐÃ REFACTOR: Sử dụng AppAlertDialog và AppButton hệ thống
   Future<int?> _showJumpDialog(BuildContext context, Color themeColor) {
     final controller = TextEditingController();
     return showDialog<int>(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          "Nhập trang cần đến",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E293B),
-          ),
-        ),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: "Phạm vi: 1 - $totalPages",
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 12,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: themeColor, width: 1.5),
+      builder: (context) => AppAlertDialog(
+        title: "Nhập trang cần đến",
+        size: AlertDialogSize.small, // Sử dụng kích thước nhỏ gọn cho ô nhập số
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: "Phạm vi: 1 - $totalPages",
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: themeColor, width: 1.5),
+              ),
             ),
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              "Hủy",
-              style: TextStyle(
-                color: Color(0xFF64748B),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          ElevatedButton(
+          // Lưu ý: Nút "Hủy" (slate) đã tự động có sẵn từ file AppAlertDialog của bạn rồi!
+          // Ở đây ta chỉ cần thêm nút "Đi" với size: ButtonSize.small
+          AppButton(
+            label: "Đi",
+            variant: ButtonVariant
+                .brand, // Hoặc variant tương ứng với màu primary của bạn
+            size: ButtonSize.small, // Ép cố định size small theo yêu cầu
             onPressed: () {
               final int? val = int.tryParse(controller.text);
               Navigator.pop(context, val);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: themeColor,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: const Text(
-              "Đi",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
           ),
         ],
       ),

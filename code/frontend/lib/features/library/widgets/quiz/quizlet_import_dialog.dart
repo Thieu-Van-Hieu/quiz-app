@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
+import 'package:frontend/core/widgets/input/text_field.dart';
 
 class QuizletImportDialog extends HookWidget {
   const QuizletImportDialog({super.key});
 
   static String _formatTextHeavy(String text) {
-    // Xử lý logic nặng ở đây
     return text.trim();
   }
 
@@ -28,22 +30,18 @@ class QuizletImportDialog extends HookWidget {
         final data = await Clipboard.getData(Clipboard.kTextPlain);
 
         if (data?.text != null && data!.text!.isNotEmpty) {
-          // Bước 1: Parse logic
           final processedText = await compute(
             QuizletImportDialog._formatTextHeavy,
             data.text!,
           );
 
-          // Bước 2: Gán vào controller
-          // Đây là lúc khả năng cao nhất gây đứng hình
           controller.value = TextEditingValue(
             text: processedText.substring(0, 5000),
-            selection: TextSelection.collapsed(offset: 0),
+            selection: const TextSelection.collapsed(offset: 0),
           );
 
-          // 2. Đợi UI render xong frame đầu tiên rồi mới nạp nốt phần còn lại
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(Duration(milliseconds: 100), () {
+            Future.delayed(const Duration(milliseconds: 100), () {
               controller.value = TextEditingValue(
                 text: processedText,
                 selection: TextSelection.collapsed(
@@ -53,7 +51,6 @@ class QuizletImportDialog extends HookWidget {
             });
           });
 
-          // Bước 3: Đợi frame kế tiếp để render xong
           await SchedulerBinding.instance.endOfFrame;
         }
       } catch (e) {
@@ -63,19 +60,19 @@ class QuizletImportDialog extends HookWidget {
       }
     }
 
-    return AlertDialog(
-      title: const Text("Nhập từ Quizlet"),
-      content: SizedBox(
-        width: 600,
-        height: 400,
-        child: Column(
-          children: [
-            Expanded(
-              // DÙNG STACK ĐỂ KHÔNG HỦY WIDGET KHI LOADING
-              child: Stack(
+    return AppAlertDialog(
+      title: "Nhập từ Quizlet",
+      size: AlertDialogSize.medium,
+      content: SingleChildScrollView(
+        // Bảo vệ dialog khỏi mọi nguy cơ overflow trên các màn hình nhỏ
+        child: SizedBox(
+          width: 600,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
                 alignment: Alignment.center,
                 children: [
-                  // TextField luôn tồn tại, chỉ ẩn đi khi loading
                   Opacity(
                     opacity: isLoading.value ? 0.0 : 1.0,
                     child: IgnorePointer(
@@ -97,62 +94,59 @@ class QuizletImportDialog extends HookWidget {
                               onInvoke: (_) => handlePaste(),
                             ),
                           },
-                          child: TextField(
+                          // Giải pháp an toàn: Thiết lập số dòng lớn cố định
+                          // Giúp hiển thị ô nhập cực kỳ rộng rãi mà không gây xung đột layout
+                          child: AppTextField(
+                            label: "Nội dung Quizlet",
+                            hintText: "Dán nội dung vào đây (Ctrl+V)...",
                             controller: controller,
-                            // QUAN TRỌNG: Tắt kiểm tra chính tả để tránh lag khi dán text dài
-                            spellCheckConfiguration:
-                                const SpellCheckConfiguration.disabled(),
-                            autocorrect: false,
-                            enableSuggestions: false,
-                            enableInteractiveSelection: true,
-                            maxLines: 20,
+                            maxLines: 10,
                             keyboardType: TextInputType.multiline,
-                            decoration: const InputDecoration(
-                              hintText: "Dán nội dung vào đây (Ctrl+V)...",
-                              border: OutlineInputBorder(),
-                              filled: true,
-                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  // Chỉ hiện Loading khi cần
                   if (isLoading.value)
                     const Center(child: CircularProgressIndicator()),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSmallInput("Dấu giữa Term - Def", termDefSep),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: _buildSmallInput("Dấu giữa các hàng", rowSep)),
-              ],
-            ),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: AppTextField(
+                      label: "Dấu giữa Term - Def",
+                      hintText: "\\t hoặc |",
+                      controller: termDefSep,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: AppTextField(
+                      label: "Dấu giữa các hàng",
+                      hintText: "\\n hoặc ;",
+                      controller: rowSep,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
-        TextButton.icon(
-          icon: const Icon(Icons.paste),
-          label: const Text("Dán thủ công"),
-          style: TextButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-          ),
+        AppButton(
+          label: "Dán thủ công",
+          variant: ButtonVariant.indigo,
+          size: ButtonSize.small,
           onPressed: isLoading.value ? null : handlePaste,
         ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          style: TextButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-          ),
-          child: const Text("Hủy"),
-        ),
-        ElevatedButton(
+        AppButton(
+          label: "Phân tích",
+          variant: ButtonVariant.brand,
+          size: ButtonSize.small,
           onPressed: isLoading.value
               ? null
               : () => Navigator.pop(context, {
@@ -160,26 +154,6 @@ class QuizletImportDialog extends HookWidget {
                   'termDef': termDefSep.text,
                   'row': rowSep.text,
                 }),
-          style: ElevatedButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-          ),
-          child: const Text("Phân tích"),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSmallInput(String label, TextEditingController ctrl) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        ),
-        TextField(
-          controller: ctrl,
-          decoration: const InputDecoration(hintText: "\\t hoặc |"),
         ),
       ],
     );

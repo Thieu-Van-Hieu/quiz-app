@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
-import 'package:frontend/core/widgets/input/delete_confirm_dialog.dart';
+import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
 import 'package:frontend/core/widgets/layout/pagination.dart'; // Import Widget phân trang của bạn
 import 'package:frontend/core/widgets/input/search_bar.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';

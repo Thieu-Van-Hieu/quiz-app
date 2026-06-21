@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
-import 'package:frontend/core/widgets/input/delete_confirm_dialog.dart';
+import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
 import 'package:frontend/core/widgets/layout/pagination.dart';
 import 'package:frontend/core/widgets/input/search_bar.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';

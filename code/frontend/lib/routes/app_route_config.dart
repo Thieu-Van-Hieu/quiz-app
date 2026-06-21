@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
 import 'package:frontend/features/dashboard/routes/dashboard_routes.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
@@ -12,29 +14,21 @@ import 'package:frontend/routes/types.dart';
 void _showExitDialog(BuildContext context) {
   showDialog(
     context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Xác nhận thoát"),
+    builder: (context) => AppAlertDialog(
+      title: "Xác nhận thoát",
       content: const Text("Bạn có chắc chắn muốn đóng ứng dụng?"),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          style: TextButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-          ),
-          child: const Text("Hủy"),
-        ),
-        TextButton(
+        AppButton(
+          label: "Thoát",
           onPressed: () {
             if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-              exit(0); // Lệnh thoát mạnh mẽ cho Desktop
+              exit(0);
             } else {
-              SystemNavigator.pop(); // Dành cho Mobile
+              SystemNavigator.pop();
             }
-          }, // Thoát app sạch sẽ
-          style: TextButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-          ),
-          child: const Text("Thoát", style: TextStyle(color: Colors.red)),
+          },
+          variant: ButtonVariant.danger,
+          size: ButtonSize.small,
         ),
       ],
     ),
