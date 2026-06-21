@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/button/action_button.dart';
+import 'package:frontend/core/widgets/input/menu.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
@@ -24,65 +25,31 @@ class QuizCard extends StatelessWidget {
     required this.onExportQuizlet,
   });
 
-  // --- HÀM HELPER HIỂN THỊ MENU EXPORT CHUẨN TỌA ĐỘ BẬT TỪ APP_ACTION_BUTTON ---
-  void _showExportMenu(BuildContext context, BuildContext buttonContext) {
-    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
-
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(
-          Offset(0, button.size.height + 6),
-          ancestor: overlay,
-        ),
-        button.localToGlobal(
-          button.size.bottomRight(Offset.zero),
-          ancestor: overlay,
-        ),
-      ),
-      Offset.zero & overlay.size,
-    );
-
-    showMenu<int>(
+  void _handleExportMenu(
+    BuildContext context,
+    BuildContext buttonContext,
+  ) async {
+    final selectedValue = await AppMenu.show(
       context: context,
-      position: position,
-      elevation: 0,
-      color: Colors.white,
-      constraints: const BoxConstraints(minWidth: 180),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFE2E8F0), width: 2.0),
-      ),
-      items: [
-        const PopupMenuItem(
+      buttonContext: buttonContext,
+      offsetTop: 8.0, // Khoảng cách cách nút hành động nhỏ 8px
+      items: const [
+        AppMenuItem(
           value: 0,
-          child: ListTile(
-            dense: true,
-            leading: Icon(Icons.data_object_rounded, size: 18),
-            title: Text(
-              "Xuất file JSON",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
+          label: "Xuất file JSON",
+          icon: Icons.data_object_rounded,
         ),
-        const PopupMenuItem(
+        AppMenuItem(
           value: 1,
-          child: ListTile(
-            dense: true,
-            leading: Icon(Icons.content_paste_go_rounded, size: 18),
-            title: Text(
-              "Copy cho Quizlet",
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
+          label: "Copy cho Quizlet",
+          icon: Icons.content_paste_go_rounded,
         ),
       ],
-    ).then((value) {
-      if (value == null) return;
-      if (value == 0) onExportJson();
-      if (value == 1) onExportQuizlet();
-    });
+    );
+
+    if (selectedValue == null) return;
+    if (selectedValue == 0) onExportJson();
+    if (selectedValue == 1) onExportQuizlet();
   }
 
   @override
@@ -127,18 +94,21 @@ class QuizCard extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // 1. NÚT XUẤT BỘ ĐỀ (Bọc Builder để tính tọa độ menu thả xuống chuẩn pixel)
+                        // 1. NÚT XUẤT BỘ ĐỀ (Bọc bằng AppMenu mới để quản lý dropdown an toàn)
                         Builder(
                           builder: (buttonContext) {
                             return AppActionButton(
                               icon: Icons.file_upload_outlined,
                               tooltip: "Xuất bộ đề",
-                              onTap: () =>
-                                  _showExportMenu(context, buttonContext),
+                              onTap: () => _handleExportMenu(
+                                context,
+                                buttonContext,
+                              ), // Nút nhận function đầy đủ, sáng bừng và giữ nguyên hiệu ứng bấm
                               actionType: ActionType.export,
                             );
                           },
                         ),
+
                         const SizedBox(width: 8),
 
                         // 2. NÚT BẮT ĐẦU HỌC

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/input/menu.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 
@@ -15,65 +16,31 @@ class QuizHeader extends StatelessWidget {
     required this.onAddManual,
   });
 
-  // Hàm helper xử lý hiển thị Menu chuẩn tọa độ dựa trên vị trí của nút bấm
-  void _showImportMenu(BuildContext context) {
-    // Tìm tọa độ thực tế của nút trên màn hình để thả menu đúng vị trí
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
-
-    // Tính toán khoảng cách (vị trí nút + dịch xuống 52px để không đè lên nút)
-    final RelativeRect position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(
-          Offset(0, button.size.height + 8),
-          ancestor: overlay,
-        ),
-        button.localToGlobal(
-          button.size.bottomRight(Offset.zero),
-          ancestor: overlay,
-        ),
-      ),
-      Offset.zero & overlay.size,
-    );
-
-    // Hiển thị menu tại đúng tọa độ đã tính
-    showMenu<int>(
+  void _handleMenuOpen(BuildContext context, BuildContext buttonContext) async {
+    final selectedValue = await AppMenu.show(
       context: context,
-      position: position,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      items: [
-        const PopupMenuItem(
-          value: 0,
-          child: ListTile(
-            dense: true,
-            leading: Icon(Icons.data_object_rounded),
-            title: Text("JSON"),
-          ),
-        ),
-        const PopupMenuItem(
+      buttonContext: buttonContext,
+      offsetTop: 12.0, // Khoảng cách cách nút bấm 12px
+      items: const [
+        AppMenuItem(value: 0, label: "JSON", icon: Icons.data_object_rounded),
+        AppMenuItem(
           value: 1,
-          child: ListTile(
-            dense: true,
-            leading: Icon(Icons.history_toggle_off_rounded),
-            title: Text("Binary"),
-          ),
+          label: "Binary",
+          icon: Icons.history_toggle_off_rounded,
         ),
-        const PopupMenuItem(
+        AppMenuItem(
           value: 2,
-          child: ListTile(
-            dense: true,
-            leading: Icon(Icons.auto_awesome_rounded, color: Colors.purple),
-            title: Text("Quizlet (Beta)"),
-          ),
+          label: "Quizlet (Beta)",
+          icon: Icons.auto_awesome_rounded,
+          iconColor: Colors.purple,
         ),
       ],
-    ).then((val) {
-      if (val == null) return;
-      if (val == 0) onImport(false);
-      if (val == 1) onImport(true);
-      if (val == 2) onQuizletImport();
-    });
+    );
+
+    if (selectedValue == null) return;
+    if (selectedValue == 0) onImport(false);
+    if (selectedValue == 1) onImport(true);
+    if (selectedValue == 2) onQuizletImport();
   }
 
   @override
@@ -81,7 +48,7 @@ class QuizHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // --- BÊN TRÁI: TIÊU ĐỀ & PHỤ ĐỀ ---
+        // --- BÊN TRÁI: TIÊU ĐỀ ---
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -104,12 +71,14 @@ class QuizHeader extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 1. NÚT IMPORT DẠNG POPUP MENU (Đã fix lỗi lệch vị trí)
             Builder(
               builder: (buttonContext) {
                 return AppButton(
-                  onPressed: () => _showImportMenu(buttonContext),
-                  label: "Nhập",
+                  onPressed: () => _handleMenuOpen(
+                    context,
+                    buttonContext,
+                  ), // Hàm hoạt động thật giúp nút luôn sáng màu
+                  label: "Import",
                   icon: Icons.file_download_outlined,
                   variant: ButtonVariant.slate,
                   size: ButtonSize.medium,
@@ -119,7 +88,6 @@ class QuizHeader extends StatelessWidget {
 
             const SizedBox(width: 16),
 
-            // 2. NÚT THÊM MỚI (CHỦ ĐẠO BRAND MINT)
             AppButton(
               onPressed: onAddManual,
               label: LibraryStrings.btnAddQuiz,
