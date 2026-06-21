@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ import 'package:frontend/features/library/widgets/quiz/quizlet_import_dialog.dar
 import 'package:frontend/features/library/widgets/quiz/update_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QuizPage extends HookConsumerWidget {
   final int subjectId;
@@ -56,6 +58,53 @@ class QuizPage extends HookConsumerWidget {
         );
 
         if (outputFile != null && context.mounted) {
+          String? folderPath;
+
+          // Kiểm tra nếu không phải môi trường Web (vì Web không có đường dẫn thư mục cục bộ)
+          if (!outputFile.startsWith('http')) {
+            // Lấy chính xác đường dẫn thư mục chứa file
+            folderPath = Directory(outputFile).parent.path;
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Đã xuất file thành công: ${quiz.name}.json"),
+              backgroundColor: Colors.green.shade700,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(
+                seconds: 5,
+              ), // Để 5 giây giúp người dùng thoải mái bấm
+
+              action: folderPath != null
+                  ? SnackBarAction(
+                      label: 'MỞ THƯ MỤC',
+                      textColor: Colors.white,
+                      onPressed: () async {
+                        try {
+                          if (Platform.isWindows) {
+                            // Chuẩn hóa dấu gạch chéo cho Windows (thay / bằng \)
+                            final winPath = folderPath!.replaceAll('/', '\\');
+
+                            // Gọi trực tiếp Explorer của Windows để mở thư mục, cực kỳ an toàn
+                            await Process.run('explorer.exe', [winPath]);
+                          } else {
+                            // Fallback cho các nền tảng khác (macOS, Linux, v.v.) nếu cần
+                            final Uri uri = Uri.parse('file://$folderPath');
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            }
+                          }
+                        } catch (openError) {
+                          debugPrint("Không thể mở thư mục: $openError");
+                        }
+                      },
+                    )
+                  : null,
+            ),
+          );
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("Đã xuất file thành công: ${quiz.name}.json"),

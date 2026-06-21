@@ -1,6 +1,7 @@
 import 'package:frontend/features/library/data/question_repository.dart';
 import 'package:frontend/features/library/data/quiz_repository.dart';
 import 'package:frontend/features/library/models/question.dart';
+import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -81,6 +82,7 @@ class QuestionNotifier extends _$QuestionNotifier {
       // Refresh lại dữ liệu từ DB để lấy ID mới nhất
       if (ref.mounted) {
         ref.invalidate(questionRepositoryProvider);
+        ref.invalidate(quizProvider);
       }
       final repo = ref.read(questionRepositoryProvider);
       final freshData = await repo.getQuestionsByQuiz(quizId);
