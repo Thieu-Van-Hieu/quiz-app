@@ -118,7 +118,6 @@ class SubjectPage extends HookConsumerWidget {
                         data: (total) => AppPagination(
                           currentPage: searchParamsNotifier.value.page,
                           totalPages: total,
-                          activeColor: LibraryColors.accentColor,
                           onPageChange: (newPage) {
                             searchParamsNotifier.value = searchParamsNotifier
                                 .value

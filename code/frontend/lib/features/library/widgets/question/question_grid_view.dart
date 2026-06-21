@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/widgets/layout/pagination.dart';
-import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
 import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
@@ -86,11 +85,13 @@ class QuestionGridView extends StatelessWidget {
             },
           ),
         ),
-        AppPagination(
-          currentPage: params.page,
-          totalPages: totalPages,
-          activeColor: LibraryColors.accentColor,
-          onPageChange: onPageChange,
+        Padding(
+          padding: const EdgeInsets.only(top: 32, bottom: 16),
+          child: AppPagination(
+            currentPage: params.page,
+            totalPages: totalPages,
+            onPageChange: onPageChange,
+          ),
         ),
       ],
     );

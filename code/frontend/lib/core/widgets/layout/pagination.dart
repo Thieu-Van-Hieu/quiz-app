@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppPagination extends StatelessWidget {
-  final int currentPage;
-  final int totalPages;
+  final int currentPage; // Chỉ số trang hiện tại (0-indexed)
+  final int totalPages; // Tổng số trang
   final ValueChanged<int> onPageChange;
   final Color? activeColor;
 
@@ -14,58 +14,287 @@ class AppPagination extends StatelessWidget {
     this.activeColor,
   });
 
+  /// Thuật toán hiển thị thu gọn ở giữa: [1, "...", i-1, i, i+1, "...", totalPages]
+  List<dynamic> _generatePageNumbers() {
+    List<dynamic> pages = [];
+    if (totalPages <= 0) return pages;
+
+    // Luôn luôn hiển thị trang đầu tiên
+    pages.add(1);
+
+    // Tính toán khoảng hiển thị xung quanh trang hiện tại (0-indexed sang 1-indexed)
+    int current = currentPage + 1;
+    int prev = current - 1;
+    int next = current + 1;
+
+    // Quản lý dấu ba chấm phía trước
+    if (prev > 2) {
+      pages.add("...");
+    } else if (prev == 2) {
+      pages.add(2);
+    }
+
+    // Hiển thị trang hiện tại (nếu nó không phải trang đầu hay trang cuối)
+    if (current != 1 && current != totalPages) {
+      pages.add(current);
+    }
+
+    // Quản lý dấu ba chấm phía sau
+    if (next < totalPages - 1) {
+      pages.add("...");
+    } else if (next == totalPages - 1) {
+      pages.add(totalPages - 1);
+    }
+
+    // Luôn luôn hiển thị trang cuối cùng (nếu tổng số trang > 1)
+    if (totalPages > 1) {
+      pages.add(totalPages);
+    }
+
+    return pages;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Tránh hiển thị nếu chỉ có 1 trang hoặc không có dữ liệu
-    if (totalPages <= 0) return const SizedBox.shrink();
+    if (totalPages <= 1) return const SizedBox.shrink();
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Nút Back
-        IconButton(
-          onPressed: currentPage > 0
-              ? () => onPageChange(currentPage - 1)
-              : null,
-          icon: const Icon(Icons.chevron_left),
-          color: activeColor,
-          style: IconButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-            disabledMouseCursor: SystemMouseCursors.forbidden,
+    // ✅ ĐÃ ĐỔI: Sử dụng màu Xanh Lam Nhạt dịu mắt (Màu Blue/Sky nhẹ nhàng)
+    final Color themeColor = activeColor ?? const Color(0xFF3B82F6);
+    final List<dynamic> pageList = _generatePageNumbers();
+
+    return Padding(
+      // Padding ngoài tạo không gian thở thoáng đãng với lưới câu hỏi phía trên
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment
+            .center, // Đảm bảo căn giữa tuyệt đối theo chiều dọc
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // --- NÚT BACK (Đồng bộ kích thước 40) ---
+          _buildNavButton(
+            icon: Icons.chevron_left,
+            onPressed: currentPage > 0
+                ? () => onPageChange(currentPage - 1)
+                : null,
+            themeColor: themeColor,
           ),
-        ),
+          const SizedBox(width: 6),
 
-        // Hiển thị vị trí trang
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: (activeColor ?? Theme.of(context).primaryColor).withValues(
-              alpha: 0.1,
+          // --- HIỂN THỊ CÁC NÚT SỐ TRANG HOẶC DẤU "..." ---
+          ...pageList.map((page) {
+            if (page == "...") {
+              return const SizedBox(
+                width: 32,
+                height: 40,
+                child: Center(
+                  child: Text(
+                    "...",
+                    style: TextStyle(
+                      color: Color(0xFF94A3B8),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final int pageIndex = (page as int) - 1;
+            final bool isSelected = pageIndex == currentPage;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: InkWell(
+                onTap: () => onPageChange(pageIndex),
+                borderRadius: BorderRadius.circular(12),
+                mouseCursor: SystemMouseCursors.click,
+                child: Container(
+                  width: 40, // Kích thước nút số 40px rõ ràng
+                  height: 40,
+                  alignment:
+                      Alignment.center, // Đưa text vào chính giữa ô vuông
+                  decoration: BoxDecoration(
+                    color: isSelected ? themeColor : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected ? themeColor : const Color(0xFFE2E8F0),
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Text(
+                    "$page",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: isSelected
+                          ? FontWeight.w900
+                          : FontWeight.w600,
+                      color: isSelected
+                          ? Colors.white
+                          : const Color(0xFF334155),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+
+          const SizedBox(width: 6),
+
+          // --- NÚT NEXT (Đồng bộ kích thước 40) ---
+          _buildNavButton(
+            icon: Icons.chevron_right,
+            onPressed: currentPage < totalPages - 1
+                ? () => onPageChange(currentPage + 1)
+                : null,
+            themeColor: themeColor,
+          ),
+
+          // --- NÚT NHẢY ĐẾN PAGE NHANH (Cố định chiều cao 40) ---
+          const SizedBox(width: 8),
+          _buildJumpToPageButton(context, themeColor),
+        ],
+      ),
+    );
+  }
+
+  /// Hàm dựng nút điều hướng Back/Next đồng bộ chiều cao 40px triệt tiêu hiện tượng lệch dòng
+  Widget _buildNavButton({
+    required IconData icon,
+    required VoidCallback? onPressed,
+    required Color themeColor,
+  }) {
+    final bool isDisabled = onPressed == null;
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      mouseCursor: isDisabled
+          ? SystemMouseCursors.forbidden
+          : SystemMouseCursors.click,
+      child: Container(
+        width: 40,
+        height: 40,
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          size: 22,
+          color: isDisabled ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+        ),
+      ),
+    );
+  }
+
+  /// Nút bấm phụ cho phép gõ số để nhảy nhanh đến trang bất kỳ (Căn tâm tuyệt đối)
+  Widget _buildJumpToPageButton(BuildContext context, Color themeColor) {
+    return InkWell(
+      mouseCursor: SystemMouseCursors.click,
+      onTap: () async {
+        final int? targetPage = await _showJumpDialog(context, themeColor);
+        if (targetPage != null && targetPage >= 1 && targetPage <= totalPages) {
+          onPageChange(targetPage - 1);
+        }
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        height: 40, // Khóa chiều cao cố định 40px ngang bằng nút số
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment
+              .center, // Giúp Icon và Text thẳng hàng trục ngang
+          children: [
+            Icon(
+              Icons.directions_run_rounded,
+              size: 16,
+              color: Color(0xFF475569),
             ),
-            borderRadius: BorderRadius.circular(20),
+            SizedBox(width: 6),
+            Text(
+              "Đến trang",
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF475569),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Dialog nhập số trang cơ học đồng bộ màu xanh lam nhẹ
+  Future<int?> _showJumpDialog(BuildContext context, Color themeColor) {
+    final controller = TextEditingController();
+    return showDialog<int>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          "Nhập trang cần đến",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E293B),
           ),
-          child: Text(
-            "Trang ${currentPage + 1} / $totalPages",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: activeColor ?? Theme.of(context).primaryColor,
+        ),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: "Phạm vi: 1 - $totalPages",
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: themeColor, width: 1.5),
             ),
           ),
         ),
-
-        // Nút Next
-        IconButton(
-          onPressed: currentPage < totalPages - 1
-              ? () => onPageChange(currentPage + 1)
-              : null,
-          icon: const Icon(Icons.chevron_right),
-          color: activeColor,
-          style: IconButton.styleFrom(
-            enabledMouseCursor: SystemMouseCursors.click,
-            disabledMouseCursor: SystemMouseCursors.forbidden,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "Hủy",
+              style: TextStyle(
+                color: Color(0xFF64748B),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-        ),
-      ],
+          ElevatedButton(
+            onPressed: () {
+              final int? val = int.tryParse(controller.text);
+              Navigator.pop(context, val);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: themeColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              "Đi",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
