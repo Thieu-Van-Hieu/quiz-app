@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart'; // Import để dùng kDebugMode
 import 'package:path/path.dart' as p;
 
 class AppPathService {
@@ -12,21 +12,22 @@ class AppPathService {
 
   late final String _rootPath;
 
-  // Các đường dẫn con
   String get databasePath => p.join(_rootPath, 'database');
 
   String get tessDataPath => p.join(_rootPath, 'tessdata');
 
   String get tempPath => p.join(_rootPath, 'temp');
 
-  /// Khởi tạo và tạo sẵn cấu trúc thư mục
   Future<void> init() async {
-    // 1. Lấy Roaming Path sạch sẽ
     final String? roamingPath = Platform.environment['APPDATA'];
     if (roamingPath == null) throw Exception("Không tìm thấy AppData");
 
-    // 2. Thiết lập thư mục gốc của App
-    _rootPath = p.join(roamingPath, 'QuizApp');
+    // Tự động chọn tên thư mục dựa trên chế độ chạy của App
+    // Nếu là Debug thì tên là QuizApp_Debug, Release thì là QuizApp
+    final String folderName = kDebugMode ? 'QuizApp_Debug' : 'QuizApp';
+
+    // 2. Thiết lập thư mục gốc của App dựa trên mode
+    _rootPath = p.join(roamingPath, folderName);
 
     // 3. Danh sách các folder cần tạo sẵn
     final foldersToCreate = [_rootPath, databasePath, tessDataPath, tempPath];
@@ -36,7 +37,7 @@ class AppPathService {
       final dir = Directory(path);
       if (!await dir.exists()) {
         await dir.create(recursive: true);
-        debugPrint("📁 Đã tạo thư mục: $path");
+        debugPrint("📁 Đã tạo thư mục [$folderName]: $path");
       }
     }
   }
