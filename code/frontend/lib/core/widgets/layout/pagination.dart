@@ -112,10 +112,11 @@ class AppPagination extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 mouseCursor: SystemMouseCursors.click,
                 child: Container(
-                  width: 40, // Kích thước nút số 40px rõ ràng
+                  width: 40,
+                  // Kích thước nút số 40px rõ ràng
                   height: 40,
-                  alignment:
-                      Alignment.center, // Đưa text vào chính giữa ô vuông
+                  alignment: Alignment.center,
+                  // Đưa text vào chính giữa ô vuông
                   decoration: BoxDecoration(
                     color: isSelected ? themeColor : Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -188,45 +189,17 @@ class AppPagination extends StatelessWidget {
 
   /// Nút bấm phụ cho phép gõ số để nhảy nhanh đến trang bất kỳ (Căn tâm tuyệt đối)
   Widget _buildJumpToPageButton(BuildContext context, Color themeColor) {
-    return InkWell(
-      mouseCursor: SystemMouseCursors.click,
-      onTap: () async {
+    return AppButton(
+      onPressed: () async {
         final int? targetPage = await _showJumpDialog(context, themeColor);
         if (targetPage != null && targetPage >= 1 && targetPage <= totalPages) {
           onPageChange(targetPage - 1);
         }
       },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 40, // Khóa chiều cao cố định 40px ngang bằng nút số
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment
-              .center, // Giúp Icon và Text thẳng hàng trục ngang
-          children: [
-            Icon(
-              Icons.directions_run_rounded,
-              size: 16,
-              color: Color(0xFF475569),
-            ),
-            SizedBox(width: 6),
-            Text(
-              "Đến trang",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF475569),
-              ),
-            ),
-          ],
-        ),
-      ),
+      icon: Icons.directions_run_rounded,
+      label: "Đến trang",
+      variant: ButtonVariant.indigo,
+      size: ButtonSize.small,
     );
   }
 
@@ -237,7 +210,8 @@ class AppPagination extends StatelessWidget {
       context: context,
       builder: (context) => AppAlertDialog(
         title: "Nhập trang cần đến",
-        size: AlertDialogSize.small, // Sử dụng kích thước nhỏ gọn cho ô nhập số
+        size: AlertDialogSize.small,
+        // Sử dụng kích thước nhỏ gọn cho ô nhập số
         content: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: TextField(
