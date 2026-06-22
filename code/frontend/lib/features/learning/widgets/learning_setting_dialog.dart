@@ -10,35 +10,47 @@ import 'package:frontend/features/learning/models/learning_setting.dart';
 
 class LearningSettingDialog extends HookWidget {
   final int totalQuestions;
+  final LearningSetting?
+  initialSetting;
   final Function(LearningSetting) onConfirm;
 
   const LearningSettingDialog({
     super.key,
     required this.totalQuestions,
+    this.initialSetting,
     required this.onConfirm,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Gom tất cả state vào một ValueNotifier duy nhất
+    // 1. Khởi tạo State ban đầu linh hoạt: Ưu tiên dữ liệu cũ được truyền vào
     final settingsNotifier = useValueNotifier(
-      LearningSetting(
-        fromIndex: 0,
-        toIndex: totalQuestions - 1,
-        shuffleQuestions: false,
-        shuffleOptions: false,
-        learningMode: LearningMode.practice,
-      ),
+      initialSetting ??
+          LearningSetting(
+            fromIndex: 0,
+            toIndex: totalQuestions - 1,
+            shuffleQuestions: false,
+            shuffleOptions: false,
+            learningMode: LearningMode.practice,
+          ),
     );
 
     // Lắng nghe sự thay đổi của notifier để trigger rebuild khi cần
     useListenable(settingsNotifier);
 
-    final fromController = useTextEditingController(text: '1');
-    final toController = useTextEditingController(
-      text: totalQuestions.toString(),
+    // 2. Đổ dữ liệu tương ứng lên các Controller điều khiển Input Text
+    final fromController = useTextEditingController(
+      text: ((initialSetting?.fromIndex ?? 0) + 1)
+          .toString(), // Index 0 lưu trong DB hiển thị ra ngoài là Câu 1
     );
-    final timeLimitController = useTextEditingController(text: '15');
+    final toController = useTextEditingController(
+      text: initialSetting != null
+          ? ((initialSetting!.toIndex) + 1).toString()
+          : totalQuestions.toString(),
+    );
+    final timeLimitController = useTextEditingController(
+      text: (initialSetting?.customTimeLimit ?? 15).toString(),
+    );
 
     const itemStyle = TextStyle(
       fontWeight: FontWeight.w600,
@@ -55,7 +67,7 @@ class LearningSettingDialog extends HookWidget {
           children: [
             const SizedBox(height: 8),
 
-            // --- THAY THẾ DROP DOWN GỐC THÀNH APP_DROPDOWN 3D MỘC MẠC ---
+            // --- DROP DOWN 3D MỘC MẠC ---
             AppDropdown<LearningMode>(
               label: "Chế độ học",
               initialValue: settingsNotifier.value.learningMode,

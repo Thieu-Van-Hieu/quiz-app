@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
 import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
-import 'package:frontend/core/widgets/layout/pagination.dart'; // Widget Phân trang của phen
-import 'package:frontend/core/widgets/input/search_bar.dart'; // Widget Search của phen
+import 'package:frontend/core/widgets/input/search_bar.dart';
+import 'package:frontend/core/widgets/layout/pagination.dart';
+import 'package:frontend/features/learning/models/learning_setting.dart';
 import 'package:frontend/features/learning/models/search_params/learning_session_search_params.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/learning/widgets/learning_result/learning_result_card.dart';
+import 'package:frontend/features/learning/widgets/learning_setting_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -17,36 +19,31 @@ class LearningResultPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Khởi tạo Params (Giống SubjectPage, mặc định trang 0, size 12)
+    // 1. Khởi tạo Params
     final searchParamsNotifier = useState(
       LearningSessionSearchParams(page: 0, size: 10),
     );
 
-    // 2. Watch dữ liệu (Stream cho list và Future/Stream cho tổng trang)
+    // 2. Watch dữ liệu
     final sessionsAsync = ref.watch(
       watchLearningSessionsProvider(searchParamsNotifier.value),
     );
 
-    // Giả sử phen có provider này để lấy tổng số trang từ ObjectBox
     final totalPagesAsync = ref.watch(
       watchLearningSessionTotalPagesProvider(searchParamsNotifier.value),
     );
 
-    // Trong build của LearningHistoryPage
     useEffect(() {
-      // Cứ mỗi lần build (vào trang), ép provider xoá cache cũ và lấy cái mới nhất từ DB
       void _ = ref.refresh(
         watchLearningSessionsProvider(searchParamsNotifier.value),
       );
       return null;
-    }, []); // Mảng rỗng để chỉ chạy 1 lần khi init trang
+    }, []);
 
     return Material(
-      color: Colors.white, // Hoặc LibraryColors.background
+      color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(
-          40.0,
-        ), // Padding rộng rãi theo style của phen
+        padding: const EdgeInsets.all(40.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,7 +63,7 @@ class LearningResultPage extends HookConsumerWidget {
             ),
             const SizedBox(height: 40),
 
-            // SEARCH BAR: Khi gõ sẽ reset về trang 0
+            // SEARCH BAR
             AppSearchBar(
               onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
                   .value
@@ -88,18 +85,44 @@ class LearningResultPage extends HookConsumerWidget {
                     children: [
                       Expanded(
                         child: GridView.builder(
-                          // Khống chế chiều rộng tối đa của item để không chiếm hết hàng
                           gridDelegate:
                               const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent:
-                                    350, // Mỗi card rộng tối đa 350px
-                                mainAxisExtent: 350, // Chiều cao cố định
+                                maxCrossAxisExtent: 350,
+                                mainAxisExtent: 450,
                                 crossAxisSpacing: 24,
                                 mainAxisSpacing: 24,
                               ),
                           itemCount: sessions.length,
                           itemBuilder: (context, index) {
                             final session = sessions[index];
+                            final int quizId = session.quiz.target?.id ?? 0;
+                            final details = session.learningSessionDetails;
+                            final quiz = session.quiz.target;
+                            int startIndex = 0;
+                            int endIndex = 0;
+                            final List<int> allQuestionIdsInQuiz =
+                                quiz?.questions.map((q) => q.id).toList() ?? [];
+
+                            if (details.isNotEmpty &&
+                                allQuestionIdsInQuiz.isNotEmpty) {
+                              final List<int> currentSessionIndices = details
+                                  .map((d) {
+                                    final qId = d.question.target?.id ?? 0;
+                                    final idx = allQuestionIdsInQuiz.indexOf(
+                                      qId,
+                                    );
+                                    return idx != -1 ? idx + 1 : -1;
+                                  })
+                                  .where((stt) => stt > 0)
+                                  .toList();
+
+                              if (currentSessionIndices.isNotEmpty) {
+                                currentSessionIndices.sort();
+                                startIndex = currentSessionIndices.first;
+                                endIndex = currentSessionIndices.last;
+                              }
+                            }
+
                             return LearningResultCard(
                               key: ValueKey(
                                 '${session.id}_${session.isCompleted}',
@@ -117,6 +140,30 @@ class LearningResultPage extends HookConsumerWidget {
                                       session.id,
                                     )
                                   : null,
+                              onConfigureRetake: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => LearningSettingDialog(
+                                    totalQuestions: quiz?.questions.length ?? 0,
+                                    initialSetting: LearningSetting(
+                                      fromIndex: startIndex - 1,
+                                      toIndex: endIndex - 1,
+                                      shuffleQuestions:
+                                          session.shuffleQuestions,
+                                      shuffleOptions: session.shuffleAnswers,
+                                      learningMode: session.learningModeEnum,
+                                      customTimeLimit: session.timeLimit,
+                                    ),
+                                    onConfirm: (newSetting) =>
+                                        _handleConfigureRetake(
+                                          context,
+                                          ref,
+                                          quizId,
+                                          newSetting,
+                                        ),
+                                  ),
+                                );
+                              },
                               onDelete: () => _handleDelete(
                                 context,
                                 ref,
@@ -131,7 +178,6 @@ class LearningResultPage extends HookConsumerWidget {
 
                       // PHÂN TRANG (PAGINATION)
                       const SizedBox(height: 24),
-                      // Chỗ này phen gắn totalPages từ provider vào
                       totalPagesAsync.maybeWhen(
                         data: (total) => AppPagination(
                           currentPage: searchParamsNotifier.value.page,
@@ -157,22 +203,47 @@ class LearningResultPage extends HookConsumerWidget {
     );
   }
 
-  // --- LOGIC XỬ LÝ (Giữ nguyên logic của phen) ---
+  // --- LOGIC XỬ LÝ ---
+
+  // Hàm tạo session cấu hình lại và nhảy trang trực tiếp (Style chuẩn giống QuizPage)
+  Future<void> _handleConfigureRetake(
+    BuildContext context,
+    WidgetRef ref,
+    int quizId,
+    LearningSetting settings,
+  ) async {
+    final sessionNotifier = ref.read(learningSessionProvider.notifier);
+    try {
+      final newSession = await sessionNotifier.createSession(
+        quizId: quizId,
+        setting: settings,
+      );
+      if (context.mounted) {
+        // GoRouter tự giải phóng cây widget cũ cùng Dialog, không sinh lỗi lock
+        context.go(LearningRoutes.sessionPath(newSession.id));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Lỗi: $e")));
+      }
+    }
+  }
 
   Future<void> _handleRetake(
     BuildContext context,
     WidgetRef ref,
     int oldId,
   ) async {
-    // Gọi Notifier sạch, không cần truyền params nữa
     final notifier = ref.read(learningSessionProvider.notifier);
     try {
       final newSession = await notifier.retakeSession(oldId).withToast(context);
-      if (context.mounted) {
-        context.go(LearningRoutes.sessionPath(newSession?.id));
+      if (context.mounted && newSession != null) {
+        context.go(LearningRoutes.sessionPath(newSession.id));
       }
     } catch (e) {
-      // Xử lý lỗi hoặc hiện toast ở đây
+      debugPrint("Lỗi Retake: $e");
     }
   }
 
@@ -182,16 +253,15 @@ class LearningResultPage extends HookConsumerWidget {
     int oldId,
   ) async {
     final notifier = ref.read(learningSessionProvider.notifier);
-
     try {
       final newSession = await notifier
           .createMistakeSession(oldId)
           .withToast(context);
-      if (context.mounted) {
-        context.go(LearningRoutes.sessionPath(newSession?.id));
+      if (context.mounted && newSession != null) {
+        context.go(LearningRoutes.sessionPath(newSession.id));
       }
     } catch (e) {
-      // Xử lý lỗi
+      debugPrint("Lỗi Mistake Practice: $e");
     }
   }
 
@@ -200,11 +270,8 @@ class LearningResultPage extends HookConsumerWidget {
     WidgetRef ref,
     LearningSession session,
     List<LearningSession> currentSessions,
-    // Nhận vào danh sách để kiểm tra length
     ValueNotifier<LearningSessionSearchParams> paramsNotifier,
-    // Nhận notifier để set page
   ) async {
-    // (Giữ nguyên logic lấy tên item của phen)
     String itemName = "Phiên học";
     final quiz = session.quiz.target;
     if (quiz != null) {
@@ -216,23 +283,18 @@ class LearningResultPage extends HookConsumerWidget {
 
     showDialog(
       context: context,
-      builder: (context) => DeleteConfirmDialog(
+      builder: (ctx) => DeleteConfirmDialog(
         itemName: itemName,
         onDelete: () async {
-          // 1. Thực hiện xóa
           await ref
               .read(learningSessionProvider.notifier)
               .deleteSession(sessionId)
               .withToast(context);
 
-          // 2. LOGIC QUAY TRANG:
-          // Nếu xóa item cuối cùng của trang hiện tại (và không phải trang 0)
           if (currentSessions.length == 1 && paramsNotifier.value.page > 0) {
             paramsNotifier.value = paramsNotifier.value.copyWith(
               page: paramsNotifier.value.page - 1,
             );
-          } else {
-            // Nếu không phải trang cuối hoặc vẫn còn item, chỉ cần làm mới provider
           }
         },
       ),

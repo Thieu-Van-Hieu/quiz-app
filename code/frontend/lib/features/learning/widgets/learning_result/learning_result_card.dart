@@ -9,6 +9,8 @@ class LearningResultCard extends StatelessWidget {
   final LearningSession session;
   final VoidCallback onTap;
   final VoidCallback onRetake;
+  final VoidCallback
+  onConfigureRetake; // ✅ THÊM MỚI: Callback xử lý chỉnh sửa cấu hình trước khi làm lại
   final VoidCallback? onCreateMistakeSession;
   final VoidCallback onDelete;
 
@@ -17,6 +19,7 @@ class LearningResultCard extends StatelessWidget {
     required this.session,
     required this.onTap,
     required this.onRetake,
+    required this.onConfigureRetake, // ✅ THÊM MỚI
     this.onCreateMistakeSession,
     required this.onDelete,
   });
@@ -68,6 +71,13 @@ class LearningResultCard extends StatelessWidget {
       isExamMode ? (session.timeLimit ?? 0) * 60 : session.studyTime,
     );
 
+    // Kiểm tra điều kiện hiển thị nút "Câu sai"
+    final bool showMistakeButton =
+        isCompleted &&
+        session.totalWrong > 0 &&
+        !isPracticeMode &&
+        onCreateMistakeSession != null;
+
     return Card(
       elevation: 0,
       color: Colors.white,
@@ -79,7 +89,6 @@ class LearningResultCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         mouseCursor: SystemMouseCursors.click,
-        // ✅ GIẢI PHÁP: Bọc IntrinsicHeight giúp Column nhận biết được chiều cao tối đa để sử dụng Spacer() hợp lệ
         child: IntrinsicHeight(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -202,37 +211,84 @@ class LearningResultCard extends StatelessWidget {
                   ),
                 ],
 
-                // ✅ THAY ĐỔI CỐT LÕI: Đẩy toàn bộ các nút bấm Actions xuống đáy tuyệt đối của Card
+                // Đẩy toàn bộ các nút bấm Actions xuống đáy tuyệt đối của Card
                 const Spacer(),
                 const SizedBox(height: 12),
 
-                // 5. Nút bấm Actions cố định dưới đáy
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppButton(
-                        onPressed: onRetake,
-                        label: "Làm lại",
-                        icon: Icons.refresh,
+                // 5. Nút bấm Actions tự động gom cụm & co giãn linh hoạt
+                Builder(
+                  builder: (context) {
+                    // Cấu hình danh sách các nút gốc sạch (không bọc Expanded bậy bạ)
+                    final List<Widget> rawButtons = [
+                      AppButton(
+                        onPressed: onConfigureRetake,
+                        label: "Cấu hình",
+                        icon: Icons.tune,
                         variant: ButtonVariant.brandOutlined,
                         size: ButtonSize.small,
                       ),
-                    ),
-                    if (isCompleted &&
-                        session.totalWrong > 0 &&
-                        !isPracticeMode) ...[
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: AppButton(
+                      AppButton(
+                        onPressed: onRetake,
+                        label: "Làm lại",
+                        icon: Icons.refresh,
+                        variant: ButtonVariant.brand,
+                        size: ButtonSize.small,
+                      ),
+                      if (showMistakeButton)
+                        AppButton(
                           onPressed: onCreateMistakeSession,
                           label: "Câu sai",
                           icon: Icons.error_outline,
                           variant: ButtonVariant.danger,
                           size: ButtonSize.small,
                         ),
-                      ),
-                    ],
-                  ],
+                      // Sau này thích thêm nút thứ 4, thứ 5 cứ nhét thoải mái ở đây, UI tự chạy chuẩn bài!
+                    ];
+
+                    // Thuật toán chia nhóm tự động (Mỗi nhóm/hàng tối đa 2 phần tử)
+                    final List<List<Widget>> buttonRows = [];
+                    for (var i = 0; i < rawButtons.length; i += 2) {
+                      buttonRows.add(
+                        rawButtons.sublist(
+                          i,
+                          i + 2 > rawButtons.length ? rawButtons.length : i + 2,
+                        ),
+                      );
+                    }
+
+                    // Render tự động dựa trên các hàng đã chia nhỏ
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (
+                          int rowIndex = 0;
+                          rowIndex < buttonRows.length;
+                          rowIndex++
+                        ) ...[
+                          Row(
+                            children: [
+                              for (
+                                int btnIndex = 0;
+                                btnIndex < buttonRows[rowIndex].length;
+                                btnIndex++
+                              ) ...[
+                                // Thằng lẻ loi đứng 1 mình trong Row sẽ chiếm trọn 100% nhờ Expanded
+                                // Thằng đi chung đôi với cặp của nó sẽ tự chia đều 50% - 50%
+                                Expanded(child: buttonRows[rowIndex][btnIndex]),
+
+                                // Thêm khoảng cách ngang nếu trong một hàng có 2 nút
+                                if (btnIndex < buttonRows[rowIndex].length - 1)
+                                  const SizedBox(width: 8),
+                              ],
+                            ],
+                          ),
+                          // Thêm khoảng cách dọc giữa các hàng nút (ví dụ hàng 1 chứa 2 nút và hàng 2 chứa 1 nút)
+                          if (rowIndex < buttonRows.length - 1)
+                            const SizedBox(height: 8),
+                        ],
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -242,6 +298,7 @@ class LearningResultCard extends StatelessWidget {
     );
   }
 
+  // --- Các hàm build Widget phụ giữ nguyên ---
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -298,7 +355,7 @@ class LearningResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
