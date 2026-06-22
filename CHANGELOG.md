@@ -5,6 +5,60 @@ Tất cả thay đổi đáng chú ý của dự án được ghi lại tại đ
 
 ---
 
+## [1.1.0] — 2026-06-22
+
+### ✨ Thêm mới
+
+- **Cấu hình nhanh từ lịch sử**: Thêm tính năng và nút bấm động hỗ trợ nạp nhanh cấu hình cũ để làm lại bài học.
+- **Tính năng nhảy trang**: Nâng cấp bộ phân trang (`AppPagination`) cho phép nhảy nhanh đến số trang bất kỳ.
+- **Mở thư mục sau Export**: Thêm nút mở trực tiếp thư mục chứa file ngay sau khi xuất dữ liệu thành công.
+- **Hệ thống Button dùng chung**: Khởi tạo và đồng bộ hóa toàn bộ nút bấm trong dự án qua bộ đôi `AppButton` và
+  `AppActionButton`.
+
+### 🔧 Cải tiến
+
+- **Lột lác giao diện**: Chuyển đổi toàn bộ app sang hệ màu Pastel hiện đại, dịu mắt; sửa lại màu nền cho
+  `question_page`.
+- **Refactor kiến trúc Widget**: Tách nhỏ Dropdown, Menu và các khối UI thành các widget độc lập, dễ tái sử dụng.
+- **Nâng cấp Pagination**: Thay thế toàn bộ widget `InkWell` thô sơ trong bộ phân trang sang `AppButton` chuẩn.
+- **Chuẩn hóa tên gọi**: Đổi tên các thành phần từ `item` sang `card` (ví dụ: `LearningResultCard`) giúp cấu trúc code
+  rõ nghĩa hơn.
+- **Tối ưu hóa thanh tìm kiếm**: Sửa lại style của `AppSearchBar` để tăng độ tương phản và hiển thị rõ ràng hơn.
+
+### 🐛 Sửa lỗi
+
+- **Cô lập Database (ObjectBox)**: Tách biệt hoàn toàn thư mục lưu trữ DB của môi trường Debug và Release để tránh xung
+  đột dữ liệu.
+- **Đồng bộ hóa Export**: Khắc phục triệt để lỗi dữ liệu sau khi lưu DB nhưng khi export vẫn ra bộ quiz cũ.
+- **Trộn đáp án**: Sửa lỗi logic trong tính năng trộn ngẫu nhiên vị trí đáp án.
+
+---
+
+## [1.0.2] — 2026-04-21
+
+### ✨ Thêm mới
+
+- **Chuyển câu nhanh**: Thêm tính năng chuyển đổi nhanh thứ tự câu hỏi trong màn hình làm bài.
+- **Mở rộng bộ Import**: Hỗ trợ tối ưu import dữ liệu từ nguồn Quizlet và tệp văn bản thô (TXT).
+- **Shimmer Effect**: Bổ sung hiệu ứng tải trang (Shimmer) giúp giao diện mượt mà hơn khi đợi dữ liệu.
+
+### 🔧 Cải tiến
+
+- **Tách nhỏ cấu trúc**: Tiến hành bóc tách các trang lớn (`SubjectPage`, `QuizPage`, `QuestionPage`) thành các widget
+  con chuyên biệt để dễ bảo trì.
+- **Tối ưu State Management**: Tái cấu trúc lại cách quản lý state (trạng thái) của các tác vụ tác động đến dữ liệu (như
+  xóa).
+- **UX điều hướng tự động**: Tự động tính toán quay lui trang hoặc chuyển hướng thông minh sau khi người dùng thực hiện
+  xóa phần tử cuối cùng của trang.
+
+### 🐛 Sửa lỗi
+
+- **Breadcrumb Navigation**: Sửa lỗi tính toán sai đường dẫn hiển thị (Path) trên thanh Breadcrumb.
+- **Dữ liệu Quiz**: Sửa lại các câu lệnh import sai cấu trúc trong file dữ liệu `PMG201c - QuizApp.json`.
+- **Tài liệu**: Cập nhật bộ quiz mẫu có sẵn cho môn `MLN111` và căn chỉnh lại cấu trúc đề `SYB302c`.
+
+---
+
 ## [1.0.0] — 2026-04-12
 
 ### ✨ Thêm mới

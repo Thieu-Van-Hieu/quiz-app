@@ -1,74 +1,63 @@
-# Quiz App v1.0.0
+# Quiz App v1.1.0
 
-> **🎉 First Stable Release**  
-> **Platform:** Windows Desktop (Flutter) · **Date:** 12/04/2026 · **Author:** Mr.NoBody
-
----
-
-## 🚀 Giới thiệu
-
-Đây là phiên bản **stable đầu tiên** của Quiz App — ứng dụng học tập flashcard & trắc nghiệm chạy hoàn toàn offline trên
-Windows Desktop. So với pre-release `v0.1.0`, phiên bản này bổ sung đầy đủ Dashboard, Settings, chi tiết phiên học và tự
-động cập nhật.
+> **🎨 UI/UX Refactor & Feature Expansion** > **Nền tảng:** Windows Desktop (Flutter) · **Ngày phát hành:** 22/06/2026 ·
+**Tác giả:** Mr.NoBody
 
 ---
 
-## ✨ Có gì mới trong v1.0.0
+## 🚀 Giới thiệu phiên bản
 
-### 🆕 Tính năng hoàn toàn mới
-
-- **Dashboard**: biểu đồ hoạt động 7 ngày, thống kê tỉ lệ đúng/đã xem, danh sách phiên học gần đây
-- **Settings**: tùy chỉnh font chữ, cỡ chữ và phím tắt bàn phím/chuột cho mọi hành động học tập
-- **Chi tiết phiên học**: review lại toàn bộ câu hỏi, câu đã chọn và đáp án đúng/sai
-- **Export Quizlet**: xuất bộ đề ra format Quizlet với separator tùy chỉnh
-- **Auto-updater**: tự động kiểm tra phiên bản mới khi khởi động
-- **App icon** cho Windows
-
-### 🔧 Cải tiến đáng chú ý
-
-- Font chữ từ Settings được áp dụng vào tất cả màn hình học
-- Phím tắt tùy chỉnh hoạt động trong cả Study, Practice và Exam
-- Kết quả phiên học chi tiết hơn theo từng chế độ
-
-### 🐛 Lỗi đã sửa (kể từ v0.1.x)
-
-- Màn hình trắng khi hoàn thành session
-- Câu hỏi dài bị tràn layout — đã thêm scroll
-- Logic hiển thị câu đã chọn (từ ID sang index)
-- Import Quizlet bị giới hạn 4 câu
-- Shortcut chuột sai trong exam_page
+Chào mừng bạn đến với **Quiz App v1.1.0**! Bản cập nhật này đem tới một diện mạo hoàn toàn mới nịnh mắt hơn nhờ bảng màu
+Pastel hiện đại, khắc phục các vấn đề liên quan tới cơ sở dữ liệu offline và cung cấp trải nghiệm phân trang tốt hơn rất
+nhiều cho người dùng máy tính.
 
 ---
 
-## 📦 Cài đặt
+## ✨ Điểm mới trong bản v1.1.0
 
-### Yêu cầu
+### 🆕 Tính năng & Giao diện mới
 
-- Windows 10 / 11 (64-bit)
+- **Pastel UI Theme:** Toàn bộ hệ thống màu sắc được làm mới theo phong cách Pastel dịu mát, áp dụng đồng bộ trên nền và
+  trang hiển thị câu hỏi (`question_page`).
+- **Nạp cấu hình nhanh:** Khôi phục nhanh trạng thái trộn đề, trộn đáp án và bộ câu hỏi từ một phiên học cũ trực tiếp
+  ngay tại danh sách lịch sử.
+- **Nhảy trang (Pagination):** Hỗ trợ gõ trực tiếp số trang để chuyển tiếp ngay lập tức thay vì phải bấm từng trang thủ
+  công.
+- **Tự động mở thư mục:** Hệ thống tự động mở thư mục Windows Explorer ngay khi tệp bộ đề được Export thành công.
 
-### Hướng dẫn
+### 🔧 Tối ưu hóa & Tái cấu trúc (Refactor)
 
-1. Tải file `QuizApp_Setup_v1.0.0.exe` trong phần **Assets** bên dưới
-2. Chạy file installer và làm theo hướng dẫn
-3. Sau khi cài xong, mở **Quiz App** từ Start Menu hoặc shortcut trên Desktop
-
-> Tính năng **OCR scan màn hình** đã hoạt động ngay sau khi cài đặt — Tesseract engine được bundle sẵn trong installer,
-> không cần cài thêm gì.
+- **Thống nhất hệ thống nút bấm:** Chuyển đổi toàn bộ nút riêng lẻ sang widget dùng chung `AppButton` và
+  `AppActionButton`.
+- **Tách biệt Widget Core:** Menu điều hướng, thanh Dropdown và cấu trúc thẻ card (`LearningResultCard`) được tách riêng
+  để tối ưu bộ nhớ và hiệu năng kết xuất.
+- **Sửa lỗi đồng bộ ObjectBox:** Khắc phục lỗi hiển thị quiz cũ khi xuất tệp dữ liệu và lỗi logic trộn vị trí đáp án
+  trắc nghiệm.
+- **An toàn dữ liệu phát triển:** Tách biệt vị trí ghi dữ liệu SQLite/ObjectBox giữa bản chạy thử (Debug) và bản cài đặt
+  chính thức (Release).
 
 ---
 
-## 📋 Changelog đầy đủ
+## 📦 Hướng dẫn cài đặt
 
-Xem [CHANGELOG.md](CHANGELOG.md) để biết toàn bộ lịch sử thay đổi.
+### Yêu cầu hệ thống
+
+- Hệ điều hành: Windows 10 / Windows 11 (64-bit).
+
+### Các bước thực hiện
+
+1. Tải về tệp cài đặt `QuizApp_Setup_v1.1.0.exe` tại mục **Assets** ngay phía dưới.
+2. Mở tệp `.exe` vừa tải và tiến hành cài đặt theo các bước trên màn hình.
+3. Chạy ứng dụng từ màn hình Desktop. Hệ thống cơ sở dữ liệu cũ từ phiên bản `1.0.x` của bạn sẽ tự động được giữ lại
+   nguyên vẹn và nâng cấp an toàn.
 
 ---
 
-## 🔗 Liên kết
+## 🔗 Liên kết dự án
 
-- 📁 **Repo:** https://github.com/Thieu-Van-Hieu/quiz-app
-- 📦 **Releases:** https://github.com/Thieu-Van-Hieu/quiz-app/releases
-- 📚 **Bộ đề có sẵn (JSON):** https://github.com/Thieu-Van-Hieu/quiz-app/tree/main/quizzes/current
-- 📬 **Hỗ trợ:** quiz.fpt@gmail.com
+- 📁 **Repository:** https://github.com/Thieu-Van-Hieu/quiz-app
+- 📦 **Tất cả bản phát hành:** https://github.com/Thieu-Van-Hieu/quiz-app/releases
+- 📬 **Kênh hỗ trợ kỹ thuật:** quiz.fpt@gmail.com
 
 ---
 
