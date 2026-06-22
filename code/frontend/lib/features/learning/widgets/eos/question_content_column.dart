@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
+import 'package:frontend/features/learning/utils/learning_utils.dart';
 import 'package:frontend/features/library/models/answer.dart';
 
 enum AnswerStatus { none, correct, incorrect }
@@ -51,6 +52,18 @@ class EosQuestionContent extends StatelessWidget {
     final question = learningSessionDetail.question.target;
     if (question == null) return const SizedBox.shrink();
 
+    // =========================================================================
+    // XỬ LÝ SHUFFLE ĐÁP ÁN QUA UTILS
+    // =========================================================================
+    final session = learningSessionDetail.learningSession.target;
+
+    final displayAnswers = LearningUtils.getShuffledAnswers(
+      session: session,
+      questionId: question.id,
+      originalAnswers: question.answers,
+    );
+    // =========================================================================
+
     return Container(
       color: const Color(0xFFD4D0C8),
       padding: const EdgeInsets.all(1),
@@ -86,11 +99,13 @@ class EosQuestionContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 25),
 
-                  // 2. Danh sách đáp án
-                  ...question.answers.asMap().entries.map((entry) {
+                  // 2. Danh sách đáp án (ĐÃ THAY ĐỔI: Sử dụng displayAnswers đã xử lý hạt giống)
+                  ...displayAnswers.asMap().entries.map((entry) {
                     final index = entry.key;
                     final answer = entry.value;
-                    final label = String.fromCharCode(65 + index);
+                    final label = String.fromCharCode(
+                      65 + index,
+                    ); // Tự động map nhãn A, B, C, D theo vị trí mới
                     final status = _getAnswerStatus(answer);
 
                     return Padding(

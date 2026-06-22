@@ -1,7 +1,7 @@
-// lib/features/learning/widgets/eos_side_control.dart
 import 'package:flutter/cupertino.dart';
 import 'package:frontend/features/learning/constants/learning_colors.dart';
 import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
+import 'package:frontend/features/learning/utils/learning_utils.dart';
 import 'package:frontend/features/learning/widgets/retro/checkbox.dart';
 import 'package:frontend/features/library/models/answer.dart';
 
@@ -19,19 +19,30 @@ class EosAnswerColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final question = learningSessionDetail.question.target!;
+    final question = learningSessionDetail.question.target;
+    if (question == null) return const SizedBox.shrink();
 
-    // 1. Ép load lại list từ DB
-    final allAnswers = question.answers.toList();
+    // =========================================================================
+    // XỬ LÝ SHUFFLE ĐÁP ÁN QUA UTILS (ĐỒNG BỘ ĐỘC LẬP VỚI CONTENT)
+    // =========================================================================
+    final session = learningSessionDetail.learningSession.target;
+
+    final displayAnswers = LearningUtils.getShuffledAnswers(
+      session: session,
+      questionId: question.id,
+      originalAnswers: question.answers,
+    );
+    // =========================================================================
+
     final currentSelected = learningSessionDetail.selectedAnswers.toList();
 
-    // 2. Tìm index dựa trên ID thay vì so sánh Object trực tiếp
+    // Tìm index chính xác dựa trên ID trong danh sách ĐÃ TRỘN
     final selectedIndices = currentSelected
         .map((selected) {
-          return allAnswers.indexWhere((ans) => ans.id == selected.id);
+          return displayAnswers.indexWhere((ans) => ans.id == selected.id);
         })
         .where((index) => index != -1)
-        .toList(); // Lọc bỏ các giá trị -1 nếu có lỗi data
+        .toList();
 
     final isLocked = learningSessionDetail.isChecked;
     return Container(
@@ -49,12 +60,14 @@ class EosAnswerColumn extends StatelessWidget {
           ),
           const SizedBox(height: 15),
 
-          // Render Options
-          ...List.generate(question.answers.length, (index) {
+          // Render Options dựa theo displayAnswers đã xử lý hoán vị
+          ...List.generate(displayAnswers.length, (index) {
             final isSelected = selectedIndices.contains(index);
-            final isCorrect = question.answers.toList()[index].isCorrect;
+            final currentAnswer =
+                displayAnswers[index]; // Lấy đúng đáp án theo vị trí trộn mới
+            final isCorrect = currentAnswer.isCorrect;
 
-            // Chỉ tính toán màu khi bị khóa (đã Check)
+            // Tính toán màu sắc dựa trên vị trí hiển thị mới
             Color? feedbackColor;
             if (isLocked) {
               if (isCorrect) {
@@ -67,17 +80,14 @@ class EosAnswerColumn extends StatelessWidget {
             return RetroCheckbox(
               label: String.fromCharCode(65 + index),
               value: isSelected,
-              // Nếu bị khóa thì onChanged là null -> Checkbox sẽ disabled
               onChanged: (_) => {
-                if (!isLocked)
-                  {onAnswerSelected(question.answers.toList()[index])},
+                if (!isLocked) {onAnswerSelected(currentAnswer)},
               },
               color: feedbackColor,
             );
           }),
 
           const Spacer(),
-          // Page muốn hiện nút gì thì cứ ném vào đây
           Padding(
             padding: const EdgeInsets.all(10),
             child: Column(children: actions),
