@@ -1,15 +1,38 @@
+import 'package:flutter/cupertino.dart';
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 
 class QuizTextParser {
-  static final _optionLabelRegex = RegExp(r'([A-Z])[.)\-\s]\s+');
+  // Chuẩn hóa regex bắt các nhãn đáp án (A. B. C) không phân biệt hoa thường
+  static final _optionLabelRegex = RegExp(
+    r'([A-Za-z])(?:\.|[)\-])\s*',
+    caseSensitive: false,
+  );
+
   static const String errorFlag = "[ERR_FORMAT]";
 
   static void processFullBlock(String fullText, Quiz quiz) {
+    String normalizeText(String input) {
+      return input
+          .replaceAll(
+            '\u00A0',
+            ' ',
+          ) // Thay thế Non-breaking space bằng space thường
+          .replaceAll('\r\n', '\n') // Chuẩn hóa Windows newline về Unix
+          .replaceAll('\r', '\n') // Chuẩn hóa Mac newline về Unix
+          .replaceAll(RegExp(r'\t'), ' ') // Thay Tab bằng space
+          .trim();
+    }
+
     final parts = smartSplit(fullText);
-    final term = parts['term']!;
-    final definition = parts['definition']!;
+    // Đã sửa: Gom việc lấy dữ liệu và normalize vào làm một để tránh trùng biến
+    final term = normalizeText(parts['term']!);
+    final definition = normalizeText(parts['definition']!);
+
+    debugPrint("DEBUG PARSE DEFINITION: $definition");
+    debugPrint("DEBUG STRING CODES:");
+    debugPrint(term.runes.map((r) => r.toRadixString(16)).join(' '));
 
     final matches = _optionLabelRegex.allMatches(term).toList();
     List<Answer> tempAnswers = [];
@@ -19,7 +42,7 @@ class QuizTextParser {
     if (matches.isNotEmpty) {
       questionContent = term.substring(0, matches.first.start).trim();
 
-      if (definition == "..." || definition.trim().isEmpty) {
+      if (definition == "..." || definition.isEmpty) {
         errorWarning = "THIẾU ĐÁP ÁN ĐÚNG";
       }
 
@@ -33,7 +56,7 @@ class QuizTextParser {
         tempAnswers.add(Answer(content: content, isCorrect: false));
       }
 
-      // Tự động bỏ đáp án rỗng (khoảng trắng cũng được coi là rỗng)
+      // Tự động bỏ đáp án rỗng
       tempAnswers = tempAnswers
           .where((a) => a.content.trim().isNotEmpty)
           .toList();
@@ -43,8 +66,12 @@ class QuizTextParser {
         errorWarning = "KHÔNG KHỚP ĐÁP ÁN";
       }
     } else {
+      debugPrint(
+        "Regex không tìm thấy match nào. String hiện tại: ${term.length > 20 ? term.substring(0, 20) : term}...",
+      );
       questionContent = term;
-      if (definition == "..." || definition.trim().isEmpty) {
+
+      if (definition == "..." || definition.isEmpty) {
         errorWarning = "THIẾU ĐÁP ÁN FLASHCARD";
         tempAnswers.add(Answer(content: definition, isCorrect: false));
       } else {
@@ -103,10 +130,30 @@ class QuizTextParser {
     List<RegExpMatch> matches,
   ) {
     if (definition == "..." || definition.trim().isEmpty) return false;
-    final defUpper = definition.trim().toUpperCase();
+    final trimmedDef = definition.trim();
     bool foundAtLeastOne = false;
+
+    // 1. ƯU TIÊN CAO NHẤT: Kiểm tra dạng pointer trực tiếp (ví dụ: "A", "C.", "b)")
+    final pointerRegex = RegExp(r'^([A-Da-d])[.)\-\s]*$');
+    final pointerMatch = pointerRegex.firstMatch(trimmedDef);
+
+    if (pointerMatch != null) {
+      final label = pointerMatch.group(1)!.toUpperCase();
+      for (int i = 0; i < matches.length; i++) {
+        final optionLabel = matches[i].group(1)!.toUpperCase();
+        if (optionLabel == label && i < answers.length) {
+          answers[i].isCorrect = true;
+          return true;
+        }
+      }
+    }
+
+    // 2. NẾU KHÔNG PHẢI POINTER: So sánh nội dung chữ (Content Match)
     final cleanDef = definition
-        .replaceFirst(_optionLabelRegex, '')
+        .replaceFirst(
+          _optionLabelRegex,
+          '',
+        ) // Xóa nhãn nếu lỡ dính trong definition
         .trim()
         .toUpperCase();
 
@@ -120,18 +167,22 @@ class QuizTextParser {
       }
     }
 
-    if (!foundAtLeastOne || defUpper.length < 5) {
+    // 3. FALLBACK: Nếu vẫn không khớp nội dung, tìm ký tự [A-D] ẩn lẩn khuất bên trong definition
+    if (!foundAtLeastOne) {
       final labelInDef = RegExp(
-        r'[A-Z]',
-      ).allMatches(defUpper).map((m) => m.group(0)).toList();
+        r'[A-D]',
+        caseSensitive: false,
+      ).allMatches(trimmedDef).map((m) => m.group(0)!.toUpperCase()).toSet();
+
       for (int i = 0; i < matches.length; i++) {
         String labelInQuestion = matches[i].group(1)!.toUpperCase();
-        if (labelInDef.contains(labelInQuestion)) {
+        if (labelInDef.contains(labelInQuestion) && i < answers.length) {
           answers[i].isCorrect = true;
           foundAtLeastOne = true;
         }
       }
     }
+
     return foundAtLeastOne;
   }
 }
