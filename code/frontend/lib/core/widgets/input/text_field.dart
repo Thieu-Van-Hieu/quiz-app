@@ -4,6 +4,7 @@ import 'package:frontend/core/constants/app_colors.dart';
 class AppTextField extends StatelessWidget {
   final String label;
   final String? prefixText;
+  final String? suffixText;
   final int? maxLength;
   final int? maxLines;
   final String hintText;
@@ -20,6 +21,7 @@ class AppTextField extends StatelessWidget {
     required this.label,
     this.hintText = "",
     this.prefixText,
+    this.suffixText,
     this.controller,
     this.isPassword = false,
     this.maxLength,
@@ -71,6 +73,9 @@ class AppTextField extends StatelessWidget {
             fillColor: AppColors.textFieldFill,
             prefixText: (prefixText != null && prefixText!.isNotEmpty)
                 ? prefixText
+                : null,
+            suffixText: (suffixText != null && suffixText!.isNotEmpty)
+                ? suffixText
                 : null,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,

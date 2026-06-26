@@ -3,15 +3,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/core/widgets/button/switch.dart';
 import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
-import 'package:frontend/core/widgets/input/text_field.dart';
 import 'package:frontend/core/widgets/input/dropdown.dart';
+import 'package:frontend/core/widgets/input/text_field.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/learning_setting.dart';
 
 class LearningSettingDialog extends HookWidget {
   final int totalQuestions;
-  final LearningSetting?
-  initialSetting;
+  final LearningSetting? initialSetting;
   final Function(LearningSetting) onConfirm;
 
   const LearningSettingDialog({
@@ -91,7 +90,7 @@ class LearningSettingDialog extends HookWidget {
               AppTextField(
                 label: "Thời gian thi (phút)",
                 hintText: "Nhập số phút",
-                prefixText: "phút",
+                suffixText: "phút",
                 controller: timeLimitController,
                 keyboardType: TextInputType.number,
               ),
