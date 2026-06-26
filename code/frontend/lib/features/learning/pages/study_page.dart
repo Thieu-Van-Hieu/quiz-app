@@ -36,6 +36,10 @@ class StudyPage extends HookConsumerWidget {
     final focusNode = useFocusNode();
     final container = ProviderScope.containerOf(context);
 
+    // Sử dụng ObjectRef để lưu session mới nhất, tránh bị lỗi Stale Closure khi dispose
+    final latestSessionRef = useRef<dynamic>(null);
+    final latestSecondsRef = useRef<int>(0);
+
     return sessionAsync.when(
       loading: () =>
           const Material(child: Center(child: CircularProgressIndicator())),
@@ -47,6 +51,9 @@ class StudyPage extends HookConsumerWidget {
           );
         }
 
+        // Cập nhật giá trị session mới nhất qua mỗi lượt build
+        latestSessionRef.value = session;
+
         // Lấy config thực tế hoặc dùng object mặc định nếu đang load
         final config = configAsync.maybeWhen(
           data: (c) => c,
@@ -54,6 +61,9 @@ class StudyPage extends HookConsumerWidget {
         );
 
         final elapsedSeconds = useState<int>(session.studyTime);
+        // Đồng bộ hóa thời gian vào ref để hàm hủy luôn đọc được giây mới nhất
+        latestSecondsRef.value = elapsedSeconds.value;
+
         final isFinishingRef = useRef(false);
         final currentDetail = session.getCurrentLearningSessionDetail();
 
@@ -66,21 +76,25 @@ class StudyPage extends HookConsumerWidget {
         void performSave({bool isCompleted = false}) {
           if (isFinishingRef.value && !isCompleted) return;
 
-          final details = session.learningSessionDetails;
+          // Sử dụng session mới nhất từ Ref thay vì biến "session" cũ từ hàm build
+          final currentSession = latestSessionRef.value;
+          if (currentSession == null) return;
+
+          final details = currentSession.learningSessionDetails;
           int correct = details.where((d) => d.isCorrect == true).length;
           int wrong = details
               .where((d) => d.isChecked && d.isCorrect == false)
               .length;
 
-          session.studyTime = elapsedSeconds.value;
-          session.totalCorrect = correct;
-          session.totalWrong = wrong;
-          session.isCompleted = isCompleted;
-          if (isCompleted) session.endTime = DateTime.now();
+          currentSession.studyTime = latestSecondsRef.value;
+          currentSession.totalCorrect = correct;
+          currentSession.totalWrong = wrong;
+          currentSession.isCompleted = isCompleted;
+          if (isCompleted) currentSession.endTime = DateTime.now();
 
           container
               .read(learningSessionProvider.notifier)
-              .updateSession(session);
+              .updateSession(currentSession);
         }
 
         void jumpToPage(int newIndex) {
@@ -100,8 +114,6 @@ class StudyPage extends HookConsumerWidget {
             // Nếu đã check rồi thì nhảy sang câu tiếp theo
             if (session.currentIndex <
                 session.learningSessionDetails.length - 1) {
-              // jumpToPage đã bao gồm performSave()
-              // Gọi trực tiếp logic chuyển trang
               final nextIndex = session.currentIndex + 1;
               session.currentIndex = nextIndex;
               session.studyTime = elapsedSeconds.value;
@@ -159,13 +171,11 @@ class StudyPage extends HookConsumerWidget {
           if (isActionTriggered(ShortcutAction.checkQuestion, input)) {
             handleCheckAction();
           } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
-            // Thêm logic nhảy trang tới
             jumpToPage(session.currentIndex + 1);
           } else if (isActionTriggered(
             ShortcutAction.previousQuestion,
             input,
           )) {
-            // Thêm logic nhảy trang lui
             jumpToPage(session.currentIndex - 1);
           } else if (input is LogicalKeyboardKey) {
             handleQuickAnswer(input);
@@ -181,6 +191,7 @@ class StudyPage extends HookConsumerWidget {
           );
           return () {
             timer.cancel();
+            // Hàm hủy tại đây giờ đây sẽ lấy thông tin qua Ref một cách an toàn
             if (!isFinishingRef.value) performSave();
           };
         }, [sessionId]);
@@ -204,7 +215,6 @@ class StudyPage extends HookConsumerWidget {
           },
           child: Material(
             color: const Color(0xFFF0F0F0),
-            // KEYBOARD LISTENER: Ăn phím trên toàn bộ Page
             child: KeyboardListener(
               focusNode: focusNode,
               autofocus: true,
@@ -228,7 +238,6 @@ class StudyPage extends HookConsumerWidget {
                       ),
                       child: Row(
                         children: [
-                          // LISTENER: Chỉ ăn các nút chuột khi di chuyển trong vùng AnswerColumn
                           Listener(
                             behavior: HitTestBehavior.opaque,
                             onPointerDown: (event) {

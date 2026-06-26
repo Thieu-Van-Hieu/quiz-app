@@ -36,6 +36,10 @@ class ExamPage extends HookConsumerWidget {
     final container = ProviderScope.containerOf(context);
     final focusNode = useFocusNode();
 
+    // Dùng ObjectRef để luôn giữ đối tượng session và thời gian mới nhất (Chống Stale Closure)
+    final latestSessionRef = useRef<dynamic>(null);
+    final latestSecondsRef = useRef<int>(0);
+
     return sessionAsync.when(
       loading: () =>
           const Material(child: Center(child: CircularProgressIndicator())),
@@ -46,6 +50,10 @@ class ExamPage extends HookConsumerWidget {
             child: Center(child: Text("Không tìm thấy phiên thi")),
           );
         }
+
+        // Cập nhật session mới nhất vào ref qua mỗi lần build công khai
+        latestSessionRef.value = session;
+
         // Lấy config thực tế hoặc dùng object mặc định nếu đang load
         final config = configAsync.maybeWhen(
           data: (c) => c,
@@ -53,6 +61,9 @@ class ExamPage extends HookConsumerWidget {
         );
 
         final elapsedSeconds = useState<int>(session.studyTime);
+        // Đồng bộ hóa biến giây vào ref liên tục
+        latestSecondsRef.value = elapsedSeconds.value;
+
         final isConfirmedFinish = useState(false);
         final currentDetail = session.getCurrentLearningSessionDetail();
 
@@ -60,11 +71,13 @@ class ExamPage extends HookConsumerWidget {
 
         // --- CORE LOGIC ---
         void performSave() {
-          if (session.isCompleted) return; // Không lưu nếu đã hoàn thành
-          session.studyTime = elapsedSeconds.value;
+          final currentSession = latestSessionRef.value;
+          if (currentSession == null || currentSession.isCompleted) return;
+
+          currentSession.studyTime = latestSecondsRef.value;
           container
               .read(learningSessionProvider.notifier)
-              .updateSession(session);
+              .updateSession(currentSession);
         }
 
         void jumpToPage(int newIndex) {
@@ -79,7 +92,10 @@ class ExamPage extends HookConsumerWidget {
         }
 
         Future<void> handleFinishExam() async {
-          final details = session.learningSessionDetails;
+          final currentSession = latestSessionRef.value;
+          if (currentSession == null) return;
+
+          final details = currentSession.learningSessionDetails;
           for (var detail in details) {
             await container
                 .read(learningSessionDetailProvider.notifier)
@@ -93,15 +109,15 @@ class ExamPage extends HookConsumerWidget {
               )
               .length;
 
-          session.isCompleted = true;
-          session.endTime = DateTime.now();
-          session.studyTime = elapsedSeconds.value;
-          session.totalCorrect = correct;
-          session.totalWrong = wrong;
+          currentSession.isCompleted = true;
+          currentSession.endTime = DateTime.now();
+          currentSession.studyTime = latestSecondsRef.value;
+          currentSession.totalCorrect = correct;
+          currentSession.totalWrong = wrong;
 
           await container
               .read(learningSessionProvider.notifier)
-              .updateSession(session);
+              .updateSession(currentSession);
           await container
               .read(learningSessionProvider.notifier)
               .completeSession(sessionId);
@@ -160,11 +176,14 @@ class ExamPage extends HookConsumerWidget {
           focusNode.requestFocus();
           final timer = Timer.periodic(const Duration(seconds: 1), (t) {
             elapsedSeconds.value++;
-            session.studyTime = elapsedSeconds.value;
+            // Cập nhật trực tiếp vào session gốc của kì build hiện tại để hiển thị đồng bộ
+            latestSessionRef.value?.studyTime = elapsedSeconds.value;
           });
           return () {
             timer.cancel();
-            if (!session.isCompleted) {
+            // Đọc dữ liệu từ Ref đảm bảo an toàn tuyệt đối khi đóng trang đột ngột
+            final currentSession = latestSessionRef.value;
+            if (currentSession != null && !currentSession.isCompleted) {
               performSave();
             }
           };
@@ -189,8 +208,7 @@ class ExamPage extends HookConsumerWidget {
         return PopScope(
           canPop: true, // Cho phép pop (thoát màn hình)
           onPopInvokedWithResult: (didPop, result) {
-            // didPop trả về true nếu việc pop đã thành công
-            if (didPop && !session.isCompleted) {
+            if (didPop) {
               performSave();
             }
           },
@@ -219,7 +237,6 @@ class ExamPage extends HookConsumerWidget {
                       ),
                       child: Row(
                         children: [
-                          // MOUSE SHORTCUTS: Chỉ hoạt động trong vùng Answer Column
                           Listener(
                             behavior: HitTestBehavior.opaque,
                             onPointerDown: (event) {
