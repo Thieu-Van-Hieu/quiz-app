@@ -10,6 +10,7 @@ import 'package:frontend/features/learning/hooks/eos/use_resizable.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_detail_notifier.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
+import 'package:frontend/features/learning/utils/learning_utils.dart'; // Đảm bảo import đúng đường dẫn LearningUtils
 import 'package:frontend/features/learning/widgets/eos/answer_column.dart';
 import 'package:frontend/features/learning/widgets/eos/bottom_bar.dart';
 import 'package:frontend/features/learning/widgets/eos/clock.dart';
@@ -17,6 +18,7 @@ import 'package:frontend/features/learning/widgets/eos/feedback_column.dart';
 import 'package:frontend/features/learning/widgets/eos/progress_row.dart';
 import 'package:frontend/features/learning/widgets/eos/question_content_column.dart';
 import 'package:frontend/features/learning/widgets/retro/button.dart';
+import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/setting/constants/keymaps.dart';
 import 'package:frontend/features/setting/enums/shortcut_action.dart';
 import 'package:frontend/features/setting/notifiers/app_config_notifier.dart';
@@ -124,11 +126,9 @@ class StudyPage extends HookConsumerWidget {
         // --- HANDLERS ---
         void handleCheckAction() {
           if (currentDetail.isChecked) {
-            // Nếu là câu cuối cùng mà đã check rồi -> Hoàn thành luôn
             if (isLastQuestion) {
               handleFinishExam();
             } else {
-              // Nếu chưa phải câu cuối -> Nhảy sang câu tiếp theo
               final nextIndex = session.currentIndex + 1;
               session.currentIndex = nextIndex;
               session.studyTime = elapsedSeconds.value;
@@ -137,7 +137,6 @@ class StudyPage extends HookConsumerWidget {
                   .updateSession(session);
             }
           } else {
-            // Nếu chưa check thì thực hiện check
             ref
                 .read(learningSessionDetailProvider.notifier)
                 .checkQuestion(currentDetail.id);
@@ -172,11 +171,23 @@ class StudyPage extends HookConsumerWidget {
           final label = key.keyLabel.toUpperCase();
           if (label.length == 1 && label.contains(RegExp(r'[A-Z]'))) {
             final index = label.codeUnitAt(0) - 65;
-            final answers = currentDetail.question.target?.answers ?? [];
-            if (index < answers.length) {
+
+            // SỬA TẠI ĐÂY: Lấy danh sách gốc
+            final originalAnswers =
+                currentDetail.question.target?.answers ?? List<Answer>.empty();
+
+            // Sử dụng LearningUtils để lấy đúng danh sách đã xáo trộn (giống như UI hiển thị)
+            final shuffledAnswers = LearningUtils.getShuffledAnswers(
+              session: session,
+              questionId: currentDetail.question.target?.id ?? 0,
+              originalAnswers: originalAnswers,
+            );
+
+            // Tìm và toggle theo vị trí thực tế trên màn hình
+            if (index < shuffledAnswers.length) {
               container
                   .read(learningSessionDetailProvider.notifier)
-                  .toggleAnswer(currentDetail.id, answers[index]);
+                  .toggleAnswer(currentDetail.id, shuffledAnswers[index]);
             }
           }
         }
@@ -317,7 +328,6 @@ class StudyPage extends HookConsumerWidget {
                             : null,
                       ),
                       const SizedBox(width: 8),
-                      // Nếu là câu cuối cùng, không hiển thị nút Next nữa, chỉ hiển thị duy nhất nút Finish
                       if (!isLastQuestion) ...[
                         RetroButton(
                           label: "Next >>",

@@ -9,6 +9,7 @@ import 'package:frontend/features/learning/hooks/eos/use_resizable.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_detail_notifier.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
+import 'package:frontend/features/learning/utils/learning_utils.dart'; // Thêm import LearningUtils ở đây
 import 'package:frontend/features/learning/widgets/eos/answer_column.dart';
 import 'package:frontend/features/learning/widgets/eos/bottom_bar.dart';
 import 'package:frontend/features/learning/widgets/eos/clock.dart';
@@ -17,6 +18,7 @@ import 'package:frontend/features/learning/widgets/eos/progress_row.dart';
 import 'package:frontend/features/learning/widgets/eos/question_content_column.dart';
 import 'package:frontend/features/learning/widgets/retro/button.dart';
 import 'package:frontend/features/learning/widgets/retro/checkbox.dart';
+import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/setting/constants/keymaps.dart';
 import 'package:frontend/features/setting/enums/shortcut_action.dart';
 import 'package:frontend/features/setting/notifiers/app_config_notifier.dart';
@@ -148,11 +150,20 @@ class ExamPage extends HookConsumerWidget {
           final label = key.keyLabel.toUpperCase();
           if (label.length == 1 && label.contains(RegExp(r'[A-Z]'))) {
             final index = label.codeUnitAt(0) - 65; // A=0, B=1...
-            final answers = currentDetail.question.target?.answers ?? [];
-            if (index < answers.length) {
+            final originalAnswers =
+                currentDetail.question.target?.answers ?? List<Answer>.empty();
+
+            // ĐÃ ĐƯỢC SỬA: Lấy danh sách đáp án ứng với trạng thái shuffle hiện tại
+            final shuffledAnswers = LearningUtils.getShuffledAnswers(
+              session: session,
+              questionId: currentDetail.question.target?.id ?? 0,
+              originalAnswers: originalAnswers,
+            );
+
+            if (index < shuffledAnswers.length) {
               container
                   .read(learningSessionDetailProvider.notifier)
-                  .toggleAnswer(currentDetail.id, answers[index]);
+                  .toggleAnswer(currentDetail.id, shuffledAnswers[index]);
             }
           }
         }
