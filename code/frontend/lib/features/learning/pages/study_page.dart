@@ -72,11 +72,13 @@ class StudyPage extends HookConsumerWidget {
           currentDetail.learningSession.target = session;
         }
 
+        final isLastQuestion =
+            session.currentIndex == session.learningSessionDetails.length - 1;
+
         // --- CORE LOGIC ---
         void performSave({bool isCompleted = false}) {
           if (isFinishingRef.value && !isCompleted) return;
 
-          // Sử dụng session mới nhất từ Ref thay vì biến "session" cũ từ hàm build
           final currentSession = latestSessionRef.value;
           if (currentSession == null) return;
 
@@ -97,6 +99,17 @@ class StudyPage extends HookConsumerWidget {
               .updateSession(currentSession);
         }
 
+        Future<void> handleFinishExam() async {
+          isFinishingRef.value = true;
+          performSave(isCompleted: true);
+          await container
+              .read(learningSessionProvider.notifier)
+              .completeSession(sessionId);
+          if (context.mounted) {
+            context.go(LearningRoutes.sessionPath(sessionId));
+          }
+        }
+
         void jumpToPage(int newIndex) {
           if (newIndex >= 0 &&
               newIndex < session.learningSessionDetails.length) {
@@ -111,9 +124,11 @@ class StudyPage extends HookConsumerWidget {
         // --- HANDLERS ---
         void handleCheckAction() {
           if (currentDetail.isChecked) {
-            // Nếu đã check rồi thì nhảy sang câu tiếp theo
-            if (session.currentIndex <
-                session.learningSessionDetails.length - 1) {
+            // Nếu là câu cuối cùng mà đã check rồi -> Hoàn thành luôn
+            if (isLastQuestion) {
+              handleFinishExam();
+            } else {
+              // Nếu chưa phải câu cuối -> Nhảy sang câu tiếp theo
               final nextIndex = session.currentIndex + 1;
               session.currentIndex = nextIndex;
               session.studyTime = elapsedSeconds.value;
@@ -126,7 +141,6 @@ class StudyPage extends HookConsumerWidget {
             ref
                 .read(learningSessionDetailProvider.notifier)
                 .checkQuestion(currentDetail.id);
-            // Lưu trạng thái ngay khi check
             session.studyTime = elapsedSeconds.value;
             container
                 .read(learningSessionProvider.notifier)
@@ -171,7 +185,7 @@ class StudyPage extends HookConsumerWidget {
           if (isActionTriggered(ShortcutAction.checkQuestion, input)) {
             handleCheckAction();
           } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
-            jumpToPage(session.currentIndex + 1);
+            if (!isLastQuestion) jumpToPage(session.currentIndex + 1);
           } else if (isActionTriggered(
             ShortcutAction.previousQuestion,
             input,
@@ -191,7 +205,6 @@ class StudyPage extends HookConsumerWidget {
           );
           return () {
             timer.cancel();
-            // Hàm hủy tại đây giờ đây sẽ lấy thông tin qua Ref một cách an toàn
             if (!isFinishingRef.value) performSave();
           };
         }, [sessionId]);
@@ -259,11 +272,15 @@ class StudyPage extends HookConsumerWidget {
                                 actions: [
                                   RetroButton(
                                     label: currentDetail.isChecked
-                                        ? "Next >>"
+                                        ? (isLastQuestion
+                                              ? "Finish"
+                                              : "Next >>")
                                         : "Check",
                                     width: 110,
                                     color: currentDetail.isChecked
-                                        ? LearningColors.nextButton
+                                        ? (isLastQuestion
+                                              ? Colors.green.shade100
+                                              : LearningColors.nextButton)
                                         : LearningColors.checkButton,
                                     onTap: handleCheckAction,
                                   ),
@@ -300,30 +317,20 @@ class StudyPage extends HookConsumerWidget {
                             : null,
                       ),
                       const SizedBox(width: 8),
-                      RetroButton(
-                        label: "Next >>",
-                        width: 85,
-                        onTap:
-                            session.currentIndex <
-                                session.learningSessionDetails.length - 1
-                            ? () => jumpToPage(session.currentIndex + 1)
-                            : null,
-                      ),
-                      const SizedBox(width: 16),
+                      // Nếu là câu cuối cùng, không hiển thị nút Next nữa, chỉ hiển thị duy nhất nút Finish
+                      if (!isLastQuestion) ...[
+                        RetroButton(
+                          label: "Next >>",
+                          width: 85,
+                          onTap: () => jumpToPage(session.currentIndex + 1),
+                        ),
+                        const SizedBox(width: 16),
+                      ],
                       RetroButton(
                         label: "Finish",
                         width: 85,
                         color: Colors.green.shade100,
-                        onTap: () async {
-                          isFinishingRef.value = true;
-                          performSave(isCompleted: true);
-                          await container
-                              .read(learningSessionProvider.notifier)
-                              .completeSession(sessionId);
-                          if (context.mounted) {
-                            context.go(LearningRoutes.sessionPath(sessionId));
-                          }
-                        },
+                        onTap: handleFinishExam,
                       ),
                       const SizedBox(width: 10),
                     ],
