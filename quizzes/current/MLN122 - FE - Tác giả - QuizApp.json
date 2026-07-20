@@ -1,0 +1,126 @@
+{
+  "id": 20,
+  "name": "MLN122 - FE - Tác giả - QuizApp",
+  "subjectTargetId": 6,
+  "questionsList": [
+    {
+      "id": 10247,
+      "content": "Trong các nhà kinh điển của chủ nghĩa Mác - Lênin, ai là người khái quát về nguyên nhân ra đời của chủ nhĩa tư bản độc quyền bằng câu: \"tự do cạnh tranh đẻ ra tập trung sản xuất và sự tập trung sản xuất này, khi phát triển tới một mức độ nhất định lại dẫn tới độc quyền\".",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45490,"content":"Ph. Ăngghen","is_correct":false,"index_order":0,"question_target_id":10247},
+        {"id":45491,"content":"C. Mác","is_correct":false,"index_order":0,"question_target_id":10247},
+        {"id":45492,"content":"Ph. Ăngghen và C. Mác","is_correct":false,"index_order":0,"question_target_id":10247},
+        {"id":45493,"content":"V.I.Lêinin.","is_correct":true,"index_order":0,"question_target_id":10247}
+      ]
+    },
+    {
+      "id": 10318,
+      "content": "Ai là người đầu tiên đưa ra khái niệm \"kinh tế- chính trị\"?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45757,"content":"Francois Quesney","is_correct":false,"index_order":0,"question_target_id":10318},
+        {"id":45758,"content":"Antoine Montchretiên","is_correct":true,"index_order":0,"question_target_id":10318},
+        {"id":45759,"content":"William Petty","is_correct":false,"index_order":0,"question_target_id":10318}
+      ]
+    },
+    {
+      "id": 10393,
+      "content": "Ai là người đề xuất ra ba loại thương nghiệp (trao đổi tự nhiên, trao đổi tiền tệ, trao đổi thông qua mục đích làm giàu) và hai loại kinh doanh (kinh tế, sản xuất của cải)?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46027,"content":"Aristoteles","is_correct":true,"index_order":0,"question_target_id":10393},
+        {"id":46028,"content":"Platon","is_correct":false,"index_order":0,"question_target_id":10393},
+        {"id":46029,"content":"Xenophon","is_correct":false,"index_order":0,"question_target_id":10393},
+        {"id":46030,"content":"Karl Marx","is_correct":false,"index_order":0,"question_target_id":10393}
+      ]
+    },
+    {
+      "id": 10421,
+      "content": "\"Tư bản tài chính là kết quả của sự hợp nhất giữa tư bản ngân hàng của một số ít ngân hàng độc quyền lớn nhất, với tư bản của những liên minh độc quyền các nhà công nghiệp.\" Câu nói trên của ai?",
+      "explanation": "Đáp án đúng: C",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46135,"content":"C. Mác","is_correct":false,"index_order":0,"question_target_id":10421},
+        {"id":46136,"content":"Ph. Ăngghen","is_correct":false,"index_order":0,"question_target_id":10421},
+        {"id":46137,"content":"V. I Lênin","is_correct":true,"index_order":0,"question_target_id":10421},
+        {"id":46138,"content":"Hồ Chí Minh","is_correct":false,"index_order":0,"question_target_id":10421}
+      ]
+    },
+    {
+      "id": 10425,
+      "content": "Quan điểm cho rằng lợi nhuận phần thu nhập thặng dư tính bằng hiệu quả giữa giá trị tổng doanh thu trừ đi tổng chi phí và là phần thưởng cho việc gánh chịu rủi ro và cho sự đổi mới là của ai?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46149,"content":"Paul A.Samuelson","is_correct":true,"index_order":0,"question_target_id":10425},
+        {"id":46150,"content":"David Begg","is_correct":false,"index_order":0,"question_target_id":10425},
+        {"id":46151,"content":"Stanley Fischer","is_correct":false,"index_order":0,"question_target_id":10425},
+        {"id":46152,"content":"Rudiger Dornbusch","is_correct":false,"index_order":0,"question_target_id":10425}
+      ]
+    },
+    {
+      "id": 10471,
+      "content": "Ai là người đưa kinh tế chính trị trở thành môn khoa học có tính hệ thống với các phạm trù và khái niệm chuyên ngành?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46325,"content":"Adam Smith","is_correct":true,"index_order":0,"question_target_id":10471},
+        {"id":46326,"content":"David Ricardo","is_correct":false,"index_order":0,"question_target_id":10471},
+        {"id":46327,"content":"Karl Marx","is_correct":false,"index_order":0,"question_target_id":10471},
+        {"id":46328,"content":"Willian Stafford","is_correct":false,"index_order":0,"question_target_id":10471}
+      ]
+    },
+    {
+      "id": 10472,
+      "content": "Kinh tế chính trị cổ điển Anh được hình thành và phát triển từ cuối thế ký XVIII đến nửa đầu thế kỷ XIX, mở đầu bằng các quan điểm lý luận của nhà kinh tế chính trị học nào sau đây?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46329,"content":"David Ricardo","is_correct":false,"index_order":0,"question_target_id":10472},
+        {"id":46330,"content":"Adam Smith","is_correct":true,"index_order":0,"question_target_id":10472},
+        {"id":46331,"content":"William Petty","is_correct":false,"index_order":0,"question_target_id":10472},
+        {"id":46332,"content":"Thomas Mun","is_correct":false,"index_order":0,"question_target_id":10472}
+      ]
+    },
+    {
+      "id": 10500,
+      "content": "Ai là người được Mác coi là sáng lập ra kinh tế chính trị tư sản cổ điển?",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46436,"content":"Thomas Mun","is_correct":false,"index_order":0,"question_target_id":10500},
+        {"id":46437,"content":"David Ricardo","is_correct":false,"index_order":0,"question_target_id":10500},
+        {"id":46438,"content":"Adam Smith","is_correct":false,"index_order":0,"question_target_id":10500},
+        {"id":46439,"content":"William Petty","is_correct":true,"index_order":0,"question_target_id":10500}
+      ]
+    },
+    {
+      "id": 10566,
+      "content": "Ai là người đầu tiên phát minh ra tính hai mặt của lao động sản xuất hàng hóa: lao động cụ thể và lao động trừu tượng?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46686,"content":"Đ. Ricacđô","is_correct":false,"index_order":0,"question_target_id":10566},
+        {"id":46687,"content":"C. Mác","is_correct":true,"index_order":0,"question_target_id":10566},
+        {"id":46688,"content":"Ph. Ăngghen","is_correct":false,"index_order":0,"question_target_id":10566},
+        {"id":46689,"content":"V.I. Lênin","is_correct":false,"index_order":0,"question_target_id":10566}
+      ]
+    },
+    {
+      "id": 10598,
+      "content": "Tiền tệ là bánh xe vĩ đại của lưu thông. Câu nói này là của ai và theo anh (chị) nó có đúng không?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46801,"content":"A. Smith và là câu nói đúng","is_correct":true,"index_order":0,"question_target_id":10598},
+        {"id":46802,"content":"Đ. Ricacđô và là câu nói đúng","is_correct":false,"index_order":0,"question_target_id":10598},
+        {"id":46803,"content":"C. Mác và là câu nói đúng","is_correct":false,"index_order":0,"question_target_id":10598},
+        {"id":46804,"content":"Đ. Ricacđô và là câu nói sai","is_correct":false,"index_order":0,"question_target_id":10598}
+      ]
+    }
+  ]
+}

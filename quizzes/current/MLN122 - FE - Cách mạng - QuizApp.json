@@ -1,0 +1,330 @@
+{
+  "id": 20,
+  "name": "MLN122 - FE - Cách mạng - QuizApp",
+  "subjectTargetId": 6,
+  "questionsList": [
+    {
+      "id": 10366,
+      "content": "Đặc trưng của cách mạng công nghiệp lần thứ hai đó là",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45925,"content":"Sử dụng năng lượng điện và động cơ điện, để tạo ra dây chuyền sản xuất có tính chuyên môn hóa cao","is_correct":true,"index_order":0,"question_target_id":10366},
+        {"id":45926,"content":"Sử dụng năng lượng điện và máy hơi nước để cơ khí hóa sản xuất","is_correct":false,"index_order":0,"question_target_id":10366},
+        {"id":45927,"content":"Sử dụng năng lượng hơi nước, để cơ khí hóa sản xuất","is_correct":false,"index_order":0,"question_target_id":10366},
+        {"id":45928,"content":"Sử dụng công nghệ thông tin và máy tính để tự động hóa sản xuất","is_correct":false,"index_order":0,"question_target_id":10366}
+      ]
+    },
+    {
+      "id": 10368,
+      "content": "Nghiên cứu về cách mạng công nghiệp lần thứ nhất, C. Mác đã khái quát tính quy luật của cách mạng công nghiệp qua mấy giai đoạn phát triển?",
+      "explanation": "Đáp án đúng: C",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45932,"content":"Một giai đoạn","is_correct":false,"index_order":0,"question_target_id":10368},
+        {"id":45933,"content":"Hai giai đoạn","is_correct":false,"index_order":0,"question_target_id":10368},
+        {"id":45934,"content":"Ba giai đoạn","is_correct":true,"index_order":0,"question_target_id":10368},
+        {"id":45935,"content":"Bốn giai đoạn","is_correct":false,"index_order":0,"question_target_id":10368}
+      ]
+    },
+    {
+      "id": 10369,
+      "content": "Khi nghiên cứu về cách mạng công nghiệp lần thứ nhất, C. Mác đã khái quát tính quy luật của các mạng công nghiệp qua các giai đoạn phát triển đó là:",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45936,"content":"Hiệp tác đơn giản, lao động thủ công, lao động phức tạp","is_correct":false,"index_order":0,"question_target_id":10369},
+        {"id":45937,"content":"Hiệp tác đơn giản, công trường thủ công, công nghiệp hóa","is_correct":false,"index_order":0,"question_target_id":10369},
+        {"id":45938,"content":"Hiệp tác đơn giản, sản xuất thủ công, sản xuất hiện đại","is_correct":false,"index_order":0,"question_target_id":10369},
+        {"id":45939,"content":"Hiệp tác đơn giản, công trường thủ công, đại công nghiệp","is_correct":true,"index_order":0,"question_target_id":10369}
+      ]
+    },
+    {
+      "id": 10370,
+      "content": "Chọn phương án sai vai trò của cách mạng công nghiệp đối với sự phát triển đó là",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45940,"content":"Thúc đẩy sự phát triển của lực lượng sản xuất","is_correct":false,"index_order":0,"question_target_id":10370},
+        {"id":45941,"content":"Thúc đẩy các quan hệ sản xuất mới ra đời","is_correct":true,"index_order":0,"question_target_id":10370},
+        {"id":45942,"content":"Thúc đẩy hoàn thiện quan hệ sản xuất","is_correct":false,"index_order":0,"question_target_id":10370},
+        {"id":45943,"content":"Thúc đẩy đổi mới phương thức quản trị phát triển","is_correct":false,"index_order":0,"question_target_id":10370}
+      ]
+    },
+    {
+      "id": 10383,
+      "content": "Cách mạng công nghiệp lần thứ hai diễn ra trong giai đoạn nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45988,"content":"Từ nửa cuối thế kỷ XIX đến đầu thế kỷ XX","is_correct":true,"index_order":0,"question_target_id":10383},
+        {"id":45989,"content":"Từ nửa đầu thế kỷ XIX đến cuối thế kỷ XIX","is_correct":false,"index_order":0,"question_target_id":10383},
+        {"id":45990,"content":"Từ nửa đầu thế kỷ XX đề nữa cuối thế kỷ XX","is_correct":false,"index_order":0,"question_target_id":10383},
+        {"id":45991,"content":"Từ nửa cuối thế kỷ XIX đến nửa cuối thế kỷ XX","is_correct":false,"index_order":0,"question_target_id":10383}
+      ]
+    },
+    {
+      "id": 10384,
+      "content": "Cách mạng công nghiệp lần thứ hai diễn ra trong thời gian nào?",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45992,"content":"Từ giữa thế kỷ XV đến giữa thế kỷ XIX","is_correct":false,"index_order":0,"question_target_id":10384},
+        {"id":45993,"content":"Từ giữa thế kỷ XVI đến giữa thế kỷ XVII","is_correct":false,"index_order":0,"question_target_id":10384},
+        {"id":45994,"content":"Từ giữa thế kỷ XVIII đến giữa thế kỷ XIX","is_correct":false,"index_order":0,"question_target_id":10384},
+        {"id":45995,"content":"Từ giữa thế kỷ XIX đến giữa thế kỷ XX","is_correct":true,"index_order":0,"question_target_id":10384}
+      ]
+    },
+    {
+      "id": 10407,
+      "content": "Cách mạng công nghiệp lần thứ tư sẽ làm mất đi lợi thế của các nước đang phát triển về",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46081,"content":"Tài nguyên thiên nhiên, công nhân giá rẻ","is_correct":true,"index_order":0,"question_target_id":10407},
+        {"id":46082,"content":"Khoáng sản, sức lao động","is_correct":false,"index_order":0,"question_target_id":10407},
+        {"id":46083,"content":"Khoa học công nghệ, nhân công chất lượng cao","is_correct":false,"index_order":0,"question_target_id":10407}
+      ]
+    },
+    {
+      "id": 10413,
+      "content": "Cách mạng công nghiệp lần thứ nhất diễn ra trong thời gian nào?",
+      "explanation": "Đáp án đúng: C",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46103,"content":"Từ giữa thế kỷ XV đến giữa thế kỷ XIX","is_correct":false,"index_order":0,"question_target_id":10413},
+        {"id":46104,"content":"Từ giữa thế kỷ XVI đến giữa thế kỷ XVII","is_correct":false,"index_order":0,"question_target_id":10413},
+        {"id":46105,"content":"Từ giữa thế kỷ XVIII đến giữa thế kỷ XIX","is_correct":true,"index_order":0,"question_target_id":10413},
+        {"id":46106,"content":"Từ giữa thế kỷ XIX đến giữa thế kỷ XX","is_correct":false,"index_order":0,"question_target_id":10413}
+      ]
+    },
+    {
+      "id": 10414,
+      "content": "Yếu tố nào quyết định đến sự hình thành của cách mạng công nghiệp.",
+      "explanation": "Đáp án đúng: C",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46107,"content":"Sự phát triển vượt bậc của quan hệ sản xuất","is_correct":false,"index_order":0,"question_target_id":10414},
+        {"id":46108,"content":"Phương thức sản xuất mới ra đời","is_correct":false,"index_order":0,"question_target_id":10414},
+        {"id":46109,"content":"Sự phát triển nhảy vọt về trình độ của tư liệu lao động","is_correct":true,"index_order":0,"question_target_id":10414},
+        {"id":46110,"content":"Các phát minh sáng chế của các nhà khoa học trên mọi lĩnh vực","is_correct":false,"index_order":0,"question_target_id":10414}
+      ]
+    },
+    {
+      "id": 10432,
+      "content": "Cách mạng công nghiệp lần thứ hai đã tạo ra những tiến bộ vượt bậc trong lĩnh vực nào?",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46176,"content":"Giao thông vận tải và thông tin liên lạc","is_correct":false,"index_order":0,"question_target_id":10432},
+        {"id":46177,"content":"Kết cấu hạ tầng và viễn thông","is_correct":false,"index_order":0,"question_target_id":10432},
+        {"id":46178,"content":"Năng lượng điện và năng lượng hóa thạch","is_correct":false,"index_order":0,"question_target_id":10432},
+        {"id":46179,"content":"Tất cả phương án trên","is_correct":true,"index_order":0,"question_target_id":10432}
+      ]
+    },
+    {
+      "id": 10476,
+      "content": "Người phát minh ra con thoi - một cải tiến của khung dệt và là một đóng góp quan trọng cho cách mạng cộng nghiệp lần thứ nhất là",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46344,"content":"John Kay (1704 - 1779)","is_correct":true,"index_order":0,"question_target_id":10476},
+        {"id":46345,"content":"Richard Arkwright (1732-1792)","is_correct":false,"index_order":0,"question_target_id":10476},
+        {"id":46346,"content":"Edmund Cartwright (1743-1823)","is_correct":false,"index_order":0,"question_target_id":10476},
+        {"id":46347,"content":"James Watt (1736-1891)","is_correct":false,"index_order":0,"question_target_id":10476}
+      ]
+    },
+    {
+      "id": 10479,
+      "content": "Công nghiệp hoá ở Anh (cuộc cách mạng công nghiệp lần thứ nhất) bắt nguồn từ ngành nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46356,"content":"Công nghiệp nhẹ","is_correct":true,"index_order":0,"question_target_id":10479},
+        {"id":46357,"content":"Công nghiệp nặng","is_correct":false,"index_order":0,"question_target_id":10479},
+        {"id":46358,"content":"Dịch vụ","is_correct":false,"index_order":0,"question_target_id":10479},
+        {"id":46359,"content":"Sản xuất vũ khí","is_correct":false,"index_order":0,"question_target_id":10479}
+      ]
+    },
+    {
+      "id": 10492,
+      "content": "Hiện nay thế giới trải qua bao nhiều cuộc cách mạng công nghiệp?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46403,"content":"Ba cuộc cách mạng công nghiệp","is_correct":false,"index_order":0,"question_target_id":10492},
+        {"id":46404,"content":"Bốn cuộc cách mạng công nghiệp","is_correct":true,"index_order":0,"question_target_id":10492},
+        {"id":46405,"content":"Năm cuộc cách mạng công nghiệp","is_correct":false,"index_order":0,"question_target_id":10492},
+        {"id":46406,"content":"Hai cuộc cách mạng công nghiệp","is_correct":false,"index_order":0,"question_target_id":10492}
+      ]
+    },
+    {
+      "id": 10493,
+      "content": "Những yếu tố cốt lõi của kỹ thuật số trong cách mạng công nghiệp lần thứ 4 là: (chọn 3 phương án)",
+      "explanation": "Đáp án đúng: B, D, E",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46407,"content":"Công nghệ 3D","is_correct":false,"index_order":0,"question_target_id":10493},
+        {"id":46408,"content":"Dữ liệu lớn (Big data)","is_correct":true,"index_order":0,"question_target_id":10493},
+        {"id":46409,"content":"Công nghệ sinh học","is_correct":false,"index_order":0,"question_target_id":10493},
+        {"id":46410,"content":"Vạn vật kết nối (loT)","is_correct":true,"index_order":0,"question_target_id":10493},
+        {"id":46411,"content":"Trí tuệ nhân tạo (AI)","is_correct":true,"index_order":0,"question_target_id":10493}
+      ]
+    },
+    {
+      "id": 10494,
+      "content": "Cách mạng công nghiệp lần thứ 3 còn được gọi là:",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46412,"content":"Cách mạng vô tuyến","is_correct":false,"index_order":0,"question_target_id":10494},
+        {"id":46413,"content":"Cách mạng điện tử","is_correct":true,"index_order":0,"question_target_id":10494},
+        {"id":46414,"content":"Cách mạng sinh học","is_correct":false,"index_order":0,"question_target_id":10494},
+        {"id":46415,"content":"Cách mạng máy tính","is_correct":false,"index_order":0,"question_target_id":10494}
+      ]
+    },
+    {
+      "id": 10506,
+      "content": "Mỗi cuộc cách mạng công nghiệp xuất hiện đều có sự phát triển nhảy vọt về:",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46459,"content":"Tư liệu lao động","is_correct":true,"index_order":0,"question_target_id":10506},
+        {"id":46460,"content":"Các phát minh sáng chế","is_correct":false,"index_order":0,"question_target_id":10506},
+        {"id":46461,"content":"Tư liệu sinh hoạt","is_correct":false,"index_order":0,"question_target_id":10506},
+        {"id":46462,"content":"Tư liệu tiêu dùng","is_correct":false,"index_order":0,"question_target_id":10506}
+      ]
+    },
+    {
+      "id": 10515,
+      "content": "Cách mạng công nghiệp lần thứ tư được đề cập lần đầu tiên tại ở đâu và năm nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46494,"content":"Tại Đức năm 2011","is_correct":true,"index_order":0,"question_target_id":10515},
+        {"id":46495,"content":"Tại Pháp năm 2011","is_correct":false,"index_order":0,"question_target_id":10515},
+        {"id":46496,"content":"Tại Anh năm 2012","is_correct":false,"index_order":0,"question_target_id":10515},
+        {"id":46497,"content":"Tại Mỹ năm 2011","is_correct":false,"index_order":0,"question_target_id":10515}
+      ]
+    },
+    {
+      "id": 10516,
+      "content": "Công nghiệp hóa ở nước Anh bắt nguồn từ ngành nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46498,"content":"Công nghiệp dệt","is_correct":true,"index_order":0,"question_target_id":10516},
+        {"id":46499,"content":"Công nghiệp cơ khí chế tạo","is_correct":false,"index_order":0,"question_target_id":10516},
+        {"id":46500,"content":"Công nghiệp khai khoảng","is_correct":false,"index_order":0,"question_target_id":10516},
+        {"id":46501,"content":"Công nghiệp đóng tàu","is_correct":false,"index_order":0,"question_target_id":10516}
+      ]
+    },
+    {
+      "id": 10519,
+      "content": "Ở Việt Nam cũng như trên thế giới sử dụng thuật ngũ \"cách mạng công nghiệp lần thứ tư\" với hàm ý gì?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46510,"content":"Sự thay đổi về lượng trong lực lượng sản xuất của nền kinh tế thế giới","is_correct":false,"index_order":0,"question_target_id":10519},
+        {"id":46511,"content":"Sự thay đổi về chất trong lực lượng sản xuất của nền kinh tế thế giới","is_correct":true,"index_order":0,"question_target_id":10519},
+        {"id":46512,"content":"Sự thay đổi về chất trong quan hệ sản xuất của nền kinh tế thế giới","is_correct":false,"index_order":0,"question_target_id":10519},
+        {"id":46513,"content":"Sự thay đổi căn bản, toàn diện trong đời sống, sản xuất của nền kinh tế thế giới","is_correct":false,"index_order":0,"question_target_id":10519}
+      ]
+    },
+    {
+      "id": 10520,
+      "content": "Cách mạng công nghiệp lần thứ nhất khởi phát ở quốc gia nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46514,"content":"Anh","is_correct":true,"index_order":0,"question_target_id":10520},
+        {"id":46515,"content":"Pháp","is_correct":false,"index_order":0,"question_target_id":10520},
+        {"id":46516,"content":"Hy lap","is_correct":false,"index_order":0,"question_target_id":10520},
+        {"id":46517,"content":"Đức","is_correct":false,"index_order":0,"question_target_id":10520}
+      ]
+    },
+    {
+      "id": 10521,
+      "content": "Cách mạng công nghiệp lần thứ hai khởi phát ở quốc gia nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46518,"content":"Anh","is_correct":true,"index_order":0,"question_target_id":10521},
+        {"id":46519,"content":"Pháp","is_correct":false,"index_order":0,"question_target_id":10521},
+        {"id":46520,"content":"Hy lap","is_correct":false,"index_order":0,"question_target_id":10521},
+        {"id":46521,"content":"Nga","is_correct":false,"index_order":0,"question_target_id":10521}
+      ]
+    },
+    {
+      "id": 10547,
+      "content": "Cách mạng công nghiệp lần thứ ba diễn ra trong giai đoạn nào?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46614,"content":"Từ đầu thập niên 50 của thế kỷ XX đến cuối thế kỷ XX","is_correct":false,"index_order":0,"question_target_id":10547},
+        {"id":46615,"content":"Từ đầu thập niên 60 của thế kỷ XX đến cuối thế kỷ XX","is_correct":true,"index_order":0,"question_target_id":10547},
+        {"id":46616,"content":"Từ đầu thập niên 70 của thế kỷ XX đến cuối thế kỷ XX","is_correct":false,"index_order":0,"question_target_id":10547},
+        {"id":46617,"content":"Từ đầu thập niên 80 của thế kỷ XX đến cuối thế kỷ XX","is_correct":false,"index_order":0,"question_target_id":10547}
+      ]
+    },
+    {
+      "id": 10548,
+      "content": "Cách mạng công nghiệp lần thứ ba diễn ra trong thời gian nào?",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46618,"content":"Từ giữa thế kỷ XV đến giữa thế kỷ XIX","is_correct":false,"index_order":0,"question_target_id":10548},
+        {"id":46619,"content":"Từ giữa thế kỷ XVI đến giữa thế kỷ XVII","is_correct":false,"index_order":0,"question_target_id":10548},
+        {"id":46620,"content":"Từ giữa thế kỷ XVIII đến giữa thế kỷ XIX","is_correct":false,"index_order":0,"question_target_id":10548},
+        {"id":46621,"content":"Từ đầu những năm 60 của XX đến cuối thế kỷ XX","is_correct":true,"index_order":0,"question_target_id":10548}
+      ]
+    },
+    {
+      "id": 10562,
+      "content": "Nội dung cơ bản của cách mạng công nghiệp lần thứ nhất đó là",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46671,"content":"Chuyển từ lao động thủ công sang lao động máy móc","is_correct":true,"index_order":0,"question_target_id":10562},
+        {"id":46672,"content":"Chuyển từ lao động thủ công sang sử dụng động cơ điện","is_correct":false,"index_order":0,"question_target_id":10562},
+        {"id":46673,"content":"Chuyển từ lao động máy móc sang lao động sử dụng năng lượng điện và động cơ điện","is_correct":false,"index_order":0,"question_target_id":10562}
+      ]
+    },
+    {
+      "id": 10635,
+      "content": "Cuộc cách mạng công nghiệp lần thứ nhất diễn ra trên lĩnh vực nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46945,"content":"Năng lượng hơi nước","is_correct":true,"index_order":0,"question_target_id":10635},
+        {"id":46946,"content":"Năng lượng điện","is_correct":false,"index_order":0,"question_target_id":10635},
+        {"id":46947,"content":"Động cơ đốt trong","is_correct":false,"index_order":0,"question_target_id":10635},
+        {"id":46948,"content":"Chế tạo ôtô","is_correct":false,"index_order":0,"question_target_id":10635}
+      ]
+    },
+    {
+      "id": 10638,
+      "content": "Cuộc cách mạng công nghiệp nào gắn liên với sự xuất hiện của trí tuệ nhân tạo, big data, 3D...?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46957,"content":"Cuộc cách mạng công nghiệp lần thứ tư","is_correct":true,"index_order":0,"question_target_id":10638},
+        {"id":46958,"content":"Cuộc cách mạng công nghiệp lần thứ năm","is_correct":false,"index_order":0,"question_target_id":10638},
+        {"id":46959,"content":"Cuộc cách mạng công nghiệp lần thứ ba","is_correct":false,"index_order":0,"question_target_id":10638},
+        {"id":46960,"content":"Cuộc cách mạng công nghiệp lần thứ hai","is_correct":false,"index_order":0,"question_target_id":10638}
+      ]
+    },
+    {
+      "id": 10673,
+      "content": "Đặc trưng cơ bản của cách mạng công nghiệp lần thứ ba là gì?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":47088,"content":"Sử dụng công nghệ thông tin và máy tính","is_correct":true,"index_order":0,"question_target_id":10673},
+        {"id":47089,"content":"Sử dụng năng lượng điện","is_correct":false,"index_order":0,"question_target_id":10673},
+        {"id":47090,"content":"Sử dụng động cơ hơi nước","is_correct":false,"index_order":0,"question_target_id":10673},
+        {"id":47091,"content":"Sử dụng động cơ điện","is_correct":false,"index_order":0,"question_target_id":10673}
+      ]
+    }
+  ]
+}

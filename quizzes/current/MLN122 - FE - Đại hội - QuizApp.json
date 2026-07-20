@@ -1,0 +1,91 @@
+{
+  "id": 20,
+  "name": "MLN122 - FE - Đại hội - QuizApp",
+  "subjectTargetId": 6,
+  "questionsList": [
+    {
+      "id": 10222,
+      "content": "Quan điểm \"đổi mới phải luôn luôn quán triệt quan điểm \"dân là gốc\" vì lợi ích của nhân dân, dựa vào nhân dân, phát huy vai trò làm chủ, tinh thần trách nhiệm, sức sáng tạo và mọi nguồn lực của nhân dân phát huy sức mạnh đại đoàn kết dân tộc\" được đưa ra trong đại hội nào?",
+      "explanation": "Đáp án đúng: C",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":45400,"content":"Đại hội đảng X","is_correct":false,"index_order":0,"question_target_id":10222},
+        {"id":45401,"content":"Đại hội đảng XI","is_correct":false,"index_order":0,"question_target_id":10222},
+        {"id":45402,"content":"Đại hội đảng XII","is_correct":true,"index_order":0,"question_target_id":10222},
+        {"id":45403,"content":"Đại hội đảng XIII","is_correct":false,"index_order":0,"question_target_id":10222}
+      ]
+    },
+    {
+      "id": 10408,
+      "content": "Đại hội nào đã xác định kinh tế thị trường định hướng xã hội chủ nghĩa là \"một kiểu tổ chức kinh tế vừa tuân theo quy luật của kinh tế thị trường vừa dựa trên cơ sở và chịu sự dẫn dắt chi phối bởi các nguyên tắc và bản chất của chủ nghĩa xã hội?",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46084,"content":"Đại hội Đảng toàn quốc lần thứ VI","is_correct":false,"index_order":0,"question_target_id":10408},
+        {"id":46085,"content":"Đại hội Đảng toàn quốc lần thứ VII","is_correct":false,"index_order":0,"question_target_id":10408},
+        {"id":46086,"content":"Đại hội Đảng toàn quốc lần thứ VIII","is_correct":false,"index_order":0,"question_target_id":10408},
+        {"id":46087,"content":"Đại hội Đảng toàn quốc lần thứ IX","is_correct":true,"index_order":0,"question_target_id":10408}
+      ]
+    },
+    {
+      "id": 10469,
+      "content": "Đảng và Nhà nước quyết định xây dựng nền kinh tế thị trường định hướng xã hội chủ nghĩa ở nước ta từ Đại hội nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46318,"content":"Đại hội VI (1986)","is_correct":true,"index_order":0,"question_target_id":10469},
+        {"id":46319,"content":"Đại hội X (2006)","is_correct":false,"index_order":0,"question_target_id":10469},
+        {"id":46320,"content":"Đại hội XI (2011)","is_correct":false,"index_order":0,"question_target_id":10469},
+        {"id":46321,"content":"Đại hội V (1982)","is_correct":false,"index_order":0,"question_target_id":10469}
+      ]
+    },
+    {
+      "id": 10485,
+      "content": "\"Khoa học và công nghệ sẽ có bước tiến nhảy vọt. Kinh tế tri thức có vai trò ngày càng nổi bật trong quá trình phát triển lực lượng sản xuất\" được nhận định trong đại hội mấy của Đảng ?",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46377,"content":"Đại hội XI","is_correct":false,"index_order":0,"question_target_id":10485},
+        {"id":46378,"content":"Đại hội X","is_correct":true,"index_order":0,"question_target_id":10485},
+        {"id":46379,"content":"Đại hội VIII","is_correct":false,"index_order":0,"question_target_id":10485},
+        {"id":46380,"content":"Đại hội IX","is_correct":false,"index_order":0,"question_target_id":10485}
+      ]
+    },
+    {
+      "id": 10490,
+      "content": "Đảng ta khẳng định: \"Nền kinh tế thị trường định hướng xã hội chủ nghĩa ở nước ta là nền kinh tế nhiều thành phần, vận hành theo cơ chế thị trường, có sự quản lý của Nhà nước, dưới sự lãnh đạo của Đảng Cộng sản\" từ Đại hội nào?",
+      "explanation": "Đáp án đúng: D",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46396,"content":"Đại hội V (1982)","is_correct":false,"index_order":0,"question_target_id":10490},
+        {"id":46397,"content":"Đại hội X (2006)","is_correct":false,"index_order":0,"question_target_id":10490},
+        {"id":46398,"content":"Đại hội VI (1986)","is_correct":false,"index_order":0,"question_target_id":10490},
+        {"id":46399,"content":"Đại hội XI (2011)","is_correct":true,"index_order":0,"question_target_id":10490}
+      ]
+    },
+    {
+      "id": 10508,
+      "content": "Đại hội nào của Đảng Cộng sản Việt Nam đề cập đến sự cần thiết đổi mới cơ chế quản lý kinh tế",
+      "explanation": "Đáp án đúng: B",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":46467,"content":"Đại hội đảng VII","is_correct":false,"index_order":0,"question_target_id":10508},
+        {"id":46468,"content":"Đại hội đảng VI","is_correct":true,"index_order":0,"question_target_id":10508},
+        {"id":46469,"content":"Đại hội đảng VIII","is_correct":false,"index_order":0,"question_target_id":10508},
+        {"id":46470,"content":"Đại hội đảng V","is_correct":false,"index_order":0,"question_target_id":10508}
+      ]
+    },
+    {
+      "id": 10651,
+      "content": "Mô hình kinh tế thị trường định hướng xã hội chủ nghĩa ở nước ta lần đầu tiên được Đảng đưa ra tại Đại hội nào?",
+      "explanation": "Đáp án đúng: A",
+      "quizTargetId": 20,
+      "answersList": [
+        {"id":47005,"content":"Đại hội IX (2001)","is_correct":true,"index_order":0,"question_target_id":10651},
+        {"id":47006,"content":"Đại hội X (2006)","is_correct":false,"index_order":0,"question_target_id":10651},
+        {"id":47007,"content":"Đại hội XI (2011)","is_correct":false,"index_order":0,"question_target_id":10651},
+        {"id":47008,"content":"Đại hội V (1982)","is_correct":false,"index_order":0,"question_target_id":10651}
+      ]
+    }
+  ]
+}
