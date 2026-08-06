@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - 'v*' # Chỉ tự động chạy khi push tag (VD: git push origin v1.1.1)
-  workflow_dispatch: # Cho phép bấm "Run workflow" thủ công trên GitHub UI để TEST
+  workflow_dispatch: # Cho phép bấm "Run workflow" thủ công trên GitHub UI
 
 jobs:
   # ==========================================
@@ -12,6 +12,9 @@ jobs:
   # ==========================================
   build-windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: code/frontend # 👈 TRỎ ĐÚNG VÀO THƯ MỤC CHỨA PUBSPEC.YAML
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +34,7 @@ jobs:
       - name: Sync Version to ISS & AppStrings
         shell: bash
         run: |
+          # install_script.iss và lib/ nằm trong code/frontend
           sed -i -E 's/^#define MyAppVersion .*/#define MyAppVersion "${{ env.VERSION }}"/' install_script.iss
           sed -i -E 's/static const String appVersion = ".*";/static const String appVersion = "Version: ${{ env.VERSION }}";/' lib/core/constants/app_strings.dart
 
@@ -53,13 +57,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
-
+          path: deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe # Đường dẫn tương đối từ root
+  
   # ==========================================
   # 2. BUILD LINUX (.TAR.GZ)
   # ==========================================
   build-linux:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: code/frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -89,14 +96,9 @@ jobs:
 
       - name: Package Linux Archive (.tar.gz)
         run: |
-          mkdir -p deploy/linux
-          cd build/linux/x64/release/bundle/
-          tar -czvf ../../../../../deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz *
-
-      - name: Generate Appcast.xml
-        run: |
-          mkdir -p deploy
-          sed 's/\{\{\.V\}\}/${{ env.VERSION }}/g' deploy/appcast.xml.tmpl > deploy/appcast.xml
+          mkdir -p ../../deploy/linux
+          # Dùng tham số -C để nén sạch sẽ, không bị lỗi đường dẫn
+          tar -czvf ../../deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz -C build/linux/x64/release/bundle .
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
@@ -107,19 +109,18 @@ jobs:
             deploy/appcast.xml
 
   # ==========================================
-  # 3. PUBLISH TO GITHUB RELEASES (CHỈ CHẠY KHI CÓ TAG)
+  # 3. PUBLISH TO GITHUB RELEASES
   # ==========================================
   publish-release:
     needs: [ build-windows, build-linux ]
     runs-on: ubuntu-latest
-    # CHỈ CHẠY BƯỚC NÀY NẾU CHẠY BẰNG GIT TAG (Khi test bằng workflow_dispatch bước này sẽ tự SKIP)
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v4
 
       - name: Extract Version
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | cut -d':' -f2 | cut -d'+' -f1 | tr -d ' ')
+          VERSION=$(grep '^version:' code/frontend/pubspec.yaml | cut -d':' -f2 | cut -d'+' -f1 | tr -d ' ')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Download Windows Artifact
