@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Quiz App
+Comment=Ứng dụng ôn tập và luyện thi FPT
+Exec=AppPath/quizapp
+Icon=AppPath/logo.png
+Terminal=false
+Categories=Education;Utility;
+StartupWMClass=quiz_app

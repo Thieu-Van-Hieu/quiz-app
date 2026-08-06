@@ -59,7 +59,7 @@ jobs:
           path: deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
 
   # ==========================================
-  # 2. BUILD LINUX (.TAR.GZ)
+  # 2. BUILD LINUX (.TAR.GZ KÈM INSTALL & UNINSTALL)
   # ==========================================
   build-linux:
     runs-on: ubuntu-latest
@@ -93,20 +93,34 @@ jobs:
       - name: Build Linux Release
         run: flutter build linux --release
 
+      # --- CẬP NHẬT: Copy đầy đủ bộ launcher & đóng gói ---
       - name: Package Linux Archive (.tar.gz)
         run: |
-          mkdir -p ../../deploy/linux
+          mkdir -p "../../deploy/linux"
+          
+          # 1. Copy install.sh và uninstall.sh
+          cp assets/linux/install.sh build/linux/x64/release/bundle/install.sh
+          cp assets/linux/uninstall.sh build/linux/x64/release/bundle/uninstall.sh
+          
+          # 2. Copy file .desktop & logo
+          cp assets/linux/quizapp.desktop build/linux/x64/release/bundle/quizapp.desktop
+          cp assets/images/app_icon.png build/linux/x64/release/bundle/logo.png
+          
+          # 3. Cấp quyền thực thi cho 2 script
+          chmod +x build/linux/x64/release/bundle/install.sh
+          chmod +x build/linux/x64/release/bundle/uninstall.sh
+          
+          # 4. Nén toàn bộ bundle
           tar -czvf ../../deploy/linux/QuizApp_Linux_v${{ env.VERSION }}.tar.gz -C build/linux/x64/release/bundle .
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-artifacts
-          # CHỈ UPLOAD NGUYÊN FILE .TAR.GZ (Không còn lồng thư mục hay dính appcast)
           path: deploy/linux/QuizApp_Linux_v${{ env.VERSION }}.tar.gz
 
   # ==========================================
-  # 3. PUBLISH TO GITHUB RELEASES
+  # 3. PUBLISH TO GITHUB RELEASES & APPCAST
   # ==========================================
   publish-release:
     needs: [ build-windows, build-linux ]
@@ -139,9 +153,15 @@ jobs:
           name: QuizApp v${{ env.VERSION }}
           draft: false
           prerelease: false
-          # Đính kèm đúng 2 file cài đặt duy nhất vào Release
           files: |
             deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
             deploy/linux/QuizApp_Linux_v${{ env.VERSION }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- CHỈ CẬP NHẬT APPCAST SAU KHỊ PHÁT HÀNH RELEASE THÀNH CÔNG ---
+      - name: Sync Appcast XML
+        run: |
+          mkdir -p deploy
+          sed -E 's/\{\{\.V\}\}/'${{ env.VERSION }}'/g' deploy/appcast.xml.tmpl > deploy/appcast.xml
+          echo "✅ Đã tạo appcast.xml chuẩn cho Version ${{ env.VERSION }}"
