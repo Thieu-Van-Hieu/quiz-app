@@ -5,7 +5,6 @@ import 'package:frontend/core/services/ocr/ocr_controller.dart';
 import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
 import 'package:frontend/core/widgets/input/text_field.dart';
-import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
@@ -41,10 +40,8 @@ class QuestionPage extends HookConsumerWidget {
       return;
     }
 
-    // Tính trang cuối cùng có thể có (0-based)
     final maxPage = ((totalItems - 1) / pageSize).floor();
 
-    // Nếu trang hiện tại lớn hơn trang cuối, lùi về trang cuối
     if (params.value.page > maxPage) {
       params.value = params.value.copyWith(page: maxPage);
     }
@@ -62,7 +59,7 @@ class QuestionPage extends HookConsumerWidget {
     final questionsAsync = ref.watch(questionProvider(quizId));
     final questionActions = ref.read(questionProvider(quizId).notifier);
 
-    // Logic xử lý OCR
+    // Logic xử lý OCR (Đã dọn dẹp sạch log)
     Future<void> handleOcr() async {
       isOcrLoading.value = true;
       try {
@@ -163,7 +160,6 @@ class QuestionPage extends HookConsumerWidget {
 
                   questionActions.addQuestion(q);
 
-                  // Tính toán và nhảy trang sau khi thêm
                   final currentList =
                       ref.read(questionProvider(quizId)).value ?? [];
                   final totalItems = currentList.length + 1;
@@ -199,10 +195,8 @@ class QuestionPage extends HookConsumerWidget {
                     onUpdate: (idx, q) =>
                         questionActions.updateQuestion(idx, q),
                     onDelete: (idx) async {
-                      // Xóa và đợi kết quả
                       questionActions.deleteQuestion(idx);
 
-                      // Sau khi xóa, kiểm tra lại danh sách để lùi trang nếu cần
                       final newList =
                           ref.read(questionProvider(quizId)).value ?? [];
                       _adjustPageAfterChange(
@@ -227,66 +221,61 @@ class QuestionPage extends HookConsumerWidget {
   }
 }
 
-/// Dialog Preview Text
+/// Dialog Preview Text giao diện xịn như QuizletImportDialog
 Future<String?> _showOcrPreviewDialog(
   BuildContext context,
   String initialText,
 ) async {
-  final controller = TextEditingController(text: initialText);
   return showDialog<String>(
     context: context,
     barrierDismissible: false,
-    builder: (context) => AlertDialog(
-      title: Row(
-        children: const [
-          Icon(Icons.edit_note, color: LibraryColors.accentColor),
-          SizedBox(width: 8),
-          Text("Kiểm tra nội dung OCR"),
-        ],
-      ),
-      content: SizedBox(
-        width: 900,
-        height: 600,
-        child: Column(
-          children: [
-            const Text(
-              "Vui lòng chỉnh sửa lại các lỗi nhận diện trước khi thêm.",
-              style: TextStyle(fontSize: 13, color: Colors.grey),
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: TextField(
-                controller: controller,
-                maxLines: null,
-                expands: true,
-                style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Nội dung trống...",
-                  fillColor: Color(0xFFF9F9F9),
-                  filled: true,
-                ),
+    builder: (context) => _OcrPreviewDialog(initialText: initialText),
+  );
+}
+
+class _OcrPreviewDialog extends HookWidget {
+  final String initialText;
+
+  const _OcrPreviewDialog({required this.initialText});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = useTextEditingController(text: initialText);
+
+    return AppAlertDialog(
+      title: "Kiểm tra nội dung OCR",
+      size: AlertDialogSize.medium,
+      content: SingleChildScrollView(
+        child: SizedBox(
+          width: 600,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Vui lòng kiểm tra và chỉnh sửa lại các lỗi nhận diện trước khi nhập.",
+                style: TextStyle(fontSize: 13, color: Colors.grey),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              AppTextField(
+                label: "Nội dung nhận diện",
+                hintText: "Nội dung nhận diện trống...",
+                controller: controller,
+                maxLines: 12,
+                keyboardType: TextInputType.multiline,
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Hủy bỏ"),
-        ),
-        ElevatedButton(
+        AppButton(
+          label: "Xác nhận & Thêm",
+          variant: ButtonVariant.brand,
+          size: ButtonSize.small,
           onPressed: () => Navigator.pop(context, controller.text),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: LibraryColors.accentColor,
-          ),
-          child: const Text(
-            "Xác nhận & Thêm",
-            style: TextStyle(color: Colors.white),
-          ),
         ),
       ],
-    ),
-  );
+    );
+  }
 }
