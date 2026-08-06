@@ -1,0 +1,149 @@
+name: Build & Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Chỉ tự động chạy khi push tag (VD: git push origin v1.1.1)
+  workflow_dispatch: # Cho phép bấm "Run workflow" thủ công trên GitHub UI để TEST
+
+jobs:
+  # ==========================================
+  # 1. BUILD WINDOWS & CHẠY INNO SETUP
+  # ==========================================
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Extract Version from pubspec.yaml
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d':' -f2 | cut -d'+' -f1 | tr -d ' ')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Extracted Version: $VERSION"
+
+      - name: Sync Version to ISS & AppStrings
+        shell: bash
+        run: |
+          sed -i -E 's/^#define MyAppVersion .*/#define MyAppVersion "${{ env.VERSION }}"/' install_script.iss
+          sed -i -E 's/static const String appVersion = ".*";/static const String appVersion = "Version: ${{ env.VERSION }}";/' lib/core/constants/app_strings.dart
+
+      - name: Install Dependencies & Build Runner
+        run: |
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Windows Executable
+        run: flutter build windows --release
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Compile Inno Setup Script (.exe)
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" install_script.iss
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
+
+  # ==========================================
+  # 2. BUILD LINUX (.TAR.GZ)
+  # ==========================================
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux Build Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Extract Version
+        id: get_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d':' -f2 | cut -d'+' -f1 | tr -d ' ')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install Dependencies & Build Runner
+        run: |
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Linux Release
+        run: flutter build linux --release
+
+      - name: Package Linux Archive (.tar.gz)
+        run: |
+          mkdir -p deploy/linux
+          cd build/linux/x64/release/bundle/
+          tar -czvf ../../../../../deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz *
+
+      - name: Generate Appcast.xml
+        run: |
+          mkdir -p deploy
+          sed 's/\{\{\.V\}\}/${{ env.VERSION }}/g' deploy/appcast.xml.tmpl > deploy/appcast.xml
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-artifacts
+          path: |
+            deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz
+            deploy/appcast.xml
+
+  # ==========================================
+  # 3. PUBLISH TO GITHUB RELEASES (CHỈ CHẠY KHI CÓ TAG)
+  # ==========================================
+  publish-release:
+    needs: [ build-windows, build-linux ]
+    runs-on: ubuntu-latest
+    # CHỈ CHẠY BƯỚC NÀY NẾU CHẠY BẰNG GIT TAG (Khi test bằng workflow_dispatch bước này sẽ tự SKIP)
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract Version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d':' -f2 | cut -d'+' -f1 | tr -d ' ')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-installer
+          path: deploy/windows
+
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-artifacts
+          path: deploy
+
+      - name: Create GitHub Release & Upload Files
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: QuizApp v${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
+            deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz
+            deploy/appcast.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
