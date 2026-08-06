@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -8,8 +9,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
 import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
-import 'package:frontend/core/widgets/layout/pagination.dart';
 import 'package:frontend/core/widgets/input/search_bar.dart';
+import 'package:frontend/core/widgets/layout/pagination.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/learning/widgets/learning_setting_dialog.dart';
@@ -19,8 +20,8 @@ import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
 import 'package:frontend/features/library/widgets/quiz/add_dialog.dart';
-import 'package:frontend/features/library/widgets/quiz/quiz_header.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_card.dart';
+import 'package:frontend/features/library/widgets/quiz/quiz_header.dart';
 import 'package:frontend/features/library/widgets/quiz/quizlet_export_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/quizlet_import_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/update_dialog.dart';
@@ -60,36 +61,45 @@ class QuizPage extends HookConsumerWidget {
         if (outputFile != null && context.mounted) {
           String? folderPath;
 
-          // Kiểm tra nếu không phải môi trường Web (vì Web không có đường dẫn thư mục cục bộ)
           if (!outputFile.startsWith('http')) {
-            // Lấy chính xác đường dẫn thư mục chứa file
             folderPath = Directory(outputFile).parent.path;
           }
 
-          ScaffoldMessenger.of(context).showSnackBar(
+          // 1. Dọn sạch SnackBar cũ
+          ScaffoldMessenger.of(context).clearSnackBars();
+
+          // 2. Tạo Controller để có thể chủ động ngắt SnackBar bằng code
+          late final ScaffoldFeatureController<SnackBar, SnackBarClosedReason>
+          controller;
+
+          // Timer ép ẩn sau đúng 5 giây
+          final autoDismissTimer = Timer(const Duration(seconds: 5), () {
+            try {
+              controller.close(); // Đóng SnackBar từ code
+            } catch (_) {}
+          });
+
+          controller = ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("Đã xuất file thành công: ${quiz.name}.json"),
               backgroundColor: Colors.green.shade700,
               behavior: SnackBarBehavior.floating,
-              duration: const Duration(
-                seconds: 5,
-              ), // Để 5 giây giúp người dùng thoải mái bấm
-
+              duration: const Duration(seconds: 5),
               action: folderPath != null
                   ? SnackBarAction(
                       label: 'MỞ THƯ MỤC',
                       textColor: Colors.white,
                       onPressed: () async {
+                        // Tắt timer vì người dùng đã bấm nút
+                        autoDismissTimer.cancel();
+                        controller.close();
+
                         try {
                           if (Platform.isWindows) {
-                            // Chuẩn hóa dấu gạch chéo cho Windows (thay / bằng \)
                             final winPath = folderPath!.replaceAll('/', '\\');
-
-                            // Gọi trực tiếp Explorer của Windows để mở thư mục, cực kỳ an toàn
                             await Process.run('explorer.exe', [winPath]);
                           } else {
-                            // Fallback cho các nền tảng khác (macOS, Linux, v.v.) nếu cần
-                            final Uri uri = Uri.parse('file://$folderPath');
+                            final Uri uri = Uri.file(folderPath!);
                             if (await canLaunchUrl(uri)) {
                               await launchUrl(
                                 uri,
@@ -105,20 +115,21 @@ class QuizPage extends HookConsumerWidget {
                   : null,
             ),
           );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Đã xuất file thành công: ${quiz.name}.json"),
-              backgroundColor: Colors.green.shade700,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 2),
-            ),
-          );
+
+          // Dọn dẹp timer nếu SnackBar bị đóng bằng cách khác (ví dụ bị clearSnackBars thay thế)
+          controller.closed.then((_) => autoDismissTimer.cancel());
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Lỗi Export: $e")));
+          // Xoá các thông báo cũ trước khi hiện thông báo lỗi
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Lỗi Export: $e"),
+              backgroundColor: Colors.red.shade700,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         }
       }
     }
