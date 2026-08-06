@@ -1,40 +1,41 @@
-# Quiz App v1.1.0
+# Quiz App v1.1.2
 
-> **🎨 UI/UX Refactor & Feature Expansion** > **Nền tảng:** Windows Desktop (Flutter) · **Ngày phát hành:** 22/06/2026 ·
-**Tác giả:** Mr.NoBody
+> **🐧 Linux Ecosystem, OCR Expansion & UI Bug Fixes**  
+> **Nền tảng:** Windows Desktop & Linux (Flutter) · **Ngày phát hành:** 06/08/2026 ·  
+> **Tác giả:** Mr.NoBody
 
 ---
 
 ## 🚀 Giới thiệu phiên bản
 
-Chào mừng bạn đến với **Quiz App v1.1.0**! Bản cập nhật này đem tới một diện mạo hoàn toàn mới nịnh mắt hơn nhờ bảng màu
-Pastel hiện đại, khắc phục các vấn đề liên quan tới cơ sở dữ liệu offline và cung cấp trải nghiệm phân trang tốt hơn rất
-nhiều cho người dùng máy tính.
+Chào mừng bạn đến với **Quiz App v1.1.2**! Bản cập nhật này đánh dấu bước tiến quan trọng khi **chính thức mở rộng hỗ
+trợ sang hệ điều hành Linux**, tích hợp tính năng **OCR chụp màn hình đa nền tảng**, đồng thời tối ưu hóa hiệu năng khi
+Import dữ liệu lớn và sửa các lỗi giao diện phát sinh từ phản hồi của người dùng.
 
 ---
 
-## ✨ Điểm mới trong bản v1.1.0
+## ✨ Điểm mới trong bản v1.1.2
 
-### 🆕 Tính năng & Giao diện mới
+### 🐧 Mở rộng Nền tảng Linux & OCR
 
-- **Pastel UI Theme:** Toàn bộ hệ thống màu sắc được làm mới theo phong cách Pastel dịu mát, áp dụng đồng bộ trên nền và
-  trang hiển thị câu hỏi (`question_page`).
-- **Nạp cấu hình nhanh:** Khôi phục nhanh trạng thái trộn đề, trộn đáp án và bộ câu hỏi từ một phiên học cũ trực tiếp
-  ngay tại danh sách lịch sử.
-- **Nhảy trang (Pagination):** Hỗ trợ gõ trực tiếp số trang để chuyển tiếp ngay lập tức thay vì phải bấm từng trang thủ
-  công.
-- **Tự động mở thư mục:** Hệ thống tự động mở thư mục Windows Explorer ngay khi tệp bộ đề được Export thành công.
+- **Bộ chụp màn hình thông minh (`LinuxCaptureService`):** Tự động phát hiện công cụ chụp màn hình khả dụng trên Linux
+  (hỗ trợ từ XFCE, GNOME, KDE đến Wayland)[cite: 1].
+- **OCR đa nền tảng:** Tính năng quét ảnh trích xuất câu hỏi giờ đây đã hoạt động mượt mà trên Linux[cite: 1].
+- **CI/CD Tự động hóa:** Thêm Workflows tự động hóa build ứng dụng, thông báo upgrade và dọn dẹp artifact rác trên máy
+  ảo Linux[cite: 1].
 
-### 🔧 Tối ưu hóa & Tái cấu trúc (Refactor)
+### 📥 Tối ưu Giao diện Import Quizlet & OCR Dialog
 
-- **Thống nhất hệ thống nút bấm:** Chuyển đổi toàn bộ nút riêng lẻ sang widget dùng chung `AppButton` và
-  `AppActionButton`.
-- **Tách biệt Widget Core:** Menu điều hướng, thanh Dropdown và cấu trúc thẻ card (`LearningResultCard`) được tách riêng
-  để tối ưu bộ nhớ và hiệu năng kết xuất.
-- **Sửa lỗi đồng bộ ObjectBox:** Khắc phục lỗi hiển thị quiz cũ khi xuất tệp dữ liệu và lỗi logic trộn vị trí đáp án
-  trắc nghiệm.
-- **An toàn dữ liệu phát triển:** Tách biệt vị trí ghi dữ liệu SQLite/ObjectBox giữa bản chạy thử (Debug) và bản cài đặt
-  chính thức (Release).
+- **Hiệu năng Lazy Load:** Áp dụng lazy load cho danh sách Import Quizlet, giải quyết triệt để hiện tượng treo UI khi
+  chèn hàng trăm câu hỏi cùng lúc[cite: 1].
+- **Không gian Editor mở rộng:** Nới rộng `AlertDialog` giúp dễ dàng thao tác với editor câu hỏi[cite: 1].
+- **Đồng bộ theme:** Áp dụng bộ màu chuẩn cho `OCRDialog`[cite: 1].
+
+### 🛠️ Sửa lỗi UI/UX
+
+- **Sửa lỗi Snackbar:** Dứt điểm lỗi Snackbar treo không tự ẩn sau khi chờ hết timeout[cite: 1].
+- **Đồng bộ Settings Page:** Cân chỉnh lại layout trang Cài đặt đồng bộ với tổng thể ứng dụng[cite: 1].
+- **Chống vỡ layout:** Khắc phục lỗi tràn văn bản (overflow) tên Quiz ở trang câu hỏi[cite: 1].
 
 ---
 
@@ -42,14 +43,9 @@ nhiều cho người dùng máy tính.
 
 ### Yêu cầu hệ thống
 
-- Hệ điều hành: Windows 10 / Windows 11 (64-bit).
-
-### Các bước thực hiện
-
-1. Tải về tệp cài đặt `QuizApp_Setup_v1.1.0.exe` tại mục **Assets** ngay phía dưới.
-2. Mở tệp `.exe` vừa tải và tiến hành cài đặt theo các bước trên màn hình.
-3. Chạy ứng dụng từ màn hình Desktop. Hệ thống cơ sở dữ liệu cũ từ phiên bản `1.0.x` của bạn sẽ tự động được giữ lại
-   nguyên vẹn và nâng cấp an toàn.
+- **Windows:** Windows 10 / Windows 11 (64-bit).
+- **Linux:** Các bản phân phối Linux phổ biến (Ubuntu, Linux Mint, Debian, Arch...) có sẵn công cụ chụp màn hình CLI
+  (như `xfce4-screenshooter`, `gnome-screenshot`, `spectacle`, `maim`, `scrot`, hoặc `grimshot`)[cite: 1].
 
 ---
 
