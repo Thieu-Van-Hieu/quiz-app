@@ -14,7 +14,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: code/frontend # 👈 TRỎ ĐÚNG VÀO THƯ MỤC CHỨA PUBSPEC.YAML
+        working-directory: code/frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +34,6 @@ jobs:
       - name: Sync Version to ISS & AppStrings
         shell: bash
         run: |
-          # install_script.iss và lib/ nằm trong code/frontend
           sed -i -E 's/^#define MyAppVersion .*/#define MyAppVersion "${{ env.VERSION }}"/' install_script.iss
           sed -i -E 's/static const String appVersion = ".*";/static const String appVersion = "Version: ${{ env.VERSION }}";/' lib/core/constants/app_strings.dart
 
@@ -57,8 +56,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe # Đường dẫn tương đối từ root
-  
+          path: deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
+
   # ==========================================
   # 2. BUILD LINUX (.TAR.GZ)
   # ==========================================
@@ -97,16 +96,14 @@ jobs:
       - name: Package Linux Archive (.tar.gz)
         run: |
           mkdir -p ../../deploy/linux
-          # Dùng tham số -C để nén sạch sẽ, không bị lỗi đường dẫn
-          tar -czvf ../../deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz -C build/linux/x64/release/bundle .
+          tar -czvf ../../deploy/linux/QuizApp_Linux_v${{ env.VERSION }}.tar.gz -C build/linux/x64/release/bundle .
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-artifacts
-          path: |
-            deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz
-            deploy/appcast.xml
+          # CHỈ UPLOAD NGUYÊN FILE .TAR.GZ (Không còn lồng thư mục hay dính appcast)
+          path: deploy/linux/QuizApp_Linux_v${{ env.VERSION }}.tar.gz
 
   # ==========================================
   # 3. PUBLISH TO GITHUB RELEASES
@@ -133,7 +130,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: linux-artifacts
-          path: deploy
+          path: deploy/linux
 
       - name: Create GitHub Release & Upload Files
         uses: softprops/action-gh-release@v2
@@ -142,9 +139,9 @@ jobs:
           name: QuizApp v${{ env.VERSION }}
           draft: false
           prerelease: false
+          # Đính kèm đúng 2 file cài đặt duy nhất vào Release
           files: |
             deploy/windows/QuizApp_Setup_v${{ env.VERSION }}.exe
-            deploy/linux/QuizApp-Linux-v${{ env.VERSION }}.tar.gz
-            deploy/appcast.xml
+            deploy/linux/QuizApp_Linux_v${{ env.VERSION }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
