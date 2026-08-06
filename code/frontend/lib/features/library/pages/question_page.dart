@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
+import 'package:frontend/core/services/ocr/ocr_controller.dart';
+import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
+import 'package:frontend/core/widgets/input/text_field.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
@@ -12,7 +16,6 @@ import 'package:frontend/features/library/widgets/question/ocr_loading_overlay.d
 import 'package:frontend/features/library/widgets/question/question_filter_bar.dart';
 import 'package:frontend/features/library/widgets/question/question_grid_view.dart';
 import 'package:frontend/features/library/widgets/question/question_header.dart';
-import 'package:frontend/utils/ocr.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class QuestionPage extends HookConsumerWidget {
@@ -63,31 +66,34 @@ class QuestionPage extends HookConsumerWidget {
     Future<void> handleOcr() async {
       isOcrLoading.value = true;
       try {
-        final result = await OcrUtils().processOcr();
-        if (result != "USER_CANCELLED" && !result.startsWith("Lỗi")) {
-          if (context.mounted) {
-            final editedText = await _showOcrPreviewDialog(context, result);
-            if (editedText != null && editedText.trim().isNotEmpty) {
-              final questions = QuizConverterService.convertRawOcrToQuestions(
-                editedText,
-              );
-              for (var q in questions) {
-                questionActions.addQuestion(q);
-              }
+        final result = await ref.read(ocrControllerProvider).scanScreen();
 
-              // Sau khi thêm hàng loạt, tự động nhảy về trang cuối cùng
-              final currentList =
-                  ref.read(questionProvider(quizId)).value ?? [];
-              final total = currentList.length + questions.length;
-              final lastPage = ((total - 1) / params.value.size).floor();
-              params.value = params.value.copyWith(
-                page: lastPage < 0 ? 0 : lastPage,
-              );
+        if (result != "USER_CANCELLED" &&
+            result != "BUSY" &&
+            !result.startsWith("Lỗi")) {
+          if (!context.mounted) return;
+
+          final editedText = await _showOcrPreviewDialog(context, result);
+
+          if (editedText != null && editedText.trim().isNotEmpty) {
+            final questions = QuizConverterService.convertRawOcrToQuestions(
+              editedText,
+            );
+
+            for (var q in questions) {
+              questionActions.addQuestion(q);
             }
+
+            final currentList = ref.read(questionProvider(quizId)).value ?? [];
+            final total = currentList.length + questions.length;
+            final lastPage = ((total - 1) / params.value.size).floor();
+            params.value = params.value.copyWith(
+              page: lastPage < 0 ? 0 : lastPage,
+            );
           }
         }
-      } catch (e) {
-        debugPrint("Lỗi OCR: $e");
+      } catch (_) {
+        // Handle silently or notify via UI if needed
       } finally {
         isOcrLoading.value = false;
       }

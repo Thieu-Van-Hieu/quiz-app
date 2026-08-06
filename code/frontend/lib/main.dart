@@ -10,7 +10,6 @@ import 'package:frontend/core/services/device_info_service.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/core/services/path_service.dart';
 import 'package:frontend/routes/app_router.dart';
-import 'package:frontend/utils/ocr.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async {
@@ -22,7 +21,6 @@ void main() async {
   await ObjectBoxService.create();
   await DatabaseCleanupService.runFullCleanup(); // Dọn dẹp DB trước khi app chạy
   await DeviceInfoService().init();
-  await OcrUtils().initOcr();
 
   if (!kDebugMode) {
     if (Platform.isWindows) {
