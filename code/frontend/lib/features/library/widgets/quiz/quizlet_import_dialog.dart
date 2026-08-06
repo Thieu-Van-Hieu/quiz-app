@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -5,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
-import 'package:frontend/core/widgets/input/text_field.dart';
+import 'package:re_editor/re_editor.dart';
 
 class QuizletImportDialog extends HookWidget {
   const QuizletImportDialog({super.key});
@@ -16,16 +19,17 @@ class QuizletImportDialog extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = useTextEditingController();
+    // Khởi tạo controller của re_editor
+    final editorController = useMemoized(() => CodeLineEditingController());
     final termDefSep = useTextEditingController(text: "\\t");
     final rowSep = useTextEditingController(text: "\\n");
     final isLoading = useState<bool>(false);
 
+    // Hàm xử lý Paste từ Clipboard
     Future<void> handlePaste() async {
       if (isLoading.value) return;
 
       isLoading.value = true;
-
       try {
         final data = await Clipboard.getData(Clipboard.kTextPlain);
 
@@ -35,22 +39,7 @@ class QuizletImportDialog extends HookWidget {
             data.text!,
           );
 
-          controller.value = TextEditingValue(
-            text: processedText.substring(0, 5000),
-            selection: const TextSelection.collapsed(offset: 0),
-          );
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              controller.value = TextEditingValue(
-                text: processedText,
-                selection: TextSelection.collapsed(
-                  offset: processedText.length,
-                ),
-              );
-            });
-          });
-
+          editorController.text = processedText;
           await SchedulerBinding.instance.endOfFrame;
         }
       } catch (e) {
@@ -60,15 +49,53 @@ class QuizletImportDialog extends HookWidget {
       }
     }
 
+    // Hàm xử lý Chọn file Text từ thiết bị
+    Future<void> handlePickFile() async {
+      if (isLoading.value) return;
+
+      try {
+        final result = await FilePicker.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['txt', 'csv', 'tsv', 'json'],
+          withData: true, // Lấy bytes để hỗ trợ cả Flutter Web & Desktop/Mobile
+        );
+
+        if (result != null && result.files.isNotEmpty) {
+          isLoading.value = true;
+
+          final fileBytes = result.files.first.bytes;
+          if (fileBytes != null) {
+            // Decode utf8 dữ liệu từ file
+            final rawText = utf8.decode(fileBytes);
+
+            final processedText = await compute(
+              QuizletImportDialog._formatTextHeavy,
+              rawText,
+            );
+
+            editorController.text = processedText;
+            await SchedulerBinding.instance.endOfFrame;
+          }
+        }
+      } catch (e) {
+        debugPrint("Lỗi đọc file: $e");
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    final editorHeight = (screenHeight * 0.6).clamp(200.0, 600.0);
+
     return AppAlertDialog(
-      title: "Nhập từ Quizlet",
-      size: AlertDialogSize.medium,
+      title: "Nhập từ Quizlet / File Text",
+      size: AlertDialogSize.big,
       content: SingleChildScrollView(
-        // Bảo vệ dialog khỏi mọi nguy cơ overflow trên các màn hình nhỏ
         child: SizedBox(
           width: 600,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Stack(
                 alignment: Alignment.center,
@@ -94,14 +121,25 @@ class QuizletImportDialog extends HookWidget {
                               onInvoke: (_) => handlePaste(),
                             ),
                           },
-                          // Giải pháp an toàn: Thiết lập số dòng lớn cố định
-                          // Giúp hiển thị ô nhập cực kỳ rộng rãi mà không gây xung đột layout
-                          child: AppTextField(
-                            label: "Nội dung Quizlet",
-                            hintText: "Dán nội dung vào đây (Ctrl+V)...",
-                            controller: controller,
-                            maxLines: 10,
-                            keyboardType: TextInputType.multiline,
+                          child: Container(
+                            height: editorHeight,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(6),
+                              color: const Color(0xFFFAFAFA),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: CodeEditor(
+                                controller: editorController,
+                                style: const CodeEditorStyle(
+                                  fontSize: 13,
+                                  fontFamily: 'monospace',
+                                  textColor: Colors.black87,
+                                ),
+                                indicatorBuilder: null,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -116,18 +154,24 @@ class QuizletImportDialog extends HookWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: AppTextField(
-                      label: "Dấu giữa Term - Def",
-                      hintText: "\\t hoặc |",
+                    child: TextField(
                       controller: termDefSep,
+                      decoration: const InputDecoration(
+                        labelText: "Dấu giữa Term - Def",
+                        hintText: "\\t hoặc |",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: AppTextField(
-                      label: "Dấu giữa các hàng",
-                      hintText: "\\n hoặc ;",
+                    child: TextField(
                       controller: rowSep,
+                      decoration: const InputDecoration(
+                        labelText: "Dấu giữa các hàng",
+                        hintText: "\\n hoặc ;",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                 ],
@@ -137,6 +181,12 @@ class QuizletImportDialog extends HookWidget {
         ),
       ),
       actions: [
+        AppButton(
+          label: "Chọn file (.txt)",
+          variant: ButtonVariant.indigo,
+          size: ButtonSize.small,
+          onPressed: isLoading.value ? null : handlePickFile,
+        ),
         AppButton(
           label: "Dán thủ công",
           variant: ButtonVariant.indigo,
@@ -150,7 +200,7 @@ class QuizletImportDialog extends HookWidget {
           onPressed: isLoading.value
               ? null
               : () => Navigator.pop(context, {
-                  'text': controller.text,
+                  'text': editorController.text,
                   'termDef': termDefSep.text,
                   'row': rowSep.text,
                 }),
