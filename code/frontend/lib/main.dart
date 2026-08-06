@@ -11,33 +11,29 @@ import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/core/services/path_service.dart';
 import 'package:frontend/routes/app_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:upgrader/upgrader.dart';
+
+const String appcastURL =
+    'https://raw.githubusercontent.com/Thieu-Van-Hieu/quiz-app/refs/heads/main/deploy/appcast.xml';
 
 void main() async {
   // 1. Đảm bảo Flutter đã sẵn sàng
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. Khởi tạo các service cần thiết trước khi chạy app
+  // 2. Khởi tạo các service
   await AppPathService().init();
   await ObjectBoxService.create();
-  await DatabaseCleanupService.runFullCleanup(); // Dọn dẹp DB trước khi app chạy
+  await DatabaseCleanupService.runFullCleanup();
   await DeviceInfoService().init();
 
-  if (!kDebugMode) {
-    if (Platform.isWindows) {
-      String feedURL =
-          'https://raw.githubusercontent.com/Thieu-Van-Hieu/quiz-app/refs/heads/main/deploy/appcast.xml';
-      await autoUpdater.setFeedURL(feedURL);
-      await autoUpdater.setScheduledCheckInterval(7200); // Check mỗi 2 tiếng
-      await autoUpdater.checkForUpdates(
-        inBackground: true,
-      ); // Kiểm tra ngầm khi mở app
-    }
+  // 3. Khởi chạy Auto Updater cho Windows
+  if (!kDebugMode && Platform.isWindows) {
+    await autoUpdater.setFeedURL(appcastURL);
+    await autoUpdater.setScheduledCheckInterval(7200); // Check mỗi 2 tiếng
+    await autoUpdater.checkForUpdates(inBackground: true);
   }
 
-  runApp(
-    // 3. Bọc ProviderScope ở đây
-    const ProviderScope(child: MyApp()),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends HookWidget {
@@ -50,13 +46,32 @@ class MyApp extends HookWidget {
           details.exception.toString().contains('mouse_tracker')) {
         return; // "Câm nín" cái lỗi chuột phiền phức kia
       }
-      FlutterError.presentError(details); // Các lỗi khác vẫn hiện bình thường
+      FlutterError.presentError(details);
     };
+
     return MaterialApp.router(
       title: AppStrings.appName,
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
+      // Sửa ở đây: Bọc UpgradeAlert bên trong Navigator Context
+      builder: (context, child) {
+        if (!kDebugMode && Platform.isLinux) {
+          return UpgradeAlert(
+            upgrader: Upgrader(
+              storeController: UpgraderStoreController(
+                onLinux: () => UpgraderAppcastStore(appcastURL: appcastURL),
+              ),
+              languageCode: 'vi',
+            ),
+            // Bọc bằng Builder để lấy BuildContext bên dưới Navigator
+            child: Builder(
+              builder: (innerContext) => child ?? const SizedBox.shrink(),
+            ),
+          );
+        }
+        return child ?? const SizedBox.shrink();
+      },
     );
   }
 }
