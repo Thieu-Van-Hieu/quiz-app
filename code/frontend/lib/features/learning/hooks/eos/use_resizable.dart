@@ -4,8 +4,8 @@ import 'package:frontend/features/learning/widgets/eos/vertial_splitter.dart';
 
 // Hook trả về một Record (width, splitter)
 (double, Widget) useEosResizable({
-  double initialWidth = 120.0,
-  double minWidth = 50.0,
+  double initialWidth = 180.0,
+  double minWidth = 100.0,
   double maxWidth = 400.0,
 }) {
   final widthNotifier = useState(initialWidth);

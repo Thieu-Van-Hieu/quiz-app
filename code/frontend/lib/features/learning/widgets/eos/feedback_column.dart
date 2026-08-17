@@ -65,7 +65,7 @@ class EosFeedbackColumn extends StatelessWidget {
                 ? '(Check all that apply)'
                 : '(Choose $correctAnswersCount answer${correctAnswersCount > 1 ? 's' : ''})',
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 30),
 
