@@ -30,7 +30,6 @@ class LearningSessionDetailRepository {
   Future<void> toggleAnswer(int id, Answer answer) async {
     final detail = _learningSessionDetailBox.get(id);
     if (detail == null || detail.isChecked) return;
-    detail.isSeen = true; // Đánh dấu đã xem khi chọn câu trả lời
 
     if (detail.selectedAnswers.any((a) => a.id == answer.id)) {
       detail.selectedAnswers.removeWhere((a) => a.id == answer.id);
@@ -50,7 +49,7 @@ class LearningSessionDetailRepository {
         detail.question.target?.answers.where((a) => a.isCorrect).toList() ??
         [];
     detail.isChecked = true;
-    detail.isCorrect =
+    detail.isPassed =
         (selected.length == correctAnswers.length) &&
         selected.every((s) => correctAnswers.any((c) => c.id == s.id));
 
@@ -63,7 +62,6 @@ class LearningSessionDetailRepository {
 
     // Đảo trạng thái hiện tại
     detail.isChecked = !detail.isChecked;
-    detail.isSeen = true; // Đánh dấu đã xem khi toggle trạng thái
     // Chỉ tính toán đúng/sai khi người dùng nhấn "Show" (chuyển từ false sang true)
     if (detail.isChecked) {
       final selected = detail.selectedAnswers;
@@ -71,7 +69,7 @@ class LearningSessionDetailRepository {
           detail.question.target?.answers.where((a) => a.isCorrect).toList() ??
           [];
 
-      detail.isCorrect =
+      detail.isPassed =
           (selected.length == correctAnswers.length) &&
           selected.every((s) => correctAnswers.any((c) => c.id == s.id));
     }

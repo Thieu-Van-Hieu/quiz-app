@@ -38,13 +38,13 @@ class LearningSessionDetailPage extends HookConsumerWidget {
         final filteredDetails = allDetails.where((d) {
           switch (filter.value) {
             case SessionFilter.correct:
-              return d.isCorrect == true;
+              return d.isPassed == true;
             case SessionFilter.wrong:
-              return d.isCorrect == false;
+              return d.isPassed == false;
             case SessionFilter.seen:
-              return d.isSeen == true;
+              return d.isPassed != null;
             case SessionFilter.notSeen:
-              return d.isSeen == false;
+              return d.isPassed == null;
             default:
               return true;
           }

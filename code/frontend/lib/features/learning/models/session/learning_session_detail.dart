@@ -24,14 +24,12 @@ class LearningSessionDetail with LearningSessionDetailMappable {
 
   // Bỏ final để có thể update trực tiếp trong StudyPage
   bool isChecked;
-  bool isSeen;
-  bool? isCorrect;
+  bool? isPassed;
 
   LearningSessionDetail({
     this.id = 0,
     this.isChecked = false,
-    this.isSeen = false,
-    this.isCorrect,
+    this.isPassed,
 
     // 2. VIRTUAL PARAMETERS: Giúp Mapper nhận diện ID từ JSON và copyWith
     int? learningSessionTargetId,
@@ -85,4 +83,6 @@ class LearningSessionDetail with LearningSessionDetailMappable {
     if (correctIDs.length != selectedIDs.length) return false;
     return correctIDs.every((id) => selectedIDs.contains(id));
   }
+
+  bool get needsReview => isChecked && isPassed == false;
 }

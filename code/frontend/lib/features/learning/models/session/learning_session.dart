@@ -109,10 +109,10 @@ class LearningSession with LearningSessionMappable {
   // Thêm hàm này để update stats nhanh không cần copyWith
   void updateStatistics() {
     totalCorrect = learningSessionDetails
-        .where((d) => d.isCorrect == true)
+        .where((d) => d.isPassed == true)
         .length;
     totalWrong = learningSessionDetails
-        .where((d) => d.isChecked && d.isCorrect == false)
+        .where((d) => d.isChecked && d.isPassed == false)
         .length;
   }
 
@@ -129,5 +129,6 @@ class LearningSession with LearningSessionMappable {
     return ((totalCorrect / totalAnswered) * 100).round();
   }
 
-  int get totalSeen => learningSessionDetails.where((d) => d.isSeen).length;
+  int get totalSeen =>
+      learningSessionDetails.where((d) => d.isPassed != null).length;
 }

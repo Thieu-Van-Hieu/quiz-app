@@ -136,8 +136,7 @@ class LearningSessionRepository {
   ) {
     detail.id = 0;
     detail.isChecked = false;
-    detail.isSeen = false;
-    detail.isCorrect = null;
+    detail.isPassed = null;
     detail.selectedAnswers.clear();
     detail.learningSession.target = session; // Liên kết lại với session mới
   }
@@ -174,7 +173,7 @@ class LearningSessionRepository {
 
     // 1. Lọc danh sách câu sai trước khi reset session
     final mistakeDetails = session.learningSessionDetails
-        .where((d) => d.isChecked && d.isCorrect == false)
+        .where((d) => d.isChecked && d.isPassed == false)
         .toList();
 
     if (mistakeDetails.isEmpty) {
@@ -206,10 +205,10 @@ class LearningSessionRepository {
 
       // Tận dụng hàm update stats trực tiếp trên instance
       session.totalCorrect = session.learningSessionDetails
-          .where((d) => d.isCorrect == true)
+          .where((d) => d.isPassed == true)
           .length;
       session.totalWrong = session.learningSessionDetails
-          .where((d) => d.isChecked && d.isCorrect == false)
+          .where((d) => d.isChecked && d.isPassed == false)
           .length;
 
       _sessionBox.put(session);

@@ -22,11 +22,11 @@ class SessionQuestionCard extends StatelessWidget {
     IconData icon;
     Color color;
     if (isPractice) {
-      icon = detail.isSeen ? Icons.visibility : Icons.visibility_off;
-      color = detail.isSeen ? Colors.orange : Colors.grey.shade400;
+      icon = detail.isPassed != null ? Icons.visibility : Icons.visibility_off;
+      color = detail.isPassed != null ? Colors.orange : Colors.grey.shade400;
     } else {
-      icon = detail.isCorrect == true ? Icons.check_circle : Icons.cancel;
-      color = detail.isCorrect == true ? Colors.green : Colors.red;
+      icon = detail.isPassed == true ? Icons.check_circle : Icons.cancel;
+      color = detail.isPassed == true ? Colors.green : Colors.red;
     }
 
     return Container(

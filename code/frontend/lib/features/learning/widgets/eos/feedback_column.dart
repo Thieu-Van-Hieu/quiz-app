@@ -48,10 +48,10 @@ class EosFeedbackColumn extends StatelessWidget {
     bool shouldShowStats = isStudyMode || (isExamMode && session.isCompleted);
 
     final currentCorrect = session.learningSessionDetails
-        .where((d) => d.isCorrect == true)
+        .where((d) => d.isPassed == true)
         .length;
     final currentWrong = session.learningSessionDetails
-        .where((d) => d.isChecked && d.isCorrect == false)
+        .where((d) => d.isChecked && d.isPassed == false)
         .length;
 
     return Container(
@@ -71,23 +71,23 @@ class EosFeedbackColumn extends StatelessWidget {
 
           // FEEDBACK AREA: Sẽ tự động hiện khi isChecked = true nhờ build() lại StudyPage
           if (shouldShowFeedback) ...[
-            if (learningSessionDetail.isCorrect != null) ...[
+            if (learningSessionDetail.isPassed != null) ...[
               Icon(
-                learningSessionDetail.isCorrect!
+                learningSessionDetail.isPassed!
                     ? Icons.check_circle
                     : Icons.cancel,
                 size: 60,
-                color: learningSessionDetail.isCorrect!
+                color: learningSessionDetail.isPassed!
                     ? LearningColors.correct
                     : LearningColors.wrong,
               ),
               const SizedBox(height: 8),
               Text(
-                learningSessionDetail.isCorrect! ? "CORRECT" : "WRONG",
+                learningSessionDetail.isPassed! ? "CORRECT" : "WRONG",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: learningSessionDetail.isCorrect!
+                  color: learningSessionDetail.isPassed!
                       ? LearningColors.correct
                       : LearningColors.wrong,
                 ),

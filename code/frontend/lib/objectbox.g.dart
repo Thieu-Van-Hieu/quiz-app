@@ -216,7 +216,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 5502079073284747514),
     name: 'LearningSessionDetail',
-    lastPropertyId: const obx_int.IdUid(8, 7482946366124564686),
+    lastPropertyId: const obx_int.IdUid(9, 1139258025570269890),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -241,12 +241,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(5, 2736716217999466047),
-        name: 'isCorrect',
-        type: 1,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(6, 6075764298969602044),
         name: 'learningSessionId',
         type: 11,
@@ -262,8 +256,8 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(8, 7482946366124564686),
-        name: 'isSeen',
+        id: const obx_int.IdUid(9, 1139258025570269890),
+        name: 'isPassed',
         type: 1,
         flags: 0,
       ),
@@ -626,6 +620,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
       6502654617316206455,
       3904131708249950806,
       411770755522709919,
+      7482946366124564686,
+      2736716217999466047,
     ],
     retiredRelationUids: const [
       604733439351293478,
@@ -934,14 +930,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
         object.id = id;
       },
       objectToFB: (LearningSessionDetail object, fb.Builder fbb) {
-        fbb.startTable(9);
+        fbb.startTable(10);
         fbb.addInt64(0, object.id);
         fbb.addInt64(2, object.question.targetId);
         fbb.addBool(3, object.isChecked);
-        fbb.addBool(4, object.isCorrect);
         fbb.addInt64(5, object.learningSession.targetId);
         fbb.addInt64(6, object.questionTargetId);
-        fbb.addBool(7, object.isSeen);
+        fbb.addBool(8, object.isPassed);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -960,16 +955,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           10,
           false,
         );
-        final isSeenParam = const fb.BoolReader().vTableGet(
+        final isPassedParam = const fb.BoolReader().vTableGetNullable(
           buffer,
           rootOffset,
-          18,
-          false,
-        );
-        final isCorrectParam = const fb.BoolReader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          12,
+          20,
         );
         final questionTargetIdParam = const fb.Int64Reader().vTableGet(
           buffer,
@@ -980,8 +969,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = LearningSessionDetail(
           id: idParam,
           isChecked: isCheckedParam,
-          isSeen: isSeenParam,
-          isCorrect: isCorrectParam,
+          isPassed: isPassedParam,
           questionTargetId: questionTargetIdParam,
         );
         object.question.targetId = const fb.Int64Reader().vTableGet(
@@ -1365,26 +1353,21 @@ class LearningSessionDetail_ {
     _entities[4].properties[2],
   );
 
-  /// See [LearningSessionDetail.isCorrect].
-  static final isCorrect = obx.QueryBooleanProperty<LearningSessionDetail>(
-    _entities[4].properties[3],
-  );
-
   /// See [LearningSessionDetail.learningSession].
   static final learningSession =
       obx.QueryRelationToOne<LearningSessionDetail, LearningSession>(
-        _entities[4].properties[4],
+        _entities[4].properties[3],
       );
 
   /// See [LearningSessionDetail.questionTargetId].
   static final questionTargetId =
       obx.QueryIntegerProperty<LearningSessionDetail>(
-        _entities[4].properties[5],
+        _entities[4].properties[4],
       );
 
-  /// See [LearningSessionDetail.isSeen].
-  static final isSeen = obx.QueryBooleanProperty<LearningSessionDetail>(
-    _entities[4].properties[6],
+  /// See [LearningSessionDetail.isPassed].
+  static final isPassed = obx.QueryBooleanProperty<LearningSessionDetail>(
+    _entities[4].properties[5],
   );
 
   /// see [LearningSessionDetail.selectedAnswers]
