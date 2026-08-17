@@ -81,6 +81,17 @@ class QuestionCard extends HookWidget {
       localAnswers.value = newList;
     }
 
+    int getLatestOrder() {
+      final answers = List<Answer>.from(localAnswers.value);
+      int maxOrder = 0;
+      for (Answer answer in answers) {
+        if (maxOrder < answer.indexOrder) {
+          maxOrder = answer.indexOrder;
+        }
+      }
+      return maxOrder;
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(24),
@@ -136,8 +147,8 @@ class QuestionCard extends HookWidget {
 
               ReorderableListView.builder(
                 shrinkWrap: true,
-                physics:
-                    const NeverScrollableScrollPhysics(), // Vô hiệu hóa scroll riêng của List kéo thả để dùng chung trục scroll cha
+                physics: const NeverScrollableScrollPhysics(),
+                // Vô hiệu hóa scroll riêng của List kéo thả để dùng chung trục scroll cha
                 itemCount: localAnswers.value.length,
                 onReorder: onReorder,
                 buildDefaultDragHandles: false,
@@ -177,7 +188,11 @@ class QuestionCard extends HookWidget {
                 onPressed: () {
                   localAnswers.value = [
                     ...localAnswers.value,
-                    Answer(content: "", isCorrect: false),
+                    Answer(
+                      content: "",
+                      isCorrect: false,
+                      indexOrder: getLatestOrder(),
+                    ),
                   ];
                 },
                 icon: Icons.add_circle_outline_rounded,
@@ -273,9 +288,8 @@ class QuestionCard extends HookWidget {
               style: TextStyle(
                 color: ans.isCorrect
                     ? LibraryColors.primaryText
-                    : const Color(
-                        0xFF334155,
-                      ), // Màu chữ xám Slate đậm giúp đọc rõ chữ và không bị đì tương phản
+                    : const Color(0xFF334155),
+                // Màu chữ xám Slate đậm giúp đọc rõ chữ và không bị đì tương phản
                 fontWeight: FontWeight.w500,
                 fontSize: 14.5,
               ),
