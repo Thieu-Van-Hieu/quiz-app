@@ -19,6 +19,10 @@ const String appcastURL =
 void main() async {
   // 1. Đảm bảo Flutter đã sẵn sàng
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // In stack trace chi tiết ra Console
+    FlutterError.presentError(details);
+  };
 
   // 2. Khởi tạo các service
   await AppPathService().init();

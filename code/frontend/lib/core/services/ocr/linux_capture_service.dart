@@ -36,39 +36,30 @@ class LinuxCaptureService implements CaptureService {
 
     debugPrint("📸 Đang sử dụng công cụ screenshot: $tool");
 
-    ProcessResult result;
     switch (tool) {
       case 'xfce4-screenshooter':
         // -r: region (chọn vùng), -s: save to path (lưu file)
-        result = await Process.run('xfce4-screenshooter', [
-          '-r',
-          '-s',
-          outputPath,
-        ]);
+        await Process.run('xfce4-screenshooter', ['-r', '-s', outputPath]);
         break;
 
       case 'gnome-screenshot':
-        result = await Process.run('gnome-screenshot', [
-          '-a',
-          '-f',
-          outputPath,
-        ]);
+        await Process.run('gnome-screenshot', ['-a', '-f', outputPath]);
         break;
 
       case 'spectacle':
-        result = await Process.run('spectacle', ['-r', '-b', '-o', outputPath]);
+        await Process.run('spectacle', ['-r', '-b', '-o', outputPath]);
         break;
 
       case 'maim':
-        result = await Process.run('maim', ['-s', outputPath]);
+        await Process.run('maim', ['-s', outputPath]);
         break;
 
       case 'scrot':
-        result = await Process.run('scrot', ['-s', outputPath]);
+        await Process.run('scrot', ['-s', outputPath]);
         break;
 
       case 'grimshot':
-        result = await Process.run('grimshot', ['save', 'area', outputPath]);
+        await Process.run('grimshot', ['save', 'area', outputPath]);
         break;
 
       default:

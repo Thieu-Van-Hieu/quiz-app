@@ -22,7 +22,7 @@ class LearningSettingDialog extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Khởi tạo State ban đầu linh hoạt: Ưu tiên dữ liệu cũ được truyền vào
+    // 1. State chính lưu trữ cấu hình
     final settingsNotifier = useValueNotifier(
       initialSetting ??
           LearningSetting(
@@ -30,17 +30,21 @@ class LearningSettingDialog extends HookWidget {
             toIndex: totalQuestions - 1,
             shuffleQuestions: false,
             shuffleOptions: false,
+            reviewOffset: 0,
             learningMode: LearningMode.practice,
           ),
     );
 
-    // Lắng nghe sự thay đổi của notifier để trigger rebuild khi cần
     useListenable(settingsNotifier);
 
-    // 2. Đổ dữ liệu tương ứng lên các Controller điều khiển Input Text
+    // Mặc định là true nếu initialSetting chưa có hoặc reviewOffset > 0
+    final isReviewOffsetEnabled = useState<bool>(
+      initialSetting == null ? true : (initialSetting!.reviewOffset > 0),
+    );
+
+    // 2. Controllers điều khiển Text Input
     final fromController = useTextEditingController(
-      text: ((initialSetting?.fromIndex ?? 0) + 1)
-          .toString(), // Index 0 lưu trong DB hiển thị ra ngoài là Câu 1
+      text: ((initialSetting?.fromIndex ?? 0) + 1).toString(),
     );
     final toController = useTextEditingController(
       text: initialSetting != null
@@ -49,6 +53,13 @@ class LearningSettingDialog extends HookWidget {
     );
     final timeLimitController = useTextEditingController(
       text: (initialSetting?.customTimeLimit ?? 15).toString(),
+    );
+    final reviewOffsetController = useTextEditingController(
+      text:
+          ((initialSetting?.reviewOffset ?? 0) > 0
+                  ? initialSetting!.reviewOffset
+                  : 5)
+              .toString(),
     );
 
     const itemStyle = TextStyle(
@@ -66,7 +77,7 @@ class LearningSettingDialog extends HookWidget {
           children: [
             const SizedBox(height: 8),
 
-            // --- DROP DOWN 3D MỘC MẠC ---
+            // --- CHẾ ĐỘ HỌC ---
             AppDropdown<LearningMode>(
               label: "Chế độ học",
               initialValue: settingsNotifier.value.learningMode,
@@ -86,6 +97,7 @@ class LearningSettingDialog extends HookWidget {
             ),
             const SizedBox(height: 20),
 
+            // --- THỜI GIAN THI (CHỈ HIỆN KHI CHỌN MODE EXAM) ---
             if (settingsNotifier.value.learningMode == LearningMode.exam) ...[
               AppTextField(
                 label: "Thời gian thi (phút)",
@@ -97,6 +109,7 @@ class LearningSettingDialog extends HookWidget {
               const SizedBox(height: 20),
             ],
 
+            // --- KHOẢNG CÂU HỌC ---
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,25 +134,53 @@ class LearningSettingDialog extends HookWidget {
             ),
             const SizedBox(height: 20),
 
+            // --- NHÓM CÁC CẤU HÌNH SWITCH & OFFSET ---
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                AppSwitch(
-                  label: "Đảo câu hỏi",
-                  value: settingsNotifier.value.shuffleQuestions,
-                  onChanged: (v) => settingsNotifier.value = settingsNotifier
-                      .value
-                      .copyWith(shuffleQuestions: v),
+                Expanded(
+                  child: AppSwitch(
+                    label: "Đảo câu",
+                    value: settingsNotifier.value.shuffleQuestions,
+                    onChanged: (v) => settingsNotifier.value = settingsNotifier
+                        .value
+                        .copyWith(shuffleQuestions: v),
+                  ),
                 ),
-                AppSwitch(
-                  label: "Đảo đáp án",
-                  value: settingsNotifier.value.shuffleOptions,
-                  onChanged: (v) => settingsNotifier.value = settingsNotifier
-                      .value
-                      .copyWith(shuffleOptions: v),
+                Expanded(
+                  child: AppSwitch(
+                    label: "Đảo đáp án",
+                    value: settingsNotifier.value.shuffleOptions,
+                    onChanged: (v) => settingsNotifier.value = settingsNotifier
+                        .value
+                        .copyWith(shuffleOptions: v),
+                  ),
+                ),
+                Expanded(
+                  child: AppSwitch(
+                    label: "Lặp câu sai",
+                    value: isReviewOffsetEnabled.value,
+                    onChanged: (v) => isReviewOffsetEnabled.value = v,
+                  ),
+                ),
+
+                // Ô nhập khoảng cách lặp lại (reviewOffset)
+                AppTextField(
+                  controller: reviewOffsetController,
+                  enabled: isReviewOffsetEnabled.value,
+                  layoutDirection: Axis.horizontal,
+                  textFieldWidth: 80,
+                  label: "Khoảng cách",
+                  hintText: "3",
+                  keyboardType: TextInputType.number,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 10,
+                  ),
                 ),
               ],
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -158,10 +199,18 @@ class LearningSettingDialog extends HookWidget {
               to = temp;
             }
 
+            // Tính toán reviewOffset dựa trên Switch
+            int finalReviewOffset = 0;
+            if (isReviewOffsetEnabled.value) {
+              final parsed = int.tryParse(reviewOffsetController.text) ?? 3;
+              finalReviewOffset = parsed > 0 ? parsed : 3;
+            }
+
             onConfirm(
               settingsNotifier.value.copyWith(
                 fromIndex: from - 1,
                 toIndex: to - 1,
+                reviewOffset: finalReviewOffset,
                 customTimeLimit:
                     settingsNotifier.value.learningMode == LearningMode.exam
                     ? int.tryParse(timeLimitController.text)

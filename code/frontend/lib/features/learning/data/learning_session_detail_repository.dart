@@ -27,6 +27,22 @@ class LearningSessionDetailRepository {
         .map(((query) => query.findFirst()));
   }
 
+  Future<void> updateSessionDetail(LearningSessionDetail detail) async {
+    _learningSessionDetailBox.put(detail);
+  }
+
+  Future<void> resetDetailForRetry(int detailId) async {
+    final detail = _learningSessionDetailBox.get(detailId);
+    if (detail == null) return;
+
+    // Reset trạng thái
+    detail.isChecked = false;
+    detail.isPassed = false;
+    detail.selectedAnswers.clear();
+
+    _learningSessionDetailBox.put(detail);
+  }
+
   Future<void> toggleAnswer(int id, Answer answer) async {
     final detail = _learningSessionDetailBox.get(id);
     if (detail == null || detail.isChecked) return;
@@ -53,6 +69,16 @@ class LearningSessionDetailRepository {
         (selected.length == correctAnswers.length) &&
         selected.every((s) => correctAnswers.any((c) => c.id == s.id));
 
+    _learningSessionDetailBox.put(detail);
+  }
+
+  Future<void> updatePassStatus(int id, bool status) async {
+    final detail = _learningSessionDetailBox.get(id);
+    if (detail == null) return;
+    detail.isPassed = status;
+    if (!status) {
+      detail.selectedAnswers.clear();
+    }
     _learningSessionDetailBox.put(detail);
   }
 

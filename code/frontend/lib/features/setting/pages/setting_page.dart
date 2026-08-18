@@ -340,7 +340,7 @@ class SettingPage extends HookConsumerWidget {
           child: ListView.separated(
             shrinkWrap: true,
             itemCount: AppStrings.fonts.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
+            separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final font = AppStrings.fonts[index];
               final isSelected = config.fontFamily == font;

@@ -32,7 +32,7 @@ class DashboardPage extends HookConsumerWidget {
               0,
               (sum, s) => sum + s.learningSessionDetails.length,
             );
-            final totalSeen = sessions.fold(0, (sum, s) => sum + s.totalSeen);
+            final totalPass = sessions.fold(0, (sum, s) => sum + s.totalPass);
             final completedSessions = sessions
                 .where((s) => s.isCompleted)
                 .toList();
@@ -68,7 +68,7 @@ class DashboardPage extends HookConsumerWidget {
 
             return (
               totalQuestions: totalQuestions,
-              totalSeen: totalSeen,
+              totalPass: totalPass,
               avgAccuracy: avgAccuracy,
               totalSessions: sessions.length,
               chartData: dailyStats,
@@ -90,7 +90,7 @@ class DashboardPage extends HookConsumerWidget {
               SliverToBoxAdapter(
                 child: OverallStatisticGrid(
                   totalQuestions: dashboardData.totalQuestions,
-                  totalSeen: dashboardData.totalSeen,
+                  totalSeen: dashboardData.totalPass,
                   avgAccuracy: dashboardData.avgAccuracy,
                   totalSessions: dashboardData.totalSessions,
                 ),

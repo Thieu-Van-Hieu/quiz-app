@@ -274,7 +274,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(14, 4024975291499176318),
     name: 'LearningSession',
-    lastPropertyId: const obx_int.IdUid(26, 7350298590860599548),
+    lastPropertyId: const obx_int.IdUid(30, 2269280657603537665),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -341,18 +341,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(12, 5043944630363418254),
-        name: 'totalCorrect',
-        type: 6,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(13, 4339430802236869996),
-        name: 'totalWrong',
-        type: 6,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(21, 1423225547210962661),
         name: 'learningMode',
         type: 9,
@@ -368,6 +356,24 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(26, 7350298590860599548),
         name: 'recentLearningDateTime',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(28, 7357988234384090967),
+        name: 'totalPass',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(29, 4869539673369088217),
+        name: 'totalNotPass',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(30, 2269280657603537665),
+        name: 'reviewOffset',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -622,6 +628,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
       411770755522709919,
       7482946366124564686,
       2736716217999466047,
+      5043944630363418254,
+      4339430802236869996,
+      3020679980290814656,
     ],
     retiredRelationUids: const [
       604733439351293478,
@@ -1010,7 +1019,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (LearningSession object, fb.Builder fbb) {
         final learningModeOffset = fbb.writeString(object.learningMode);
-        fbb.startTable(27);
+        fbb.startTable(31);
         fbb.addInt64(0, object.id);
         fbb.addInt64(1, object.quiz.targetId);
         fbb.addInt64(3, object.startTime.millisecondsSinceEpoch);
@@ -1021,11 +1030,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(8, object.timeLimit);
         fbb.addBool(9, object.isCompleted);
         fbb.addInt64(10, object.endTime?.millisecondsSinceEpoch);
-        fbb.addInt64(11, object.totalCorrect);
-        fbb.addInt64(12, object.totalWrong);
         fbb.addOffset(20, learningModeOffset);
         fbb.addInt64(23, object.quizTargetId);
         fbb.addInt64(25, object.recentLearningDateTime?.millisecondsSinceEpoch);
+        fbb.addInt64(27, object.totalPass);
+        fbb.addInt64(28, object.totalNotPass);
+        fbb.addInt64(29, object.reviewOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -1078,6 +1088,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           18,
           0,
         );
+        final reviewOffsetParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          62,
+          0,
+        );
         final timeLimitParam = const fb.Int64Reader().vTableGetNullable(
           buffer,
           rootOffset,
@@ -1092,16 +1108,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final endTimeParam = endTimeValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(endTimeValue);
-        final totalCorrectParam = const fb.Int64Reader().vTableGet(
+        final totalPassParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
-          26,
+          58,
           0,
         );
-        final totalWrongParam = const fb.Int64Reader().vTableGet(
+        final totalNotPassParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
-          28,
+          60,
           0,
         );
         final quizTargetIdParam = const fb.Int64Reader().vTableGet(
@@ -1119,11 +1135,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           shuffleAnswers: shuffleAnswersParam,
           currentIndex: currentIndexParam,
           studyTime: studyTimeParam,
+          reviewOffset: reviewOffsetParam,
           timeLimit: timeLimitParam,
           isCompleted: isCompletedParam,
           endTime: endTimeParam,
-          totalCorrect: totalCorrectParam,
-          totalWrong: totalWrongParam,
+          totalPass: totalPassParam,
+          totalNotPass: totalNotPassParam,
           quizTargetId: quizTargetIdParam,
         );
         object.quiz.targetId = const fb.Int64Reader().vTableGet(
@@ -1429,29 +1446,34 @@ class LearningSession_ {
     _entities[5].properties[9],
   );
 
-  /// See [LearningSession.totalCorrect].
-  static final totalCorrect = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[10],
-  );
-
-  /// See [LearningSession.totalWrong].
-  static final totalWrong = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[11],
-  );
-
   /// See [LearningSession.learningMode].
   static final learningMode = obx.QueryStringProperty<LearningSession>(
-    _entities[5].properties[12],
+    _entities[5].properties[10],
   );
 
   /// See [LearningSession.quizTargetId].
   static final quizTargetId = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[13],
+    _entities[5].properties[11],
   );
 
   /// See [LearningSession.recentLearningDateTime].
   static final recentLearningDateTime = obx.QueryDateProperty<LearningSession>(
+    _entities[5].properties[12],
+  );
+
+  /// See [LearningSession.totalPass].
+  static final totalPass = obx.QueryIntegerProperty<LearningSession>(
+    _entities[5].properties[13],
+  );
+
+  /// See [LearningSession.totalNotPass].
+  static final totalNotPass = obx.QueryIntegerProperty<LearningSession>(
     _entities[5].properties[14],
+  );
+
+  /// See [LearningSession.reviewOffset].
+  static final reviewOffset = obx.QueryIntegerProperty<LearningSession>(
+    _entities[5].properties[15],
   );
 
   /// see [LearningSession.learningSessionDetails]

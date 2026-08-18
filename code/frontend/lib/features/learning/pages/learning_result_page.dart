@@ -153,6 +153,7 @@ class LearningResultPage extends HookConsumerWidget {
                                       shuffleOptions: session.shuffleAnswers,
                                       learningMode: session.learningModeEnum,
                                       customTimeLimit: session.timeLimit,
+                                      reviewOffset: session.reviewOffset,
                                     ),
                                     onConfirm: (newSetting) =>
                                         _handleConfigureRetake(

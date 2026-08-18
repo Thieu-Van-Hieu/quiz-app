@@ -150,7 +150,7 @@ class QuestionCard extends HookWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 // Vô hiệu hóa scroll riêng của List kéo thả để dùng chung trục scroll cha
                 itemCount: localAnswers.value.length,
-                onReorder: onReorder,
+                onReorderItem: onReorder,
                 buildDefaultDragHandles: false,
                 proxyDecorator: (child, index, animation) {
                   return Material(

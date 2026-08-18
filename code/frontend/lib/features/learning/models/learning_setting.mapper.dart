@@ -37,6 +37,13 @@ class LearningSettingMapper extends ClassMapperBase<LearningSetting> {
     opt: true,
     def: 10,
   );
+  static int _$reviewOffset(LearningSetting v) => v.reviewOffset;
+  static const Field<LearningSetting, int> _f$reviewOffset = Field(
+    'reviewOffset',
+    _$reviewOffset,
+    opt: true,
+    def: 0,
+  );
   static bool _$shuffleQuestions(LearningSetting v) => v.shuffleQuestions;
   static const Field<LearningSetting, bool> _f$shuffleQuestions = Field(
     'shuffleQuestions',
@@ -69,6 +76,7 @@ class LearningSettingMapper extends ClassMapperBase<LearningSetting> {
   final MappableFields<LearningSetting> fields = const {
     #fromIndex: _f$fromIndex,
     #toIndex: _f$toIndex,
+    #reviewOffset: _f$reviewOffset,
     #shuffleQuestions: _f$shuffleQuestions,
     #shuffleOptions: _f$shuffleOptions,
     #learningMode: _f$learningMode,
@@ -79,6 +87,7 @@ class LearningSettingMapper extends ClassMapperBase<LearningSetting> {
     return LearningSetting(
       fromIndex: data.dec(_f$fromIndex),
       toIndex: data.dec(_f$toIndex),
+      reviewOffset: data.dec(_f$reviewOffset),
       shuffleQuestions: data.dec(_f$shuffleQuestions),
       shuffleOptions: data.dec(_f$shuffleOptions),
       learningMode: data.dec(_f$learningMode),
@@ -130,6 +139,7 @@ abstract class LearningSettingCopyWith<$R, $In extends LearningSetting, $Out>
   $R call({
     int? fromIndex,
     int? toIndex,
+    int? reviewOffset,
     bool? shuffleQuestions,
     bool? shuffleOptions,
     LearningMode? learningMode,
@@ -152,6 +162,7 @@ class _LearningSettingCopyWithImpl<$R, $Out>
   $R call({
     int? fromIndex,
     int? toIndex,
+    int? reviewOffset,
     bool? shuffleQuestions,
     bool? shuffleOptions,
     LearningMode? learningMode,
@@ -160,6 +171,7 @@ class _LearningSettingCopyWithImpl<$R, $Out>
     FieldCopyWithData({
       if (fromIndex != null) #fromIndex: fromIndex,
       if (toIndex != null) #toIndex: toIndex,
+      if (reviewOffset != null) #reviewOffset: reviewOffset,
       if (shuffleQuestions != null) #shuffleQuestions: shuffleQuestions,
       if (shuffleOptions != null) #shuffleOptions: shuffleOptions,
       if (learningMode != null) #learningMode: learningMode,
@@ -170,6 +182,7 @@ class _LearningSettingCopyWithImpl<$R, $Out>
   LearningSetting $make(CopyWithData data) => LearningSetting(
     fromIndex: data.get(#fromIndex, or: $value.fromIndex),
     toIndex: data.get(#toIndex, or: $value.toIndex),
+    reviewOffset: data.get(#reviewOffset, or: $value.reviewOffset),
     shuffleQuestions: data.get(#shuffleQuestions, or: $value.shuffleQuestions),
     shuffleOptions: data.get(#shuffleOptions, or: $value.shuffleOptions),
     learningMode: data.get(#learningMode, or: $value.learningMode),

@@ -17,38 +17,38 @@ class SessionQuestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final question = detail.question.target;
-    final isPractice = mode == LearningMode.practice;
 
     IconData icon;
     Color color;
-    if (isPractice) {
-      icon = detail.isPassed != null ? Icons.visibility : Icons.visibility_off;
-      color = detail.isPassed != null ? Colors.orange : Colors.grey.shade400;
-    } else {
-      icon = detail.isPassed == true ? Icons.check_circle : Icons.cancel;
-      color = detail.isPassed == true ? Colors.green : Colors.red;
-    }
+
+    icon = detail.isPassed == true ? Icons.check_circle : Icons.cancel;
+    color = detail.isPassed == true ? Colors.green : Colors.red;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
+      child: Material(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade100),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: color, size: 22),
-        title: Text(
-          question?.content ?? "N/A",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            16,
+          ), // Bo góc đã nằm sẵn ở đây rồi
+          side: BorderSide(color: Colors.grey.shade100),
         ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          size: 12,
-          color: Colors.grey,
+        child: ListTile(
+          onTap: onTap,
+          leading: Icon(icon, color: color, size: 22),
+          title: Text(
+            question?.content ?? "N/A",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            size: 12,
+            color: Colors.grey,
+          ),
         ),
       ),
     );

@@ -9,10 +9,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum SessionFilter {
   all,
-  correct,
-  wrong, // Cho Study/Exam
-  seen,
-  notSeen, // Cho Practice
+  pass,
+  notPass, // Cho Study/Exam
 }
 
 class LearningSessionDetailPage extends HookConsumerWidget {
@@ -37,14 +35,10 @@ class LearningSessionDetailPage extends HookConsumerWidget {
         final allDetails = session.learningSessionDetails;
         final filteredDetails = allDetails.where((d) {
           switch (filter.value) {
-            case SessionFilter.correct:
+            case SessionFilter.pass:
               return d.isPassed == true;
-            case SessionFilter.wrong:
-              return d.isPassed == false;
-            case SessionFilter.seen:
-              return d.isPassed != null;
-            case SessionFilter.notSeen:
-              return d.isPassed == null;
+            case SessionFilter.notPass:
+              return d.isPassed == null || d.isPassed == false;
             default:
               return true;
           }
@@ -163,7 +157,6 @@ class LearningSessionDetailPage extends HookConsumerWidget {
   List<Widget> _buildAnswers(LearningSessionDetail detail, LearningMode mode) {
     final answers = detail.question.target?.answers ?? [];
     final selectedIds = detail.selectedAnswers.map((a) => a.id).toSet();
-    final isPractice = mode == LearningMode.practice;
 
     return answers.map((answer) {
       bool isSelected = selectedIds.contains(answer.id);
@@ -173,30 +166,18 @@ class LearningSessionDetailPage extends HookConsumerWidget {
       Color borderColor = Colors.grey.shade200;
       Widget? trailing;
 
-      if (isPractice) {
-        if (isCorrect) {
-          bgColor = Colors.green.withValues(alpha: 0.08);
-          borderColor = Colors.green.withValues(alpha: 0.3);
-          trailing = const Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 20,
-          );
-        }
-      } else {
-        if (isCorrect) {
-          bgColor = Colors.green.withValues(alpha: 0.08);
-          borderColor = Colors.green.withValues(alpha: 0.3);
-          trailing = Icon(
-            isSelected ? Icons.check_circle : Icons.check_circle_outline,
-            color: Colors.green,
-            size: 20,
-          );
-        } else if (isSelected) {
-          bgColor = Colors.red.withValues(alpha: 0.08);
-          borderColor = Colors.red.withValues(alpha: 0.3);
-          trailing = const Icon(Icons.cancel, color: Colors.red, size: 20);
-        }
+      if (isCorrect) {
+        bgColor = Colors.green.withValues(alpha: 0.08);
+        borderColor = Colors.green.withValues(alpha: 0.3);
+        trailing = Icon(
+          isSelected ? Icons.check_circle : Icons.check_circle_outline,
+          color: Colors.green,
+          size: 20,
+        );
+      } else if (isSelected) {
+        bgColor = Colors.red.withValues(alpha: 0.08);
+        borderColor = Colors.red.withValues(alpha: 0.3);
+        trailing = const Icon(Icons.cancel, color: Colors.red, size: 20);
       }
 
       return Container(

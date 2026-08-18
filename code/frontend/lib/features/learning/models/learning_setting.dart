@@ -1,5 +1,6 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
+
 part 'learning_setting.mapper.dart';
 
 @MappableClass(
@@ -12,12 +13,14 @@ class LearningSetting with LearningSettingMappable {
   int toIndex;
   bool shuffleQuestions;
   bool shuffleOptions;
+  int reviewOffset;
   LearningMode learningMode;
   int? customTimeLimit;
 
   LearningSetting({
     this.fromIndex = 0,
     this.toIndex = 10,
+    this.reviewOffset = 0,
     this.shuffleQuestions = false,
     this.shuffleOptions = false,
     this.learningMode = LearningMode.practice,

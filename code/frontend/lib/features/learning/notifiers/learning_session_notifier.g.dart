@@ -42,7 +42,7 @@ final class LearningSessionNotifierProvider
 }
 
 String _$learningSessionNotifierHash() =>
-    r'4a136c990d497fd774c738f46375ff701a3b32a4';
+    r'ddfde7a71188b81ba9708679c72c37d94862581c';
 
 abstract class _$LearningSessionNotifier extends $Notifier<void> {
   void build();

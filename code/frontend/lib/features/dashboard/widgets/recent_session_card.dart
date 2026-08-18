@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:intl/intl.dart';
 
@@ -15,7 +14,6 @@ class RecentSessionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPractice = session.learningModeEnum == LearningMode.practice;
     final accuracyColor = _getAccuracyColor(session.accuracyRate);
 
     return Container(
@@ -67,8 +65,8 @@ class RecentSessionCard extends StatelessWidget {
                     Text(
                       session.quiz.target?.name ?? "N/A",
                       style: const TextStyle(
-                        fontWeight: FontWeight
-                            .w700, // Sử dụng fontWeight tương đương cấu trúc nút Brand
+                        fontWeight: FontWeight.w700,
+                        // Sử dụng fontWeight tương đương cấu trúc nút Brand
                         fontSize: 15,
                         color: Color(
                           0xFF1E293B,
@@ -108,7 +106,7 @@ class RecentSessionCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isPractice ? "Đã xem" : "Đúng",
+                    "Đã qua",
                     style: const TextStyle(
                       color: Color(0xFF94A3B8),
                       fontSize: 11,
@@ -126,8 +124,9 @@ class RecentSessionCard extends StatelessWidget {
 
   // Tinh chỉnh lại mã màu trạng thái để tiệp với các Palette màu hệ thống (Brand/Slate/Danger)
   Color _getAccuracyColor(int acc) {
-    if (acc >= 80)
+    if (acc >= 80) {
       return const Color(0xFF22C55E); // Green chính xác cao (chuẩn hệ thống)
+    }
     if (acc >= 50) return const Color(0xFFF59E0B); // Orange trung bình
     return const Color(
       0xFFEF4444,

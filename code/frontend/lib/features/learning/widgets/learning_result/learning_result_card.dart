@@ -10,7 +10,7 @@ class LearningResultCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onRetake;
   final VoidCallback
-  onConfigureRetake; // ✅ THÊM MỚI: Callback xử lý chỉnh sửa cấu hình trước khi làm lại
+  onConfigureRetake;
   final VoidCallback? onCreateMistakeSession;
   final VoidCallback onDelete;
 
@@ -19,7 +19,7 @@ class LearningResultCard extends StatelessWidget {
     required this.session,
     required this.onTap,
     required this.onRetake,
-    required this.onConfigureRetake, // ✅ THÊM MỚI
+    required this.onConfigureRetake,
     this.onCreateMistakeSession,
     required this.onDelete,
   });
@@ -74,7 +74,7 @@ class LearningResultCard extends StatelessWidget {
     // Kiểm tra điều kiện hiển thị nút "Câu sai"
     final bool showMistakeButton =
         isCompleted &&
-        session.totalWrong > 0 &&
+        session.totalNotPass > 0 &&
         !isPracticeMode &&
         onCreateMistakeSession != null;
 
@@ -188,17 +188,13 @@ class LearningResultCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _buildStatBox(
-                          isPracticeMode ? "Xem" : "Đúng",
-                          isPracticeMode
-                              ? "${session.totalSeen}"
-                              : "${session.totalCorrect}",
+                          "Đã qua",
+                          "${session.totalPass}",
                           const Color(0xFF22C55E),
                         ),
                         _buildStatBox(
-                          isPracticeMode ? "Chưa xem" : "Sai",
-                          isPracticeMode
-                              ? "${session.learningSessionDetails.length - session.totalSeen}"
-                              : "${session.totalWrong}",
+                          "Chưa qua",
+                          "${session.totalNotPass}",
                           const Color(0xFFEF4444),
                         ),
                         _buildStatBox(
@@ -355,7 +351,7 @@ class LearningResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(

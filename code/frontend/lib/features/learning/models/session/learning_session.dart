@@ -37,6 +37,10 @@ class LearningSession with LearningSessionMappable {
   int currentIndex;
   int studyTime;
 
+  // --- Chế độ học cuốn chiếu ---
+  int
+  reviewOffset; // Số lượng câu hỏi mới phải học trước khi review lại câu hỏi cũ. 0 = không review, 1 = review sau 1 câu mới, 2 = review sau 2 câu mới, ...
+
   // --- Exam Specific ---
   int? timeLimit;
   bool isCompleted;
@@ -45,8 +49,8 @@ class LearningSession with LearningSessionMappable {
   DateTime? endTime;
 
   // --- Statistics ---
-  int totalCorrect;
-  int totalWrong;
+  int totalPass;
+  int totalNotPass;
 
   @Backlink('learningSession')
   final learningSessionDetails = ToMany<LearningSessionDetail>();
@@ -60,11 +64,12 @@ class LearningSession with LearningSessionMappable {
     this.shuffleAnswers = false,
     this.currentIndex = 0,
     this.studyTime = 0,
+    this.reviewOffset = 0,
     this.timeLimit,
     this.isCompleted = false,
     this.endTime,
-    this.totalCorrect = 0,
-    this.totalWrong = 0,
+    this.totalPass = 0,
+    this.totalNotPass = 0,
     // Virtual parameters để phục vụ copyWith
     int? quizTargetId,
     List<LearningSessionDetail>? detailsList,
@@ -108,27 +113,15 @@ class LearningSession with LearningSessionMappable {
 
   // Thêm hàm này để update stats nhanh không cần copyWith
   void updateStatistics() {
-    totalCorrect = learningSessionDetails
-        .where((d) => d.isPassed == true)
-        .length;
-    totalWrong = learningSessionDetails
+    totalPass = learningSessionDetails.where((d) => d.isPassed == true).length;
+    totalNotPass = learningSessionDetails
         .where((d) => d.isChecked && d.isPassed == false)
         .length;
   }
 
   int get accuracyRate {
-    if (learningMode == LearningMode.practice.toValue()) {
-      // Chỉ tính câu đã trả lời đã xem
-      final totalSeen = this.totalSeen;
-      final totalAnswer = learningSessionDetails.length;
-      if (totalSeen == 0) return 0;
-      return ((totalSeen / totalAnswer) * 100).round();
-    }
-    final totalAnswered = totalCorrect + totalWrong;
+    final totalAnswered = totalPass + totalNotPass;
     if (totalAnswered == 0) return 0;
-    return ((totalCorrect / totalAnswered) * 100).round();
+    return ((totalPass / totalAnswered) * 100).round();
   }
-
-  int get totalSeen =>
-      learningSessionDetails.where((d) => d.isPassed != null).length;
 }

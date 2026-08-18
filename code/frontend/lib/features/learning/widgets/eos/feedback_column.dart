@@ -51,7 +51,7 @@ class EosFeedbackColumn extends StatelessWidget {
         .where((d) => d.isPassed == true)
         .length;
     final currentWrong = session.learningSessionDetails
-        .where((d) => d.isChecked && d.isPassed == false)
+        .where((d) => d.isPassed == false)
         .length;
 
     return Container(

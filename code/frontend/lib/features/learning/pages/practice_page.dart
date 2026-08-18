@@ -9,6 +9,7 @@ import 'package:frontend/features/learning/hooks/eos/use_resizable.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_detail_notifier.dart';
 import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
+import 'package:frontend/features/learning/utils/learning_flow_utils.dart';
 import 'package:frontend/features/learning/widgets/eos/bottom_bar.dart';
 import 'package:frontend/features/learning/widgets/eos/clock.dart';
 import 'package:frontend/features/learning/widgets/eos/feedback_column.dart';
@@ -28,7 +29,6 @@ class PracticePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. Lấy dữ liệu cấu hình từ hệ thống
     final configAsync = ref.watch(watchAppConfigProvider);
     final sessionAsync = ref.watch(watchLearningSessionProvider(sessionId));
     final focusNode = useFocusNode();
@@ -45,7 +45,6 @@ class PracticePage extends HookConsumerWidget {
           );
         }
 
-        // Lấy config thực tế hoặc dùng object mặc định nếu đang load
         final config = configAsync.maybeWhen(
           data: (c) => c,
           orElse: () => null,
@@ -56,18 +55,30 @@ class PracticePage extends HookConsumerWidget {
         final isShowingAnswer = useState<bool>(false);
         final isFinishingRef = useRef(false);
 
+        // Biến trigger ép Rebuild UI khi đánh dấu câu mà không chuyển trang
+        final refreshState = useState<int>(0);
+
+        final flowUtils = useMemoized(
+          () => LearningFlowUtils(reviewOffset: session.reviewOffset),
+          [session.reviewOffset],
+        );
+
+        useEffect(() {
+          if (currentIndex.value >= session.learningSessionDetails.length) {
+            currentIndex.value = 0;
+          }
+          return null;
+        }, [session.learningSessionDetails.length]);
+
         // --- SHORTCUT MAPPER ---
-        // Hàm này kiểm tra xem input (phím/chuột) có khớp với hành động đã cài đặt không
         bool isActionTriggered(ShortcutAction action, dynamic input) {
           if (config == null) return false;
           final bindings = config.keyBindings[action] ?? [];
 
           return bindings.any((physicalKey) {
-            // Nếu input là bàn phím (LogicalKeyboardKey)
             if (input is LogicalKeyboardKey) {
               return KeyMaps.logicalToPhysical[input] == physicalKey;
             }
-            // Nếu input là chuột (int - event.buttons)
             if (input is int) {
               return KeyMaps.mouseButtonsMap[input] == physicalKey;
             }
@@ -100,14 +111,55 @@ class PracticePage extends HookConsumerWidget {
           }
         }
 
+        Future<void> markCurrentAndNext({required bool isPassed}) async {
+          final details = session.learningSessionDetails;
+          final currIdx = currentIndex.value;
+
+          if (currIdx < 0 || currIdx >= details.length) return;
+
+          final targetDetail = details[currIdx];
+          targetDetail.isPassed = isPassed;
+
+          if (isPassed) {
+            await container
+                .read(learningSessionDetailProvider.notifier)
+                .markAsPass(targetDetail.id);
+          } else {
+            await container
+                .read(learningSessionDetailProvider.notifier)
+                .markAsNotPass(targetDetail.id);
+          }
+
+          final nextIndex = flowUtils.getNextIndex(
+            details: details,
+            currentIndex: currIdx,
+          );
+
+          // Nếu nextIndex trả về khác câu hiện tại thì mới nhảy trang
+          if (nextIndex != -1 && nextIndex != currIdx) {
+            jumpToPage(nextIndex);
+          } else {
+            // Nếu vẫn là câu cũ (hoặc -1), ép rebuild UI để cập nhật lại Feedback UI
+            refreshState.value++;
+            performSave();
+          }
+        }
+
         void toggleShowAnswer() {
-          final currentDetail = session.getCurrentLearningSessionDetail();
-          if (currentDetail == null) return;
+          final details = session.learningSessionDetails;
+          if (currentIndex.value < 0 || currentIndex.value >= details.length) {
+            return;
+          }
+
+          final currentDetail = details[currentIndex.value];
 
           isShowingAnswer.value = !isShowingAnswer.value;
           container
               .read(learningSessionDetailProvider.notifier)
-              .toggleCheckStatus(currentDetail.id);
+              .markAsPass(currentDetail.id);
+          debugPrint(
+            "[PracticePage] Toggled show answer for detailId: ${currentDetail.id}, isShowingAnswer: ${isShowingAnswer.value}, isChecked: ${currentDetail.isChecked}, isPassed: ${currentDetail.isPassed}",
+          );
         }
 
         // --- HANDLERS ---
@@ -115,18 +167,21 @@ class PracticePage extends HookConsumerWidget {
           if (isActionTriggered(ShortcutAction.toggleQuestion, input)) {
             toggleShowAnswer();
           } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
-            jumpToPage(currentIndex.value + 1);
+            markCurrentAndNext(isPassed: true);
           } else if (isActionTriggered(
             ShortcutAction.previousQuestion,
             input,
           )) {
-            jumpToPage(currentIndex.value - 1);
+            if (currentIndex.value > 0) jumpToPage(currentIndex.value - 1);
           }
         }
 
         useEffect(() {
-          final detail = session.learningSessionDetails[currentIndex.value];
-          isShowingAnswer.value = detail.isChecked;
+          final details = session.learningSessionDetails;
+          if (currentIndex.value >= 0 && currentIndex.value < details.length) {
+            final detail = details[currentIndex.value];
+            isShowingAnswer.value = detail.isPassed != true;
+          }
           return null;
         }, [currentIndex.value]);
 
@@ -141,8 +196,18 @@ class PracticePage extends HookConsumerWidget {
           };
         }, []);
 
-        final currentDetail =
-            session.learningSessionDetails[currentIndex.value];
+        final details = session.learningSessionDetails;
+        final safeIndex = currentIndex.value.clamp(
+          0,
+          details.isEmpty ? 0 : details.length - 1,
+        );
+        final currentDetail = details.isNotEmpty ? details[safeIndex] : null;
+
+        if (currentDetail == null) {
+          return const Material(
+            child: Center(child: Text("Không có dữ liệu câu hỏi")),
+          );
+        }
 
         final (eosHeader, fontSize, fontFamily) = useEosHeader(
           ref: ref,
@@ -163,7 +228,6 @@ class PracticePage extends HookConsumerWidget {
           },
           child: Material(
             color: const Color(0xFFF0F0F0),
-            // KEYBOARD LISTENER: Bọc toàn bộ trang
             child: KeyboardListener(
               focusNode: focusNode,
               autofocus: true,
@@ -174,7 +238,13 @@ class PracticePage extends HookConsumerWidget {
                 children: [
                   eosHeader,
                   EosProgressRow(
-                    answeredCount: currentIndex.value,
+                    answeredCount: session.learningSessionDetails
+                        .where(
+                          (d) => (session.reviewOffset > 0
+                              ? d.isPassed == true
+                              : d.isPassed != null),
+                        )
+                        .length,
                     totalQuestions: session.learningSessionDetails.length,
                   ),
                   Expanded(
@@ -191,22 +261,73 @@ class PracticePage extends HookConsumerWidget {
                           ),
                           eosVerticalSplitter,
                           Expanded(
-                            // MOUSE SHORTCUTS: Chỉ bọc vùng Content câu hỏi
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Listener(
-                                behavior: HitTestBehavior.opaque,
-                                onPointerDown: (event) {
-                                  focusNode
-                                      .requestFocus(); // Đảm bảo luôn giữ focus cho phím
-                                  handleShortcut(event.buttons);
-                                },
-                                child: EosQuestionContent(
-                                  fontSize: fontSize,
-                                  fontFamily: fontFamily,
-                                  learningSessionDetail: currentDetail,
-                                  showAnswer: isShowingAnswer.value,
-                                ),
+                            child: GestureDetector(
+                              onTap: () => focusNode.requestFocus(),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: currentDetail.isPassed == false
+                                          ? Colors.amber.shade50
+                                          : null,
+                                      border: currentDetail.isPassed == false
+                                          ? Border.all(
+                                              color: Colors.orange.shade800,
+                                              width: 2.5,
+                                            )
+                                          : null,
+                                    ),
+                                    child: EosQuestionContent(
+                                      fontSize: fontSize,
+                                      fontFamily: fontFamily,
+                                      learningSessionDetail: currentDetail,
+                                      showAnswer: isShowingAnswer.value,
+                                    ),
+                                  ),
+                                  if (currentDetail.isPassed == false)
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.orange.shade800,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Colors.black26,
+                                              blurRadius: 3,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.replay_rounded,
+                                              size: 14,
+                                              color: Colors.white,
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'CÂU LÀM LẠI',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                           ),
@@ -217,12 +338,28 @@ class PracticePage extends HookConsumerWidget {
                   EosBottomBar(
                     bgColor: const Color(0xFFD4D0C8),
                     rightActions: [
+                      if (session.reviewOffset <= 0) ...[
+                        RetroButton(
+                          label: "<< Back",
+                          width: 85,
+                          onTap: currentIndex.value > 0
+                              ? () => jumpToPage(currentIndex.value - 1)
+                              : null,
+                        ),
+                        const SizedBox(width: 8),
+                      ],
                       RetroButton(
-                        label: "<< Back",
-                        width: 85,
-                        onTap: currentIndex.value > 0
-                            ? () => jumpToPage(currentIndex.value - 1)
-                            : null,
+                        label: "Mark as Not Pass",
+                        width: 140,
+                        color: Colors.red.shade100,
+                        onTap:
+                            (flowUtils.peekNextIndex(
+                                  details: details,
+                                  currentIndex: currentIndex.value,
+                                ) ==
+                                -1)
+                            ? null
+                            : () => markCurrentAndNext(isPassed: false),
                       ),
                       const SizedBox(width: 8),
                       RetroButton(
@@ -235,10 +372,13 @@ class PracticePage extends HookConsumerWidget {
                         label: "Next >>",
                         width: 85,
                         onTap:
-                            currentIndex.value <
-                                session.learningSessionDetails.length - 1
-                            ? () => jumpToPage(currentIndex.value + 1)
-                            : null,
+                            (flowUtils.peekNextIndex(
+                                  details: details,
+                                  currentIndex: currentIndex.value,
+                                ) ==
+                                -1)
+                            ? null
+                            : () => markCurrentAndNext(isPassed: true),
                       ),
                       const SizedBox(width: 16),
                       RetroButton(

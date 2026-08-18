@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:frontend/features/learning/data/learning_session_repository.dart';
 import 'package:frontend/features/learning/models/learning_setting.dart';
 import 'package:frontend/features/learning/models/search_params/learning_session_search_params.dart';
@@ -57,8 +58,13 @@ class LearningSessionNotifier extends _$LearningSessionNotifier {
 
   // Hàm update cực kỳ quan trọng, giờ gọi rất dễ
   Future<void> updateSession(LearningSession session) async {
+    // In ra dấu vết các hàm vừa gọi đến hàm này
+    debugPrint("[updateSession] Caller trace:\n${StackTrace.current}");
+
     final repo = ref.read(learningSessionRepositoryProvider);
+    debugPrint("[LearningSession] Session: ${session.toJson()}");
     await repo.updateSession(session);
+    ref.container.invalidate(watchLearningSessionProvider);
   }
 
   Future<void> deleteSession(int id) async {

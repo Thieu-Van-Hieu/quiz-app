@@ -21,6 +21,22 @@ class LearningSessionDetailNotifier extends _$LearningSessionDetailNotifier {
     ref.container.invalidate(watchLearningSessionProvider);
   }
 
+  Future<void> updatePassStatus(int detailId, bool status) async {
+    final repo = ref.read(learningSessionDetailRepositoryProvider);
+    await repo.updatePassStatus(detailId, status);
+    ref.container.invalidate(watchLearningSessionDetailProvider);
+    ref.container.invalidate(watchLearningSessionProvider);
+  }
+
+  Future<void> markAsNotPass(int detailId) async {
+    await updatePassStatus(detailId, false);
+  }
+
+  Future<void> markAsPass(int detailId) async {
+    await updatePassStatus(detailId, true);
+  }
+
+
   // Nhấn nút kiểm tra (trong mode Study)
   Future<void> checkQuestion(int detailId) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
@@ -32,6 +48,14 @@ class LearningSessionDetailNotifier extends _$LearningSessionDetailNotifier {
   Future<void> toggleCheckStatus(int detailId) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
     await repo.toggleCheckStatus(detailId);
+    ref.container.invalidate(watchLearningSessionDetailProvider);
+    ref.container.invalidate(watchLearningSessionProvider);
+  }
+
+  Future<void> resetDetailForRetry(int detailId) async {
+    final repo = ref.read(learningSessionDetailRepositoryProvider);
+    await repo.resetDetailForRetry(detailId);
+
     ref.container.invalidate(watchLearningSessionDetailProvider);
     ref.container.invalidate(watchLearningSessionProvider);
   }

@@ -95,6 +95,7 @@ class LearningSessionRepository {
       timeLimit: setting.learningMode == LearningMode.exam
           ? setting.customTimeLimit
           : null,
+      reviewOffset: setting.reviewOffset,
     );
     session.quiz.target = quiz;
 
@@ -125,9 +126,11 @@ class LearningSessionRepository {
     session.endTime = null;
     session.currentIndex = 0;
     session.studyTime = 0;
-    session.totalCorrect = 0;
-    session.totalWrong = 0;
+    session.totalPass = 0;
+    session.totalNotPass = 0;
     session.isCompleted = false;
+    session.shuffleQuestions = false;
+    session.shuffleAnswers = false;
   }
 
   void resetSessionDetail(
@@ -204,11 +207,11 @@ class LearningSessionRepository {
       session.endTime = DateTime.now();
 
       // Tận dụng hàm update stats trực tiếp trên instance
-      session.totalCorrect = session.learningSessionDetails
+      session.totalPass = session.learningSessionDetails
           .where((d) => d.isPassed == true)
           .length;
-      session.totalWrong = session.learningSessionDetails
-          .where((d) => d.isChecked && d.isPassed == false)
+      session.totalNotPass = session.learningSessionDetails
+          .where((d) => d.isPassed == null || d.isPassed == false)
           .length;
 
       _sessionBox.put(session);

@@ -114,8 +114,8 @@ class ExamPage extends HookConsumerWidget {
           currentSession.isCompleted = true;
           currentSession.endTime = DateTime.now();
           currentSession.studyTime = latestSecondsRef.value;
-          currentSession.totalCorrect = correct;
-          currentSession.totalWrong = wrong;
+          currentSession.totalPass = correct;
+          currentSession.totalNotPass = wrong;
 
           await container
               .read(learningSessionProvider.notifier)

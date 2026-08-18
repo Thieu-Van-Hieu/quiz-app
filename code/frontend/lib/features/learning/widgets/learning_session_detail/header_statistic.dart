@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:frontend/features/learning/pages/learning_session_detail_page.dart';
 import 'package:frontend/features/learning/widgets/learning_session_detail/statistic_box.dart';
@@ -19,8 +18,6 @@ class SessionHeaderStatistic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPractice = session.learningModeEnum == LearningMode.practice;
-
     return Container(
       padding: const EdgeInsets.all(24),
       margin: const EdgeInsets.only(bottom: 16),
@@ -65,41 +62,21 @@ class SessionHeaderStatistic extends StatelessWidget {
               ),
               const SizedBox(width: 12),
 
-              if (isPractice) ...[
-                // Filter cho Practice: Đã xem
+              ...[
                 StatisticBox(
-                  label: "ĐÃ XEM",
-                  value: "${session.totalSeen}",
-                  color: Colors.orange,
-                  isSelected: currentFilter == SessionFilter.seen,
-                  onTap: () => onFilterChanged(SessionFilter.seen),
-                ),
-                const SizedBox(width: 12),
-                // Filter cho Practice: Chưa xem
-                StatisticBox(
-                  label: "CHƯA XEM",
-                  value:
-                      "${session.learningSessionDetails.length - session.totalSeen}",
-                  color: Colors.grey,
-                  isSelected: currentFilter == SessionFilter.notSeen,
-                  onTap: () => onFilterChanged(SessionFilter.notSeen),
-                ),
-              ] else ...[
-                // Filter cho Study/Exam: Đúng/Sai như cũ
-                StatisticBox(
-                  label: "ĐÚNG",
-                  value: "${session.totalCorrect}",
+                  label: "ĐÃ QUA",
+                  value: "${session.totalPass}",
                   color: Colors.green,
-                  isSelected: currentFilter == SessionFilter.correct,
-                  onTap: () => onFilterChanged(SessionFilter.correct),
+                  isSelected: currentFilter == SessionFilter.pass,
+                  onTap: () => onFilterChanged(SessionFilter.pass),
                 ),
                 const SizedBox(width: 12),
                 StatisticBox(
-                  label: "SAI",
-                  value: "${session.totalWrong}",
+                  label: "CHƯA QUA",
+                  value: "${session.totalNotPass}",
                   color: Colors.red,
-                  isSelected: currentFilter == SessionFilter.wrong,
-                  onTap: () => onFilterChanged(SessionFilter.wrong),
+                  isSelected: currentFilter == SessionFilter.notPass,
+                  onTap: () => onFilterChanged(SessionFilter.notPass),
                 ),
               ],
             ],

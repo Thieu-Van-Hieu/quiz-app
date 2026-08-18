@@ -33,13 +33,13 @@ class OverallStatisticGrid extends StatelessWidget {
           color: Colors.blue,
         ),
         StatisticCard(
-          label: "Đã học/Đã xem",
+          label: "Đã qua",
           value: totalSeen.toString(),
           icon: Icons.check_circle_outline,
           color: Colors.orange,
         ),
         StatisticCard(
-          label: "Chính xác/Đã xem",
+          label: "Chính xác",
           value: "${avgAccuracy.toStringAsFixed(1)}%",
           icon: Icons.track_changes,
           color: Colors.green,
