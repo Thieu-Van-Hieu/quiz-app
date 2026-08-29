@@ -157,13 +157,11 @@ class PracticePage extends HookConsumerWidget {
           container
               .read(learningSessionDetailProvider.notifier)
               .markAsPass(currentDetail.id);
-          debugPrint(
-            "[PracticePage] Toggled show answer for detailId: ${currentDetail.id}, isShowingAnswer: ${isShowingAnswer.value}, isChecked: ${currentDetail.isChecked}, isPassed: ${currentDetail.isPassed}",
-          );
         }
 
         // --- HANDLERS ---
         void handleShortcut(dynamic input) {
+          debugPrint(input.toString());
           if (isActionTriggered(ShortcutAction.toggleQuestion, input)) {
             toggleShowAnswer();
           } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
@@ -180,7 +178,7 @@ class PracticePage extends HookConsumerWidget {
           final details = session.learningSessionDetails;
           if (currentIndex.value >= 0 && currentIndex.value < details.length) {
             final detail = details[currentIndex.value];
-            isShowingAnswer.value = detail.isPassed != true;
+            isShowingAnswer.value = detail.isChecked && detail.isPassed != true;
           }
           return null;
         }, [currentIndex.value]);
@@ -220,6 +218,15 @@ class PracticePage extends HookConsumerWidget {
           ),
         );
         final (feedbackColumnWidth, eosVerticalSplitter) = useEosResizable();
+
+        final isCurrentRetryNotifier = useState<bool>(false);
+        useEffect(() {
+          // Khi mới chuyển sang câu hỏi này: nếu nó đang isPassed == false thì đánh dấu là câu làm lại
+          isCurrentRetryNotifier.value =
+              currentDetail.isPassed == false && session.reviewOffset > 0;
+
+          return null;
+        }, [currentDetail.id]);
 
         return PopScope(
           canPop: true,
@@ -261,73 +268,80 @@ class PracticePage extends HookConsumerWidget {
                           ),
                           eosVerticalSplitter,
                           Expanded(
-                            child: GestureDetector(
-                              onTap: () => focusNode.requestFocus(),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: currentDetail.isPassed == false
-                                          ? Colors.amber.shade50
-                                          : null,
-                                      border: currentDetail.isPassed == false
-                                          ? Border.all(
-                                              color: Colors.orange.shade800,
-                                              width: 2.5,
-                                            )
-                                          : null,
-                                    ),
-                                    child: EosQuestionContent(
-                                      fontSize: fontSize,
-                                      fontFamily: fontFamily,
-                                      learningSessionDetail: currentDetail,
-                                      showAnswer: isShowingAnswer.value,
-                                    ),
-                                  ),
-                                  if (currentDetail.isPassed == false)
-                                    Positioned(
-                                      top: 8,
-                                      right: 8,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange.shade800,
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Colors.black26,
-                                              blurRadius: 3,
-                                              offset: Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.replay_rounded,
-                                              size: 14,
-                                              color: Colors.white,
-                                            ),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              'CÂU LÀM LẠI',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                            child: Listener(
+                              behavior: HitTestBehavior.opaque,
+                              onPointerDown: (event) {
+                                focusNode.requestFocus();
+                                handleShortcut(event.buttons);
+                              },
+                              child: GestureDetector(
+                                onTap: () => focusNode.requestFocus(),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: isCurrentRetryNotifier.value
+                                            ? Colors.amber.shade50
+                                            : null,
+                                        border: isCurrentRetryNotifier.value
+                                            ? Border.all(
+                                                color: Colors.orange.shade800,
+                                                width: 2.5,
+                                              )
+                                            : null,
+                                      ),
+                                      child: EosQuestionContent(
+                                        fontSize: fontSize,
+                                        fontFamily: fontFamily,
+                                        learningSessionDetail: currentDetail,
+                                        showAnswer: isShowingAnswer.value,
                                       ),
                                     ),
-                                ],
+                                    if (isCurrentRetryNotifier.value)
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.orange.shade800,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 3,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.replay_rounded,
+                                                size: 14,
+                                                color: Colors.white,
+                                              ),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                'CÂU LÀM LẠI',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

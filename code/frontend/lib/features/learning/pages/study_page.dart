@@ -125,9 +125,6 @@ class StudyPage extends HookConsumerWidget {
 
             await performSave(overrideIndex: nextIndex);
           }
-          debugPrint(
-            "[StudyPage - jumpToNextQuestion] Current Session: ${session.toJson()}",
-          );
         }
 
         void jumpToPage(int newIndex) {
@@ -173,10 +170,11 @@ class StudyPage extends HookConsumerWidget {
 
         final isLastQuestion = nextCalculatedIndex == -1;
 
-        final isCurrentRetry = useState<bool>(false);
+        final isCurrentRetryNotifier = useState<bool>(false);
         useEffect(() {
           // Khi mới chuyển sang câu hỏi này: nếu nó đang isPassed == false thì đánh dấu là câu làm lại
-          isCurrentRetry.value = currentDetail.isPassed == false;
+          isCurrentRetryNotifier.value =
+              currentDetail.isPassed == false && session.reviewOffset > 0;
 
           return null;
         }, [currentDetail.id]);
@@ -203,11 +201,8 @@ class StudyPage extends HookConsumerWidget {
 
         // Đánh dấu sai câu hiện tại thông qua Notifier
         Future<void> handleMarkAsNotPass() async {
-          debugPrint(
-            "[StudyPage - handleMarkAsNotPass] Marking question as Not Pass: ${currentDetail.id}",
-          );
           // 1. Cập nhật câu hiện tại: isChecked = false & isPassed = false thông qua Notifier
-          currentDetail.isChecked = false;
+          currentDetail.isChecked = session.reviewOffset <= 0;
           currentDetail.isPassed = false;
           currentDetail.selectedAnswers.clear();
           await container
@@ -221,9 +216,6 @@ class StudyPage extends HookConsumerWidget {
           );
 
           await performSave();
-          debugPrint(
-            "[StudyPage - handleMarkAsNotPass] Current Session: ${session.toJson()}",
-          );
 
           // 3. Điều hướng sang câu kế tiếp hoặc hoàn thành
           if (nextIndex == -1) {
@@ -277,6 +269,7 @@ class StudyPage extends HookConsumerWidget {
         }
 
         void handleInput(dynamic input) {
+          debugPrint(input.toString());
           if (isActionTriggered(ShortcutAction.checkQuestion, input)) {
             handleCheckAction();
           } else if (isActionTriggered(ShortcutAction.nextQuestion, input)) {
@@ -402,10 +395,10 @@ class StudyPage extends HookConsumerWidget {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: isCurrentRetry.value
+                                      color: isCurrentRetryNotifier.value
                                           ? Colors.amber.shade50
                                           : null,
-                                      border: isCurrentRetry.value
+                                      border: isCurrentRetryNotifier.value
                                           ? Border.all(
                                               color: Colors.orange.shade800,
                                               width: 2.5,
@@ -419,7 +412,7 @@ class StudyPage extends HookConsumerWidget {
                                       showAnswer: currentDetail.isChecked,
                                     ),
                                   ),
-                                  if (isCurrentRetry.value)
+                                  if (isCurrentRetryNotifier.value)
                                     Positioned(
                                       top: 8,
                                       right: 8,
