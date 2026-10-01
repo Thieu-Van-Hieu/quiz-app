@@ -126,8 +126,6 @@ class LearningSessionRepository {
     session.endTime = null;
     session.currentIndex = 0;
     session.studyTime = 0;
-    session.totalPass = 0;
-    session.totalNotPass = 0;
     session.isCompleted = false;
     session.shuffleQuestions = false;
     session.shuffleAnswers = false;
@@ -221,14 +219,6 @@ class LearningSessionRepository {
     if (session != null) {
       session.isCompleted = true;
       session.endTime = DateTime.now();
-
-      // Tận dụng hàm update stats trực tiếp trên instance
-      session.totalPass = session.learningSessionDetails
-          .where((d) => d.isPassed == true)
-          .length;
-      session.totalNotPass = session.learningSessionDetails
-          .where((d) => d.isPassed == null || d.isPassed == false)
-          .length;
 
       _sessionBox.put(session);
     }

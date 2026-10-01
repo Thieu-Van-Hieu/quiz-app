@@ -82,16 +82,8 @@ class StudyPage extends HookConsumerWidget {
         }) async {
           if (isFinishingRef.value && !isCompleted) return;
 
-          final details = session.learningSessionDetails;
-          int pass = details.where((d) => d.isPassed == true).length;
-          int notPass = details
-              .where((d) => d.isChecked && d.isPassed == false)
-              .length;
-
           session.studyTime = elapsedSecondsRef.value;
           session.currentIndex = overrideIndex ?? currentIndexRef.value;
-          session.totalPass = pass;
-          session.totalNotPass = notPass;
           session.isCompleted = isCompleted;
           if (isCompleted) session.endTime = DateTime.now();
 

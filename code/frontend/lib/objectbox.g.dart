@@ -359,18 +359,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(28, 7357988234384090967),
-        name: 'totalPass',
-        type: 6,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(29, 4869539673369088217),
-        name: 'totalNotPass',
-        type: 6,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(30, 2269280657603537665),
         name: 'reviewOffset',
         type: 6,
@@ -631,6 +619,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
       5043944630363418254,
       4339430802236869996,
       3020679980290814656,
+      7357988234384090967,
+      4869539673369088217,
     ],
     retiredRelationUids: const [
       604733439351293478,
@@ -1033,8 +1023,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(20, learningModeOffset);
         fbb.addInt64(23, object.quizTargetId);
         fbb.addInt64(25, object.recentLearningDateTime?.millisecondsSinceEpoch);
-        fbb.addInt64(27, object.totalPass);
-        fbb.addInt64(28, object.totalNotPass);
         fbb.addInt64(29, object.reviewOffset);
         fbb.finish(fbb.endTable());
         return object.id;
@@ -1108,18 +1096,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final endTimeParam = endTimeValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(endTimeValue);
-        final totalPassParam = const fb.Int64Reader().vTableGet(
-          buffer,
-          rootOffset,
-          58,
-          0,
-        );
-        final totalNotPassParam = const fb.Int64Reader().vTableGet(
-          buffer,
-          rootOffset,
-          60,
-          0,
-        );
         final quizTargetIdParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -1139,8 +1115,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           timeLimit: timeLimitParam,
           isCompleted: isCompletedParam,
           endTime: endTimeParam,
-          totalPass: totalPassParam,
-          totalNotPass: totalNotPassParam,
           quizTargetId: quizTargetIdParam,
         );
         object.quiz.targetId = const fb.Int64Reader().vTableGet(
@@ -1461,19 +1435,9 @@ class LearningSession_ {
     _entities[5].properties[12],
   );
 
-  /// See [LearningSession.totalPass].
-  static final totalPass = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[13],
-  );
-
-  /// See [LearningSession.totalNotPass].
-  static final totalNotPass = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[14],
-  );
-
   /// See [LearningSession.reviewOffset].
   static final reviewOffset = obx.QueryIntegerProperty<LearningSession>(
-    _entities[5].properties[15],
+    _entities[5].properties[13],
   );
 
   /// see [LearningSession.learningSessionDetails]

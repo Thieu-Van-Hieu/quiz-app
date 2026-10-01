@@ -104,18 +104,9 @@ class ExamPage extends HookConsumerWidget {
                 .checkQuestion(detail.id);
           }
 
-          int correct = details.where((d) => d.isCorrect == true).length;
-          int wrong = details
-              .where(
-                (d) => d.selectedAnswers.isNotEmpty && d.isCorrect == false,
-              )
-              .length;
-
           currentSession.isCompleted = true;
           currentSession.endTime = DateTime.now();
           currentSession.studyTime = latestSecondsRef.value;
-          currentSession.totalPass = correct;
-          currentSession.totalNotPass = wrong;
 
           await container
               .read(learningSessionProvider.notifier)

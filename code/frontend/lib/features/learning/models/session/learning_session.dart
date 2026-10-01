@@ -48,10 +48,6 @@ class LearningSession with LearningSessionMappable {
   @Property(type: PropertyType.date)
   DateTime? endTime;
 
-  // --- Statistics ---
-  int totalPass;
-  int totalNotPass;
-
   @Backlink('learningSession')
   final learningSessionDetails = ToMany<LearningSessionDetail>();
 
@@ -68,8 +64,6 @@ class LearningSession with LearningSessionMappable {
     this.timeLimit,
     this.isCompleted = false,
     this.endTime,
-    this.totalPass = 0,
-    this.totalNotPass = 0,
     // Virtual parameters để phục vụ copyWith
     int? quizTargetId,
     List<LearningSessionDetail>? detailsList,
@@ -111,13 +105,14 @@ class LearningSession with LearningSessionMappable {
     return learningSessionDetails[currentIndex];
   }
 
-  // Thêm hàm này để update stats nhanh không cần copyWith
-  void updateStatistics() {
-    totalPass = learningSessionDetails.where((d) => d.isPassed == true).length;
-    totalNotPass = learningSessionDetails
-        .where((d) => d.isChecked && d.isPassed == false)
-        .length;
-  }
+  // --- Statistics: tính trực tiếp từ relation, không lưu DB ---
+  @Transient()
+  int get totalPass =>
+      learningSessionDetails.where((d) => d.isPassed == true).length;
+
+  @Transient()
+  int get totalNotPass =>
+      learningSessionDetails.where((d) => d.isPassed == false).length;
 
   int get accuracyRate {
     final totalAnswered = totalPass + totalNotPass;

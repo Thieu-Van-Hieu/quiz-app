@@ -99,20 +99,6 @@ class LearningSessionMapper extends ClassMapperBase<LearningSession> {
     _$endTime,
     opt: true,
   );
-  static int _$totalPass(LearningSession v) => v.totalPass;
-  static const Field<LearningSession, int> _f$totalPass = Field(
-    'totalPass',
-    _$totalPass,
-    opt: true,
-    def: 0,
-  );
-  static int _$totalNotPass(LearningSession v) => v.totalNotPass;
-  static const Field<LearningSession, int> _f$totalNotPass = Field(
-    'totalNotPass',
-    _$totalNotPass,
-    opt: true,
-    def: 0,
-  );
   static int _$quizTargetId(LearningSession v) => v.quizTargetId;
   static const Field<LearningSession, int> _f$quizTargetId = Field(
     'quizTargetId',
@@ -153,8 +139,6 @@ class LearningSessionMapper extends ClassMapperBase<LearningSession> {
     #timeLimit: _f$timeLimit,
     #isCompleted: _f$isCompleted,
     #endTime: _f$endTime,
-    #totalPass: _f$totalPass,
-    #totalNotPass: _f$totalNotPass,
     #quizTargetId: _f$quizTargetId,
     #detailsList: _f$detailsList,
     #quiz: _f$quiz,
@@ -175,8 +159,6 @@ class LearningSessionMapper extends ClassMapperBase<LearningSession> {
       timeLimit: data.dec(_f$timeLimit),
       isCompleted: data.dec(_f$isCompleted),
       endTime: data.dec(_f$endTime),
-      totalPass: data.dec(_f$totalPass),
-      totalNotPass: data.dec(_f$totalNotPass),
       quizTargetId: data.dec(_f$quizTargetId),
       detailsList: data.dec(_f$detailsList),
     );
