@@ -9,6 +9,8 @@ class QuestionHeader extends StatelessWidget {
   final VoidCallback onRefreshTap;
   final VoidCallback onSaveTap;
   final VoidCallback onAddTap;
+  final int duplicateCount;
+  final VoidCallback onRemoveDuplicatesTap;
 
   const QuestionHeader({
     super.key,
@@ -18,6 +20,8 @@ class QuestionHeader extends StatelessWidget {
     required this.onRefreshTap,
     required this.onSaveTap,
     required this.onAddTap,
+    required this.duplicateCount,
+    required this.onRemoveDuplicatesTap,
   });
 
   @override
@@ -67,6 +71,18 @@ class QuestionHeader extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // 0. XOÁ CÂU TRÙNG (chỉ hiện khi có câu trùng)
+              if (duplicateCount > 0) ...[
+                AppButton(
+                  onPressed: onRemoveDuplicatesTap,
+                  icon: Icons.content_copy_rounded,
+                  label: "Xoá $duplicateCount câu trùng",
+                  variant: ButtonVariant.danger,
+                  size: ButtonSize.medium,
+                ),
+                const SizedBox(width: 12),
+              ],
+
               // 1. QUÉT ẢNH
               AppButton(
                 onPressed: onOcrTap,

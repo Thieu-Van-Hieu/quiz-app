@@ -11,6 +11,7 @@ import 'package:frontend/features/library/models/search_params/question_search_p
 import 'package:frontend/features/library/notifiers/question_notifier.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_deduplicator.dart';
 import 'package:frontend/features/library/widgets/question/ocr_loading_overlay.dart';
 import 'package:frontend/features/library/widgets/question/question_filter_bar.dart';
 import 'package:frontend/features/library/widgets/question/question_grid_view.dart';
@@ -59,6 +60,27 @@ class QuestionPage extends HookConsumerWidget {
     final questionsAsync = ref.watch(questionProvider(quizId));
     final questionActions = ref.read(questionProvider(quizId).notifier);
 
+    final allQuestions = questionsAsync.value;
+    final duplicateCount = useMemoized(
+      () => allQuestions == null
+          ? 0
+          : QuizDeduplicator.findDuplicates(allQuestions).length,
+      [allQuestions],
+    );
+
+    void handleRemoveDuplicates() {
+      final removed = questionActions.removeDuplicates();
+      final total = ref.read(questionProvider(quizId)).value?.length ?? 0;
+      _adjustPageAfterChange(total, params.value.size, params);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Đã xoá $removed câu trùng. Bấm \"Lưu DB\" để lưu thay đổi.",
+          ),
+        ),
+      );
+    }
+
     // Logic xử lý OCR (Đã dọn dẹp sạch log)
     Future<void> handleOcr() async {
       isOcrLoading.value = true;
@@ -77,8 +99,28 @@ class QuestionPage extends HookConsumerWidget {
               editedText,
             );
 
+            final beforeDuplicates = duplicateCount;
             for (var q in questions) {
               questionActions.addQuestion(q);
+            }
+
+            final afterDuplicates = QuizDeduplicator.findDuplicates(
+              ref.read(questionProvider(quizId)).value ?? [],
+            ).length;
+            if (afterDuplicates > beforeDuplicates && context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "Có ${afterDuplicates - beforeDuplicates} câu vừa thêm bị trùng với câu đã có.",
+                  ),
+                  backgroundColor: Colors.orange.shade800,
+                  action: SnackBarAction(
+                    label: "Xoá trùng",
+                    textColor: Colors.white,
+                    onPressed: handleRemoveDuplicates,
+                  ),
+                ),
+              );
             }
 
             final currentList = ref.read(questionProvider(quizId)).value ?? [];
@@ -112,6 +154,8 @@ class QuestionPage extends HookConsumerWidget {
                     ? questionsAsync.value!.length
                     : 0,
                 onOcrTap: handleOcr,
+                duplicateCount: duplicateCount,
+                onRemoveDuplicatesTap: handleRemoveDuplicates,
                 onRefreshTap: () async {
                   try {
                     await questionActions.refresh();

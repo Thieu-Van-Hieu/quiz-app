@@ -22,11 +22,14 @@ class QuizDeduplicator {
   // 2. Hàm tạo "chữ ký" cho đáp án (để đảm bảo so sánh đúng kể cả khi đảo thứ tự)
   static String getAnswerSignature(List<Answer> answers) {
     // Sort theo nội dung để thứ tự A, B, C không ảnh hưởng
-    final sorted = List.of(answers)
-      ..sort((a, b) => a.content.compareTo(b.content));
+    final keys =
+        answers
+            .map((a) => "${normalizeContent(a.content)}|${a.isCorrect}")
+            .toList()
+          ..sort();
 
-    // Tạo chuỗi dạng: "A:Nội dung|true||B:Nội dung|false"
-    return sorted.map((a) => "${a.content.trim()}|${a.isCorrect}").join("||");
+    // Tạo chuỗi dạng: "nội dung|true||nội dung|false"
+    return keys.join("||");
   }
 
   // 3. Hàm kiểm tra trùng
@@ -34,5 +37,23 @@ class QuizDeduplicator {
     final contentKey = normalizeContent(q.content);
     final answerKey = getAnswerSignature(q.answers);
     return "$contentKey::$answerKey";
+  }
+
+  // 4. Tìm các câu bị trùng (giữ lại câu xuất hiện đầu tiên, trả về các câu lặp phía sau).
+  // Bỏ qua câu nháp chưa có nội dung.
+  static List<Question> findDuplicates(Iterable<Question> questions) {
+    final seen = <String>{};
+    final duplicates = <Question>[];
+    for (final q in questions) {
+      if (q.content.trim().isEmpty) continue;
+      if (!seen.add(createFingerprint(q))) duplicates.add(q);
+    }
+    return duplicates;
+  }
+
+  // 5. Trả về danh sách mới đã bỏ các câu trùng
+  static List<Question> removeDuplicates(List<Question> questions) {
+    final duplicates = findDuplicates(questions).toSet();
+    return questions.where((q) => !duplicates.contains(q)).toList();
   }
 }

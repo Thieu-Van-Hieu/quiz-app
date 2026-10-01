@@ -21,6 +21,7 @@ import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
 import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
 import 'package:frontend/features/library/widgets/quiz/add_dialog.dart';
+import 'package:frontend/features/library/widgets/quiz/duplicate_confirm_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_card.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_header.dart';
 import 'package:frontend/features/library/widgets/quiz/quizlet_export_dialog.dart';
@@ -145,16 +146,23 @@ class QuizPage extends HookConsumerWidget {
 
         if (result != null && result.files.single.bytes != null) {
           final bytes = result.files.single.bytes!;
-          late Quiz newQuiz;
+          late Quiz parsedQuiz;
 
           if (isBinary) {
-            newQuiz = QuizConverterService.importFromLegacyBinary(
+            parsedQuiz = QuizConverterService.importFromLegacyBinary(
               bytes,
               quizName: result.files.single.name.split('.').first,
             );
           } else {
-            newQuiz = QuizConverterService.importAsNew(utf8.decode(bytes));
+            parsedQuiz = QuizConverterService.importAsNew(utf8.decode(bytes));
           }
+
+          if (!context.mounted) return;
+          final newQuiz = await DuplicateConfirmDialog.resolve(
+            context,
+            parsedQuiz,
+          );
+          if (newQuiz == null) return;
 
           if (context.mounted) {
             await ref
@@ -189,14 +197,20 @@ class QuizPage extends HookConsumerWidget {
           String parse(String input) =>
               input.replaceAll("\\t", "\t").replaceAll("\\n", "\n");
 
-          final newQuiz = QuizConverterService.convertQuizletToQuiz(
+          final parsedQuiz = QuizConverterService.convertQuizletToQuiz(
             result['text']!,
             termDefSeparator: parse(result['termDef']!), // Dùng dấu tùy chỉnh
             rowSeparator: parse(result['row']!), // Dùng dấu tùy chỉnh
             quizName: "Import ${DateTime.now().hour}:${DateTime.now().minute}",
           );
 
-          // Đếm số câu lỗi
+          final newQuiz = await DuplicateConfirmDialog.resolve(
+            context,
+            parsedQuiz,
+          );
+          if (newQuiz == null || !context.mounted) return;
+
+          // Đếm số câu lỗi (cờ lỗi được parser gắn vào đầu explanation)
           int errorCount = newQuiz.questions
               .where((q) => q.explanation.startsWith(QuizTextParser.errorFlag))
               .length;

@@ -3,6 +3,7 @@ import 'package:frontend/features/library/data/quiz_repository.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_deduplicator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'question_notifier.g.dart';
@@ -60,6 +61,17 @@ class QuestionNotifier extends _$QuestionNotifier {
       newList.removeAt(index);
       state = AsyncValue.data(newList);
     }
+  }
+
+  /// Xoá các câu trùng trong bản nháp, trả về số câu đã xoá
+  int removeDuplicates() {
+    final currentList = state.value;
+    if (currentList == null) return 0;
+
+    final uniqueList = QuizDeduplicator.removeDuplicates(currentList);
+    final removedCount = currentList.length - uniqueList.length;
+    if (removedCount > 0) state = AsyncValue.data(uniqueList);
+    return removedCount;
   }
 
   // --- LOGIC GHI XUỐNG DB ---

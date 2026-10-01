@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/services/quiz/quiz_binary_handler.dart';
-import 'package:frontend/features/library/services/quiz/quiz_deduplicator.dart';
 import 'package:frontend/features/library/services/quiz/quiz_exporter.dart';
 import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
 
@@ -66,19 +65,6 @@ class QuizConverterService {
       }
     }
 
-    // TASK: Lọc trùng nâng cao
-    final Map<String, Question> uniqueQuestions = {};
-
-    for (var q in quiz.questions) {
-      final fingerprint = QuizDeduplicator.createFingerprint(q);
-
-      // Nếu chưa tồn tại trong Map thì thêm vào
-      if (!uniqueQuestions.containsKey(fingerprint)) {
-        uniqueQuestions[fingerprint] = q;
-      } else {
-        // Log hoặc debug nếu cần: print("Đã tìm thấy câu trùng và bỏ qua: ${q.content}");
-      }
-    }
     return _prepareForImport(quiz);
   }
 
