@@ -21,40 +21,51 @@ class QuizNotifier extends _$QuizNotifier {
   }
 
   // --- HÀM SAVE VỚI FULL VALIDATE ---
-  Future<void> saveQuiz(int subjectId, Quiz quiz) async {
-    final trimmedName = quiz.name.trim();
-
-    // 1. Validate dữ liệu đầu vào
-    if (trimmedName.isEmpty) {
-      throw ValidationException('Tên bộ đề không được để trống.');
-    }
-    if (trimmedName.length < 3) {
-      throw ValidationException('Tên bộ đề phải có ít nhất 3 ký tự.');
-    }
-
-    final repo = ref.read(quizRepositoryProvider);
-
-    // 2. Validate nghiệp vụ (Check trùng tên trong môn học)
-    final existingQuiz = await repo.getQuizBySubjectIdAndName(
+  Future<void> saveQuiz(int subjectId, Quiz quiz) {
+    return validateAndSaveQuiz(
+      ref.read(quizRepositoryProvider),
       subjectId,
-      trimmedName,
+      quiz,
     );
-
-    if (existingQuiz != null && existingQuiz.id != quiz.id) {
-      throw EntityAlreadyExistsException(
-        'Bộ đề "$trimmedName" đã tồn tại trong môn học này.',
-      );
-    }
-
-    // 3. Thực thi lưu dữ liệu
-    quiz.name = trimmedName; // Cập nhật tên đã được trim
-    await repo.saveQuiz(subjectId, quiz);
   }
 
   Future<void> deleteQuiz(int id) async {
     final repo = ref.read(quizRepositoryProvider);
     await repo.deleteQuiz(id);
   }
+}
+
+/// Kiểm tra tên bộ đề rồi lưu (dùng chung cho QuizNotifier và trang Công cụ)
+Future<void> validateAndSaveQuiz(
+  QuizRepository repo,
+  int subjectId,
+  Quiz quiz,
+) async {
+  final trimmedName = quiz.name.trim();
+
+  // 1. Validate dữ liệu đầu vào
+  if (trimmedName.isEmpty) {
+    throw ValidationException('Tên bộ đề không được để trống.');
+  }
+  if (trimmedName.length < 3) {
+    throw ValidationException('Tên bộ đề phải có ít nhất 3 ký tự.');
+  }
+
+  // 2. Validate nghiệp vụ (Check trùng tên trong môn học)
+  final existingQuiz = await repo.getQuizBySubjectIdAndName(
+    subjectId,
+    trimmedName,
+  );
+
+  if (existingQuiz != null && existingQuiz.id != quiz.id) {
+    throw EntityAlreadyExistsException(
+      'Bộ đề "$trimmedName" đã tồn tại trong môn học này.',
+    );
+  }
+
+  // 3. Thực thi lưu dữ liệu
+  quiz.name = trimmedName; // Cập nhật tên đã được trim
+  await repo.saveQuiz(subjectId, quiz);
 }
 
 // --- PROVIDER BỔ TRỢ ĐỂ TÍNH TỔNG SỐ TRANG ---

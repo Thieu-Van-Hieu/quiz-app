@@ -1,6 +1,22 @@
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
 
+/// Kết quả kiểm tra trùng chi tiết (port từ utilities/filter.py)
+class DuplicateReport {
+  /// Nhóm câu trùng cả nội dung lẫn đáp án (an toàn để xoá bớt)
+  final List<List<Question>> fullGroups;
+
+  /// Nhóm câu trùng nội dung câu hỏi nhưng KHÁC đáp án (cần người dùng tự kiểm tra)
+  final List<List<Question>> contentOnlyGroups;
+
+  const DuplicateReport(this.fullGroups, this.contentOnlyGroups);
+
+  int get removableCount =>
+      fullGroups.fold(0, (sum, group) => sum + group.length - 1);
+
+  bool get isEmpty => fullGroups.isEmpty && contentOnlyGroups.isEmpty;
+}
+
 class QuizDeduplicator {
   // 1. Hàm làm sạch nội dung câu hỏi
   static String normalizeContent(String content) {
@@ -55,5 +71,28 @@ class QuizDeduplicator {
   static List<Question> removeDuplicates(List<Question> questions) {
     final duplicates = findDuplicates(questions).toSet();
     return questions.where((q) => !duplicates.contains(q)).toList();
+  }
+
+  // 6. Phân nhóm câu trùng: trùng hoàn toàn / chỉ trùng nội dung câu hỏi
+  static DuplicateReport findDuplicateGroups(Iterable<Question> questions) {
+    final byContent = <String, List<Question>>{};
+    for (final q in questions) {
+      final key = normalizeContent(q.content);
+      if (key.isEmpty) continue;
+      byContent.putIfAbsent(key, () => []).add(q);
+    }
+
+    final fullGroups = <List<Question>>[];
+    final contentOnlyGroups = <List<Question>>[];
+    for (final group in byContent.values.where((g) => g.length > 1)) {
+      final byFingerprint = <String, List<Question>>{};
+      for (final q in group) {
+        byFingerprint.putIfAbsent(createFingerprint(q), () => []).add(q);
+      }
+      fullGroups.addAll(byFingerprint.values.where((g) => g.length > 1));
+      // Cùng nội dung nhưng có >= 2 bộ đáp án khác nhau
+      if (byFingerprint.length > 1) contentOnlyGroups.add(group);
+    }
+    return DuplicateReport(fullGroups, contentOnlyGroups);
   }
 }
