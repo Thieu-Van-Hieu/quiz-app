@@ -144,11 +144,27 @@ class LearningSessionRepository {
     detail.learningSession.target = session; // Liên kết lại với session mới
   }
 
+  /// Lọc các detail còn trỏ tới câu hỏi tồn tại trong quiz.
+  /// - Câu hỏi bị xoá hẳn: targetId vẫn còn nhưng target = null
+  /// - Câu hỏi bị bỏ khỏi quiz (chờ DatabaseCleanupService dọn): quiz.targetId = 0
+  List<LearningSessionDetail> _getValidDetails(LearningSession session) {
+    return session.learningSessionDetails.where((d) {
+      final question = d.question.target;
+      return question != null && question.quiz.targetId != 0;
+    }).toList();
+  }
+
   /// Làm lại toàn bộ: Đổi ID về 0 để clone
   Future<LearningSession> retakeSession(int oldSessionId) async {
     final session = await _sessionBox.getAsync(oldSessionId);
     if (session == null) {
       throw EntityNotFoundException('Session không tìm thấy.');
+    }
+
+    // Bỏ các câu hỏi đã bị xoá khỏi quiz
+    final validDetails = _getValidDetails(session);
+    if (validDetails.isEmpty) {
+      throw EntityNotFoundException('Không còn câu hỏi nào để làm lại!');
     }
 
     // 1. Đưa ID về 0 để tạo bản ghi mới
@@ -158,11 +174,11 @@ class LearningSessionRepository {
     session.id = newSessionId; // Cập nhật lại ID mới sau khi lưu
 
     // 2. Reset chi tiết và liên kết lại với session mới
-    for (var detail in session.learningSessionDetails) {
+    for (var detail in validDetails) {
       resetSessionDetail(session, detail);
     }
 
-    _sessionDetailBox.putMany(session.learningSessionDetails);
+    _sessionDetailBox.putMany(validDetails);
 
     return session;
   }
@@ -175,9 +191,9 @@ class LearningSessionRepository {
     }
 
     // 1. Lọc danh sách câu sai trước khi reset session
-    final mistakeDetails = session.learningSessionDetails
-        .where((d) => d.isChecked && d.isPassed == false)
-        .toList();
+    final mistakeDetails = _getValidDetails(
+      session,
+    ).where((d) => d.isPassed == false).toList();
 
     if (mistakeDetails.isEmpty) {
       throw EntityNotFoundException('Không có câu nào làm sai để luyện tập!');
