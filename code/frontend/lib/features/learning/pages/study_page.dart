@@ -225,6 +225,32 @@ class StudyPage extends HookConsumerWidget {
           }
         }
 
+        // Đánh dấu đúng câu hiện tại (ghi đè kết quả kiểm tra) rồi sang câu tiếp theo
+        Future<void> handleMarkAsPass() async {
+          final detailNotifier = container.read(
+            learningSessionDetailProvider.notifier,
+          );
+          if (!currentDetail.isChecked) {
+            await detailNotifier.checkQuestion(currentDetail.id);
+          }
+          currentDetail.isChecked = true;
+          currentDetail.isPassed = true;
+          await detailNotifier.markAsPass(currentDetail.id);
+
+          final nextIndex = flowUtils.getNextIndex(
+            details: details,
+            currentIndex: safeIndex,
+          );
+
+          await performSave();
+
+          if (nextIndex == -1) {
+            await handleFinishExam();
+          } else {
+            await jumpToNextQuestion(nextIndex);
+          }
+        }
+
         // --- SHORTCUT MAPPER ---
         bool isActionTriggered(ShortcutAction action, dynamic input) {
           if (config == null) return false;
@@ -489,6 +515,13 @@ class StudyPage extends HookConsumerWidget {
                         width: 130,
                         color: Colors.red.shade100,
                         onTap: handleMarkAsNotPass,
+                      ),
+                      const SizedBox(width: 8),
+                      RetroButton(
+                        label: "Mark as Pass",
+                        width: 110,
+                        color: Colors.lightGreen.shade100,
+                        onTap: handleMarkAsPass,
                       ),
                       const SizedBox(width: 16),
                       RetroButton(
