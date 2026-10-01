@@ -9,7 +9,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-0078D6?logo=windows&logoColor=white)](https://flutter.dev/desktop)
 [![ObjectBox](https://img.shields.io/badge/Database-ObjectBox-green)](https://objectbox.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.1.2-brightgreen)](RELEASE.md)
+[![Version](https://img.shields.io/badge/Version-1.2.0-brightgreen)](RELEASE.md)
 
 </div>
 
@@ -55,10 +55,11 @@ Updater**.
 - ✅ Tạo / sửa / xóa **Môn học (Subject)**
 - ✅ Tạo / sửa / xóa **Bộ đề (Quiz)** theo từng môn
 - ✅ Thêm **Câu hỏi & Đáp án** với phần giải thích chi tiết
-- ✅ Tìm kiếm và phân trang
+- ✅ Tìm kiếm (kèm tuỳ chọn nâng cao & highlight từ khoá) và phân trang
 - ✅ **Import/Export JSON** — chia sẻ bộ đề dễ dàng
 - ✅ **Import/Export Quizlet** — hỗ trợ định dạng trắc nghiệm với custom separator, tích hợp **Lazy Load** xử lý mượt dữ
   liệu lớn
+- ✅ **Cảnh báo câu trùng** khi import / thêm câu hỏi, xoá câu trùng bằng 1 nút
 - ✅ **Nhập câu hỏi bằng OCR** — Chụp màn hình native (Windows Native CLI / Linux Capture Service) và nhận diện văn bản
   bằng Tesseract
 
@@ -71,8 +72,37 @@ Updater**.
 | ⏱️ **Thi cử (Exam)**         | Giới hạn thời gian, chấm điểm sau khi nộp bài |
 
 - Cấu hình phiên học: chọn khoảng câu hỏi, xáo trộn câu hỏi/đáp án, nạp nhanh cấu hình cũ
+- **Học cuốn chiếu**: câu làm sai được đưa lại sau một số câu ngay trong phiên học
+- **Mark as Pass / Mark as Not Pass** để tự đánh dấu kết quả câu hiện tại
+- **Làm lại toàn bộ / Làm lại câu sai** từ màn hình kết quả (tự bỏ qua câu đã bị xoá khỏi bộ đề)
 - Màn hình kết quả chi tiết: xem lại từng câu đã chọn, đáp án đúng/sai
 - Trang chi tiết phiên học: thống kê và review toàn bộ câu hỏi sau khi hoàn thành
+
+### 🔎 Tìm kiếm
+
+- **Tìm kiếm toàn cục (Master Search)**: tìm cùng lúc trong mọi môn học, bộ đề và câu hỏi; chọn phạm vi (câu hỏi / đáp
+  án / giải thích / chỉ đáp án đúng), lọc theo môn; bấm kết quả để mở bộ đề kèm từ khoá
+- **Tuỳ chọn ở mọi ô tìm kiếm** (cụm nút trong ô tìm kiếm):
+
+| Nút   | Tuỳ chọn                                                                        |
+|-------|---------------------------------------------------------------------------------|
+| `aA`  | Hoa thường: tự động (phân biệt khi từ khoá có chữ hoa) / phân biệt / không phân biệt |
+| `Ă→A` | Bỏ dấu tiếng Việt (`duong loi` → "Đường lối")                                   |
+| `ab`  | Khớp nguyên từ                                                                  |
+| `&`   | Chứa tất cả các từ, không cần đúng thứ tự                                        |
+| `a…z` | Khớp theo từng ký tự theo thứ tự (`cnxh` → "chủ nghĩa xã hội")                  |
+| `.*`  | Biểu thức chính quy (Regex)                                                     |
+
+### 🧰 Công cụ
+
+| Công cụ           | Mô tả                                                                                                                   |
+|-------------------|-------------------------------------------------------------------------------------------------------------------------|
+| 📊 **Phân tích**  | Vị trí đáp án đúng A/B/C/D, tỉ lệ đáp án dài/ngắn nhất là đáp án đúng, cụm từ chỉ có trong đáp án đúng, câu dễ nhầm... |
+| ✂️ **Tách quiz**  | Theo khoảng câu, từ một phiên học (vd. chỉ câu làm sai), theo nhóm phân tích                                            |
+| 🔗 **Gộp quiz**   | Gộp nhiều bộ đề, tuỳ chọn tiêu chí và cách xử lý câu trùng                                                              |
+| 🧹 **Lọc trùng**  | Xoá câu trùng hoàn toàn, liệt kê câu trùng nội dung nhưng khác đáp án                                                   |
+
+Kết quả tách / gộp được lưu thành **bộ đề mới**, bộ đề gốc không bị thay đổi.
 
 ### ⚙️ Cài đặt & Hệ thống
 
@@ -93,6 +123,7 @@ Updater**.
 | Routing          | go_router                                       | ^17.1.0    |
 | Local Database   | ObjectBox                                       | ^5.1.0     |
 | Serialization    | dart_mappable                                   | ^4.6.0     |
+| Reactive Streams | rxdart                                          | ^0.28.0    |
 | Chart            | fl_chart                                        | ^1.2.0     |
 | OCR Engine       | Tesseract OCR                                   | ^0.2.3     |
 | Capture Service  | `WindowsCaptureService` / `LinuxCaptureService` | Native CLI |
@@ -137,8 +168,9 @@ lib/
 │   ├── constants/               # AppColors, AppStrings
 │   ├── extensions/              # Dart extensions tiện ích
 │   ├── layout/                  # MainScreen: Sidebar + BreadcrumbBar
+│   ├── search/                  # TextMatcher, SearchOptions (bộ so khớp tìm kiếm dùng chung)
 │   ├── services/                # ObjectBox, PathService, LinuxCaptureService, WindowsCaptureService
-│   └── widgets/                 # BreadcrumbBar, Pagination, SearchBar, AppButton...
+│   └── widgets/                 # BreadcrumbBar, Pagination, SearchBar, HighlightedText, AppButton...
 │
 ├── features/
 │   ├── dashboard/               # Thống kê & phiên học gần đây
@@ -158,6 +190,16 @@ lib/
 │   │   ├── notifiers/           # Session state management
 │   │   ├── pages/               # Study/Practice/Exam/Result/Detail pages
 │   │   └── widgets/             # RetroCheckbox, AnswerColumn, Clock...
+│   │
+│   ├── search/                  # Tìm kiếm toàn cục (Master Search)
+│   │   ├── data/                # Corpus tìm kiếm (watch nhiều bảng)
+│   │   ├── services/            # MasterSearchService
+│   │   └── pages/ widgets/      # MasterSearchPage, QuestionHitCard
+│   │
+│   ├── utilities/               # Trang Công cụ
+│   │   ├── services/            # QuizAnalyzer, QuizSplitter, QuizMerger
+│   │   ├── notifiers/           # Tạo bộ đề mới, xoá câu trùng
+│   │   └── pages/ widgets/      # 4 tab: Phân tích, Tách, Gộp, Lọc trùng
 │   │
 │   └── setting/                 # Cài đặt ứng dụng
 │       ├── data/                # AppConfigRepository
@@ -209,6 +251,12 @@ flutter run -d linux
 
 ```
 
+### Chạy Test
+
+```bash
+flutter test
+```
+
 ### Build Release
 
 ```bash
@@ -239,7 +287,7 @@ Subject (1) ──→ (N) Quiz (1) ──→ (N) Question (1) ──→ (N) Answ
 | `Quiz`                  | Bộ đề thuộc một môn học                           |
 | `Question`              | Câu hỏi kèm phần giải thích                       |
 | `Answer`                | Đáp án cho câu hỏi                                |
-| `LearningSession`       | Phiên học: mode, cấu hình, thống kê kết quả       |
+| `LearningSession`       | Phiên học: mode, cấu hình, tiến độ (thống kê đúng/sai tính từ Detail) |
 | `LearningSessionDetail` | Chi tiết từng câu trả lời trong phiên             |
 | `AppConfig`             | Cấu hình ứng dụng: font, phím tắt                 |
 
@@ -257,9 +305,12 @@ Subject (1) ──→ (N) Quiz (1) ──→ (N) Question (1) ──→ (N) Answ
 * [x] Auto-updater (Windows) & Upgrader integration (Linux)
 * [x] App icon & Pastel Theme UI
 * [x] Hỗ trợ chính thức Linux OS
+* [x] Tìm kiếm toàn cục & tuỳ chọn tìm kiếm nâng cao (bỏ dấu, Regex...)
+* [x] Trang Công cụ: phân tích, tách, gộp, lọc trùng bộ đề
+* [x] Unit test cho các service xử lý dữ liệu
 * [ ] Hỗ trợ macOS
 * [ ] Export / Import backup toàn bộ dữ liệu (Full DB Dump)
-* [ ] Unit test & Integration test
+* [ ] Integration test
 * [ ] Import từ file CSV / Excel
 
 ---

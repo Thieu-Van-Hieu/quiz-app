@@ -1,41 +1,51 @@
-# Quiz App v1.1.2
+# Quiz App v1.2.0
 
-> **🐧 Linux Ecosystem, OCR Expansion & UI Bug Fixes**  
-> **Nền tảng:** Windows Desktop & Linux (Flutter) · **Ngày phát hành:** 06/08/2026 ·  
+> **🔎 Tìm kiếm toàn cục, 🧰 Công cụ quản lý bộ đề & 📥 Import Quizlet chính xác hơn**  
+> **Nền tảng:** Windows Desktop & Linux (Flutter) · **Ngày phát hành:** 01/10/2026 ·  
 > **Tác giả:** Mr.NoBody
 
 ---
 
 ## 🚀 Giới thiệu phiên bản
 
-Chào mừng bạn đến với **Quiz App v1.1.2**! Bản cập nhật này đánh dấu bước tiến quan trọng khi **chính thức mở rộng hỗ
-trợ sang hệ điều hành Linux**, tích hợp tính năng **OCR chụp màn hình đa nền tảng**, đồng thời tối ưu hóa hiệu năng khi
-Import dữ liệu lớn và sửa các lỗi giao diện phát sinh từ phản hồi của người dùng.
+Chào mừng bạn đến với **Quiz App v1.2.0**! Bản cập nhật này tập trung vào **tìm kiếm** và **quản lý bộ đề**: bạn có
+thể tìm câu hỏi trên toàn bộ thư viện với nhiều tuỳ chọn mạnh mẽ (bỏ dấu tiếng Việt, Regex...), đồng thời phân tích,
+tách, gộp và lọc trùng bộ đề ngay trong ứng dụng thay vì phải dùng script riêng. Bên cạnh đó là nhiều sửa lỗi quan
+trọng cho Import Quizlet và chế độ làm lại câu sai.
 
 ---
 
-## ✨ Điểm mới trong bản v1.1.2
+## ✨ Điểm mới trong bản v1.2.0
 
-### 🐧 Mở rộng Nền tảng Linux & OCR
+### 🔎 Tìm kiếm toàn cục & Tuỳ chọn tìm kiếm
 
-- **Bộ chụp màn hình thông minh (`LinuxCaptureService`):** Tự động phát hiện công cụ chụp màn hình khả dụng trên Linux
-  (hỗ trợ từ XFCE, GNOME, KDE đến Wayland)[cite: 1].
-- **OCR đa nền tảng:** Tính năng quét ảnh trích xuất câu hỏi giờ đây đã hoạt động mượt mà trên Linux[cite: 1].
-- **CI/CD Tự động hóa:** Thêm Workflows tự động hóa build ứng dụng, thông báo upgrade và dọn dẹp artifact rác trên máy
-  ảo Linux[cite: 1].
+- **Master Search:** Mục "Tìm kiếm" mới trên sidebar, tìm cùng lúc trong mọi môn học, bộ đề và câu hỏi. Lọc theo môn,
+  chọn tìm trong câu hỏi / đáp án / giải thích / chỉ đáp án đúng; bấm vào kết quả để mở thẳng bộ đề kèm từ khoá.
+- **Tuỳ chọn tìm kiếm ở mọi ô tìm kiếm:** phân biệt hoa thường thông minh, **bỏ dấu tiếng Việt** (gõ `duong loi` tìm
+  được "Đường lối"), khớp nguyên từ, chứa tất cả các từ, khớp theo từng ký tự (`cnxh` → "chủ nghĩa xã hội"), Regex.
+- **Highlight từ khoá** trên card môn học, bộ đề, câu hỏi và phiên học.
 
-### 📥 Tối ưu Giao diện Import Quizlet & OCR Dialog
+### 🧰 Trang Công cụ
 
-- **Hiệu năng Lazy Load:** Áp dụng lazy load cho danh sách Import Quizlet, giải quyết triệt để hiện tượng treo UI khi
-  chèn hàng trăm câu hỏi cùng lúc[cite: 1].
-- **Không gian Editor mở rộng:** Nới rộng `AlertDialog` giúp dễ dàng thao tác với editor câu hỏi[cite: 1].
-- **Đồng bộ theme:** Áp dụng bộ màu chuẩn cho `OCRDialog`[cite: 1].
+- **Phân tích bộ đề:** vị trí đáp án đúng A/B/C/D, tỉ lệ "đáp án dài/ngắn nhất là đáp án đúng", cụm từ chỉ xuất hiện
+  trong đáp án đúng, câu dễ nhầm (đáp án đúng của câu này là đáp án sai của câu khác), câu có chung đáp án đúng.
+- **Tách quiz:** theo khoảng câu, từ một phiên học (vd. chỉ các câu làm sai) hoặc theo nhóm phân tích.
+- **Gộp quiz:** gộp nhiều bộ đề, tuỳ chọn tiêu chí và cách xử lý câu trùng.
+- **Lọc trùng:** xoá câu trùng hoàn toàn bằng 1 nút, liệt kê câu trùng nội dung nhưng khác đáp án để kiểm tra.
 
-### 🛠️ Sửa lỗi UI/UX
+### 🎓 Học tập
 
-- **Sửa lỗi Snackbar:** Dứt điểm lỗi Snackbar treo không tự ẩn sau khi chờ hết timeout[cite: 1].
-- **Đồng bộ Settings Page:** Cân chỉnh lại layout trang Cài đặt đồng bộ với tổng thể ứng dụng[cite: 1].
-- **Chống vỡ layout:** Khắc phục lỗi tràn văn bản (overflow) tên Quiz ở trang câu hỏi[cite: 1].
+- **Học lại câu sai ngay trong phiên** với chế độ cuốn chiếu.
+- **Nút Mark as Pass** ở chế độ Học tập.
+- "Làm lại câu sai" không còn lấy các câu đã bị xoá; phiên Luyện tập đã tạo được bài làm lại câu sai.
+- Thống kê đúng/sai nhất quán giữa các màn hình.
+
+### 📥 Import & Quản lý câu hỏi
+
+- **Import Quizlet chính xác hơn:** không còn tách nhầm đáp án ở dấu `-` / `.`, không còn đánh đúng nhiều đáp án do khớp
+  một phần, hỗ trợ đáp án dạng `A, C`.
+- **Cảnh báo câu trùng** khi import và nút xoá câu trùng trong trang câu hỏi.
+- Dữ liệu trên mọi màn hình tự cập nhật ngay khi có thay đổi.
 
 ---
 

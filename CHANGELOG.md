@@ -1,3 +1,50 @@
+## [1.2.0] — 2026-10-01
+
+### ✨ Thêm mới
+
+- **Tìm kiếm toàn cục (Master Search)**: Mục "Tìm kiếm" mới trên sidebar, tìm cùng lúc trong mọi môn học, bộ đề và câu
+  hỏi; chọn phạm vi (câu hỏi / đáp án / giải thích / chỉ đáp án đúng), lọc theo môn; bấm kết quả mở bộ đề kèm từ khoá.
+- **Tuỳ chọn tìm kiếm**: `TextMatcher` dùng chung cho mọi ô tìm kiếm — smart case / không phân biệt / phân biệt hoa
+  thường, bỏ dấu tiếng Việt (hỗ trợ cả văn bản NFD), khớp nguyên từ, chứa tất cả các từ, khớp theo từng ký tự, Regex
+  (báo lỗi cú pháp).
+- **Highlight từ khoá**: Widget `HighlightedText` trên card môn học, bộ đề, câu hỏi (nội dung / đáp án / giải thích) và
+  phiên học.
+- **Trang Công cụ**: Phân tích bộ đề, tách quiz (theo khoảng câu, từ phiên học, theo nhóm phân tích), gộp quiz và lọc
+  trùng — thay cho các script Python trong `utilities/`. Kết quả tách/gộp được lưu thành bộ đề mới (bản sao câu hỏi).
+- **Học lại câu sai trong phiên**: Câu làm sai được đưa lại sau `reviewOffset` câu (chế độ cuốn chiếu).
+- **Nút Mark as Pass**: Đánh dấu đúng câu hiện tại ở chế độ Học tập.
+- **Cảnh báo câu trùng**: Hộp thoại Giữ nguyên / Xoá câu trùng / Huỷ khi import Quizlet / JSON / bin; nút "Xoá N câu
+  trùng" và cảnh báo khi quét OCR thêm câu trùng ở trang câu hỏi.
+
+### 🔧 Cải tiến
+
+- **Viết lại parser Import Quizlet**: Nhãn đáp án chỉ nhận `A.` / `A)` đứng đầu dòng hoặc sau khoảng trắng và phải liên
+  tiếp A, B, C…; ưu tiên khớp chính xác nội dung đáp án, chỉ khớp gần đúng khi chọn được duy nhất 1 đáp án; hỗ trợ
+  nhiều đáp án dạng `A, C`; dùng đúng dấu phân cách Term/Def; đặt `indexOrder` theo thứ tự đáp án.
+- **Bỏ `ref.invalidate`**: Thêm `ObjectBoxService.watchTables()` gộp sự kiện thay đổi của nhiều bảng (debounce) và
+  `QueryBuilder.buildAndClose()`; các danh sách tự cập nhật khi bảng liên quan thay đổi.
+- **Thống kê phiên học**: `totalPass` / `totalNotPass` chuyển thành getter tính từ chi tiết phiên học, thống nhất định
+  nghĩa `isPassed == true / false`.
+- Bỏ viền khi làm sai ở chế độ thường (`reviewOffset = 0`) trên cả Practice và Study.
+- Cập nhật cỡ chữ cột gợi ý số lượng đáp án.
+
+### 🐛 Sửa lỗi
+
+- **Làm lại câu sai / làm lại toàn bộ**: Không còn lấy các câu đã bị xoá hoặc bị gỡ khỏi bộ đề.
+- **Phiên Luyện tập**: Sửa lỗi không tạo được bài "Làm lại câu sai" (do lọc theo `isChecked`).
+- **Import Quizlet**: Sửa lỗi tách nhầm đáp án ở `-` / `.` (vd. `Marx-Lenin`), đánh đúng nhiều đáp án do khớp một phần,
+  lệch nhãn khi bỏ đáp án rỗng; sửa lỗi tự loại câu trùng không có tác dụng và thông báo câu lỗi định dạng không hiện.
+- **Trang Luyện tập**: Sửa lỗi mất focus bàn phím.
+- **Đáp án mới tạo**: Sửa lỗi không cập nhật `indexOrder`.
+
+### 🧪 Kỹ thuật
+
+- Thêm unit test (48 test) cho parser Quizlet, lọc trùng, `TextMatcher`, Master Search và các service Công cụ.
+- Thêm dependency `rxdart`.
+- Schema ObjectBox: bỏ cột `totalPass`, `totalNotPass` của `LearningSession` (không cần migrate).
+
+---
+
 ## [1.1.2] — 2026-08-06
 
 ### ✨ Thêm mới
