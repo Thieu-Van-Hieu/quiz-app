@@ -57,7 +57,11 @@ class QuizConverterService {
         currentBlock.write("\n$line");
       }
       if (line.contains(termDefSeparator) || i == lines.length - 1) {
-        QuizTextParser.processFullBlock(currentBlock.toString(), quiz);
+        QuizTextParser.processFullBlock(
+          currentBlock.toString(),
+          quiz,
+          termDefSeparator: termDefSeparator,
+        );
         currentBlock.clear();
       }
     }

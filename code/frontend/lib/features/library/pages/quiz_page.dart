@@ -19,6 +19,7 @@ import 'package:frontend/features/library/models/search_params/quiz_search_param
 import 'package:frontend/features/library/notifiers/quiz_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
 import 'package:frontend/features/library/services/quiz/quiz_convert_service.dart';
+import 'package:frontend/features/library/services/quiz/quiz_text_parser.dart';
 import 'package:frontend/features/library/widgets/quiz/add_dialog.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_card.dart';
 import 'package:frontend/features/library/widgets/quiz/quiz_header.dart';
@@ -197,7 +198,7 @@ class QuizPage extends HookConsumerWidget {
 
           // Đếm số câu lỗi
           int errorCount = newQuiz.questions
-              .where((q) => q.content.startsWith('['))
+              .where((q) => q.explanation.startsWith(QuizTextParser.errorFlag))
               .length;
 
           await ref
@@ -209,7 +210,7 @@ class QuizPage extends HookConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  "Phát hiện $errorCount câu lỗi định dạng. Vui lòng kiểm tra các câu có đánh dấu [LỖI]",
+                  "Phát hiện $errorCount câu lỗi định dạng. Vui lòng dùng bộ lọc câu lỗi để kiểm tra",
                 ),
                 backgroundColor: Colors.orange.shade800,
                 duration: const Duration(seconds: 6),
