@@ -1,0 +1,1771 @@
+{
+  "id": 36,
+  "name": "MSS301 - FE - QuizApp",
+  "subjectTargetId": 7,
+  "questionsList": [
+    {
+      "id": 13897,
+      "content": "In an OAuth 2.0 flow for \"Login with Google\" on your e-commerce site, what is the purpose of defining scopes like email and profile?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59477,
+          "content": "To define the scope of variables in your Java code.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13897
+        },
+        {
+          "id": 59478,
+          "content": "To request specific permissions from the user to access their Google email and profile information.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13897
+        },
+        {
+          "id": 59479,
+          "content": "To limit the number of users who can access the application.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13897
+        },
+        {
+          "id": 59480,
+          "content": "To define the security packages to import.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13897
+        }
+      ]
+    },
+    {
+      "id": 13898,
+      "content": "What is the role of a \"refresh token\" in a secure e-commerce application?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59481,
+          "content": "It is a short-lived token used for every API request.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13898
+        },
+        {
+          "id": 59482,
+          "content": "It is a long-lived token used to securely obtain a new, short-lived access token without requiring the user to log in again.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13898
+        },
+        {
+          "id": 59483,
+          "content": "It is used to refresh the product catalog page.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13898
+        },
+        {
+          "id": 59484,
+          "content": "It is an alternative to a user's password.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13898
+        }
+      ]
+    },
+    {
+      "id": 13899,
+      "content": "Which of the following is a primary characteristic of cloud computing, allowing users to rapidly provision and release resources?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59485,
+          "content": "Low latency",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13899
+        },
+        {
+          "id": 59486,
+          "content": "Physical security",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13899
+        },
+        {
+          "id": 59487,
+          "content": "Rapid elasticity",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13899
+        },
+        {
+          "id": 59488,
+          "content": "Static capacity",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13899
+        }
+      ]
+    },
+    {
+      "id": 13900,
+      "content": "Which GCP service is a fully managed, serverless platform for running containerized applications?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59489,
+          "content": "Google Compute Engine (GCE)",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13900
+        },
+        {
+          "id": 59490,
+          "content": "Google Cloud Storage (GCS)",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13900
+        },
+        {
+          "id": 59491,
+          "content": "Google Cloud Run",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13900
+        },
+        {
+          "id": 59492,
+          "content": "Google BigQuery",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13900
+        }
+      ]
+    },
+    {
+      "id": 13901,
+      "content": "Which Google Cloud Platform (GCP) service is ideal for deploying a simple Spring Boot microservice that needs to scale to zero when not in use, making it very cost-effective?",
+      "explanation": "D",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59493,
+          "content": "Google Compute Engine (GCE)",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13901
+        },
+        {
+          "id": 59494,
+          "content": "Google Kubernetes Engine (GKE)",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13901
+        },
+        {
+          "id": 59495,
+          "content": "Google Cloud Functions",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13901
+        },
+        {
+          "id": 59496,
+          "content": "Google App Engine Standard Environment",
+          "is_correct": true,
+          "index_order": 4,
+          "question_target_id": 13901
+        }
+      ]
+    },
+    {
+      "id": 13902,
+      "content": "In Google Cloud Platform (GCP), what is the primary purpose of Google Cloud Storage (GCS)?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59497,
+          "content": "To run containerized applications.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13902
+        },
+        {
+          "id": 59498,
+          "content": "To provide a scalable and durable object storage service for unstructured data like images, videos, and backups.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13902
+        },
+        {
+          "id": 59499,
+          "content": "To manage and query large datasets with SQL.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13902
+        },
+        {
+          "id": 59500,
+          "content": "To host virtual machine instances.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13902
+        }
+      ]
+    },
+    {
+      "id": 13903,
+      "content": "To deploy a Spring Boot application packaged as a container image to GCP, what is the first step you must typically perform?",
+      "explanation": "A",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59501,
+          "content": "Push the container image to a container registry, such as Google Artifact Registry.",
+          "is_correct": true,
+          "index_order": 1,
+          "question_target_id": 13903
+        },
+        {
+          "id": 59502,
+          "content": "Create a new virtual machine manually.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13903
+        },
+        {
+          "id": 59503,
+          "content": "Order a physical server from Google.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13903
+        },
+        {
+          "id": 59504,
+          "content": "Rewrite the application in a different programming language.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13903
+        }
+      ]
+    },
+    {
+      "id": 13904,
+      "content": "What problem does containerization, as implemented by Docker, primarily solve?",
+      "explanation": "A",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59505,
+          "content": "The \"it works on my machine\" problem by packaging an application with all its dependencies.",
+          "is_correct": true,
+          "index_order": 1,
+          "question_target_id": 13904
+        },
+        {
+          "id": 59506,
+          "content": "Slow internet connections for developers.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13904
+        },
+        {
+          "id": 59507,
+          "content": "The need for writing code in multiple programming languages.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13904
+        },
+        {
+          "id": 59508,
+          "content": "The high cost of physical hardware.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13904
+        }
+      ]
+    },
+    {
+      "id": 13905,
+      "content": "Which feature of Docker ensures that an application runs the same way regardless of the underlying environment?",
+      "explanation": "A",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59509,
+          "content": "Portability",
+          "is_correct": true,
+          "index_order": 1,
+          "question_target_id": 13905
+        },
+        {
+          "id": 59510,
+          "content": "High Availability",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13905
+        },
+        {
+          "id": 59511,
+          "content": "Automatic Scaling",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13905
+        },
+        {
+          "id": 59512,
+          "content": "Data Encryption",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13905
+        }
+      ]
+    },
+    {
+      "id": 13906,
+      "content": "What is a Docker Registry, such as Docker Hub?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59513,
+          "content": "A service that runs containers in production.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13906
+        },
+        {
+          "id": 59514,
+          "content": "A local storage area for Docker images on a developer's machine.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13906
+        },
+        {
+          "id": 59515,
+          "content": "A server-side application for storing and distributing Docker images.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13906
+        },
+        {
+          "id": 59516,
+          "content": "A tool for monitoring the performance of containers.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13906
+        }
+      ]
+    },
+    {
+      "id": 13907,
+      "content": "How does Docker benefit a microservices architecture?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59517,
+          "content": "By forcing all microservices to be written in the same language.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13907
+        },
+        {
+          "id": 59518,
+          "content": "By allowing each microservice and its dependencies to be isolated and packaged independently.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13907
+        },
+        {
+          "id": 59519,
+          "content": "By combining all microservices into a single, large container.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13907
+        },
+        {
+          "id": 59520,
+          "content": "By eliminating the need for network communication between services.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13907
+        }
+      ]
+    },
+    {
+      "id": 13908,
+      "content": "To build a Docker image from a Dockerfile in the current directory, what is the correct command?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59521,
+          "content": "docker run .",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13908
+        },
+        {
+          "id": 59522,
+          "content": "docker build -t my-app:latest .",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13908
+        },
+        {
+          "id": 59523,
+          "content": "docker push my-app",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13908
+        },
+        {
+          "id": 59524,
+          "content": "docker create-image my-app .",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13908
+        }
+      ]
+    },
+    {
+      "id": 13909,
+      "content": "You would choose Cloud Run over Google Kubernetes Engine (GKE) when:",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59525,
+          "content": "You need fine-grained control over the networking and node infrastructure.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13909
+        },
+        {
+          "id": 59526,
+          "content": "You have a simple, stateless web application or API and want the platform to manage all infrastructure and scaling for you.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13909
+        },
+        {
+          "id": 59527,
+          "content": "You need to run stateful workloads that require persistent disk attachments.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13909
+        },
+        {
+          "id": 59528,
+          "content": "Your application is not containerized.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13909
+        }
+      ]
+    },
+    {
+      "id": 13910,
+      "content": "When would you choose GKE over Cloud Run?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59529,
+          "content": "When you have a simple web app and want to minimize operational overhead.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13910
+        },
+        {
+          "id": 59530,
+          "content": "When you need to orchestrate a complex system of multiple microservices with specific networking rules, stateful workloads, and fine-grained control.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13910
+        },
+        {
+          "id": 59531,
+          "content": "When you want your application to scale to zero automatically.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13910
+        },
+        {
+          "id": 59532,
+          "content": "When you do not want to use containers.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13910
+        }
+      ]
+    },
+    {
+      "id": 13911,
+      "content": "What is the primary function of Google Container Registry (GCR) or its successor, Artifact Registry?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59533,
+          "content": "To run and scale containers.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13911
+        },
+        {
+          "id": 59534,
+          "content": "To provide a private, secure repository for storing, managing, and distributing Docker container images.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13911
+        },
+        {
+          "id": 59535,
+          "content": "To monitor the performance of running applications.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13911
+        },
+        {
+          "id": 59536,
+          "content": "To write the code for a Spring Boot application.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13911
+        }
+      ]
+    },
+    {
+      "id": 13912,
+      "content": "Your Spring Boot application requires a database password, which you don't want to bake into the container image. What is the recommended way to provide this secret to a Cloud Run service?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59537,
+          "content": "Pass it as a command-line argument in the deployment command.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13912
+        },
+        {
+          "id": 59538,
+          "content": "Store it in a public text file in Cloud Storage.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13912
+        },
+        {
+          "id": 59539,
+          "content": "Use Google Secret Manager and mount the secret as an environment variable or a volume in the Cloud Run service.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13912
+        },
+        {
+          "id": 59540,
+          "content": "Hardcode it directly in the application.properties file.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13912
+        }
+      ]
+    },
+    {
+      "id": 13913,
+      "content": "What is the purpose of a Kubernetes Deployment object in a GKE cluster?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59541,
+          "content": "To expose a running application to the network.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13913
+        },
+        {
+          "id": 59542,
+          "content": "To provide persistent storage for an application.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13913
+        },
+        {
+          "id": 59543,
+          "content": "To declaratively manage a set of identical Pods, ensuring a specified number of them are running and handling updates.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13913
+        },
+        {
+          "id": 59544,
+          "content": "To store application secrets and configuration.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13913
+        }
+      ]
+    },
+    {
+      "id": 13914,
+      "content": "A primary goal of using microservices is to:",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59545,
+          "content": "Simplify the development of small, simple applications.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13914
+        },
+        {
+          "id": 59546,
+          "content": "Increase the complexity of the deployment process.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13914
+        },
+        {
+          "id": 59547,
+          "content": "Improve the scalability and agility of large, complex applications.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13914
+        },
+        {
+          "id": 59548,
+          "content": "Enforce the use of a single technology stack across the organization.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13914
+        }
+      ]
+    },
+    {
+      "id": 13915,
+      "content": "How do microservices typically communicate with each other?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59549,
+          "content": "By directly accessing each other's databases",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13915
+        },
+        {
+          "id": 59550,
+          "content": "Through well-defined APIs, often using HTTP/REST or messaging queues",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13915
+        },
+        {
+          "id": 59551,
+          "content": "By sharing the same memory space.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13915
+        },
+        {
+          "id": 59552,
+          "content": "Through a centralized monolithic server.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13915
+        }
+      ]
+    },
+    {
+      "id": 13916,
+      "content": "What is a significant challenge when adopting microservices compared to a monolith?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59553,
+          "content": "Reduced complexity in testing and monitoring.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13916
+        },
+        {
+          "id": 59554,
+          "content": "The codebase is easier to understand in its entirety.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13916
+        },
+        {
+          "id": 59555,
+          "content": "Increased operational complexity and the need for robust DevOps practices.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13916
+        },
+        {
+          "id": 59556,
+          "content": "The team can stick to a single, familiar technology.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13916
+        }
+      ]
+    },
+    {
+      "id": 13917,
+      "content": "Which component acts as the single entry point for all incoming requests from clients?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59557,
+          "content": "Service Registry",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13917
+        },
+        {
+          "id": 59558,
+          "content": "Message Broker",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13917
+        },
+        {
+          "id": 59559,
+          "content": "API Gateway",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13917
+        },
+        {
+          "id": 59560,
+          "content": "Container",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13917
+        }
+      ]
+    },
+    {
+      "id": 13918,
+      "content": "Which Java framework is most popular for building microservices due to its convention-over-configuration approach and embedded servers?",
+      "explanation": "A",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59561,
+          "content": "Spring Boot",
+          "is_correct": true,
+          "index_order": 1,
+          "question_target_id": 13918
+        },
+        {
+          "id": 59562,
+          "content": "Apache Struts",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13918
+        },
+        {
+          "id": 59563,
+          "content": "Hibernate",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13918
+        },
+        {
+          "id": 59564,
+          "content": "JavaFX",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13918
+        }
+      ]
+    },
+    {
+      "id": 13919,
+      "content": "When modeling, the goal is \"high cohesion\" and \"low coupling.\" What does \"low coupling\" mean?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59565,
+          "content": "Services should have many strong dependencies on each other.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13919
+        },
+        {
+          "id": 59566,
+          "content": "Changes in one service should have minimal impact on other services.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13919
+        },
+        {
+          "id": 59567,
+          "content": "All services should be deployed together.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13919
+        },
+        {
+          "id": 59568,
+          "content": "All services should share a common data model and database.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13919
+        }
+      ]
+    },
+    {
+      "id": 13920,
+      "content": "The Saga pattern is used to manage data consistency across services in the absence of distributed transactions. How does it work?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59569,
+          "content": "By locking all databases involved in a transaction simultaneously.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13920
+        },
+        {
+          "id": 59570,
+          "content": "By breaking a transaction into a sequence of local transactions, with compensating transactions to undo changes if a step fails.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13920
+        },
+        {
+          "id": 59571,
+          "content": "By using a single, monolithic database for all transactions.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13920
+        },
+        {
+          "id": 59572,
+          "content": "By allowing services to directly update each other's databases.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13920
+        }
+      ]
+    },
+    {
+      "id": 13921,
+      "content": "What is a key characteristic of synchronous communication, such as a REST API call?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59573,
+          "content": "The client sends a request and immediately continues with other work, without waiting for a response.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13921
+        },
+        {
+          "id": 59574,
+          "content": "The client is blocked and waits for a response from the server before continuing.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13921
+        },
+        {
+          "id": 59575,
+          "content": "It is primarily used for broadcasting events to multiple services.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13921
+        },
+        {
+          "id": 59576,
+          "content": "It improves the resilience of the system by decoupling services.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13921
+        }
+      ]
+    },
+    {
+      "id": 13922,
+      "content": "What is the primary role of an API Gateway in a microservices architecture?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59577,
+          "content": "To store data for all upstream services.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13922
+        },
+        {
+          "id": 59578,
+          "content": "To act as a single entry point for all client requests, handling routing, composition, and authentication.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13922
+        },
+        {
+          "id": 59579,
+          "content": "To manage the deployment and scaling of individual microservices.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13922
+        },
+        {
+          "id": 59580,
+          "content": "To facilitate direct communication between internal microservices.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13922
+        }
+      ]
+    },
+    {
+      "id": 13923,
+      "content": "The Database per Service pattern dictates that:",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59581,
+          "content": "All microservices must share a single, centralized database.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13923
+        },
+        {
+          "id": 59582,
+          "content": "Each microservice is responsible for its own private data store.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13923
+        },
+        {
+          "id": 59583,
+          "content": "Services are not allowed to use a database and must be stateless.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13923
+        },
+        {
+          "id": 59584,
+          "content": "A single database server hosts separate schemas for each microservice.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13923
+        }
+      ]
+    },
+    {
+      "id": 13924,
+      "content": "What triggers the transition from the \"Closed\" to the \"Open\" state in a Circuit Breaker?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59585,
+          "content": "A predefined period of inactivity.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13924
+        },
+        {
+          "id": 59586,
+          "content": "The number of consecutive or recent failures exceeding a configured threshold.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13924
+        },
+        {
+          "id": 59587,
+          "content": "A successful response from the downstream service.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13924
+        },
+        {
+          "id": 59588,
+          "content": "A manual command from an administrator.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13924
+        }
+      ]
+    },
+    {
+      "id": 13925,
+      "content": "There are two main types of service discovery: client-side and server-side. What is a characteristic of client-side discovery?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59589,
+          "content": "The client queries the service registry to get a list of service locations and then chooses one.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13925
+        },
+        {
+          "id": 59590,
+          "content": "A router or load balancer queries the service registry and routes the client's request.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13925
+        },
+        {
+          "id": 59591,
+          "content": "The client has hardcoded IP addresses for all services.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13925
+        },
+        {
+          "id": 59592,
+          "content": "The service registry pushes updates directly to the client.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13925
+        }
+      ]
+    },
+    {
+      "id": 13926,
+      "content": "A major benefit of applying CQRS is that it allows you to:",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59593,
+          "content": "Simplify the overall architecture by using one data model.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13926
+        },
+        {
+          "id": 59594,
+          "content": "Optimize the data schema and scaling characteristics independently for reads and writes.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13926
+        },
+        {
+          "id": 59595,
+          "content": "Eliminate the need for a database.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13926
+        },
+        {
+          "id": 59596,
+          "content": "Enforce strong transactional consistency across multiple services.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13926
+        }
+      ]
+    },
+    {
+      "id": 13927,
+      "content": "The Strangler Fig pattern is primarily used for what purpose?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59597,
+          "content": "To manage distributed transactions.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13927
+        },
+        {
+          "id": 59598,
+          "content": "To incrementally migrate a legacy monolithic application to a microservices architecture.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13927
+        },
+        {
+          "id": 59599,
+          "content": "To monitor the health of running services.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13927
+        },
+        {
+          "id": 59600,
+          "content": "To secure communication between services.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13927
+        }
+      ]
+    },
+    {
+      "id": 13928,
+      "content": "Which of the following best describes Spring Cloud?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59601,
+          "content": "A framework for building monolithic Spring applications.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13928
+        },
+        {
+          "id": 59602,
+          "content": "A project that provides tools for developers to quickly build common patterns in distributed systems.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13928
+        },
+        {
+          "id": 59603,
+          "content": "A cloud platform for hosting Java applications.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13928
+        },
+        {
+          "id": 59604,
+          "content": "A replacement for the core Spring Framework.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13928
+        }
+      ]
+    },
+    {
+      "id": 13929,
+      "content": "Which Spring Cloud project provides a centralized, externalized configuration management for distributed systems?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59605,
+          "content": "Spring Cloud Gateway",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13929
+        },
+        {
+          "id": 59606,
+          "content": "Spring Cloud Config",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13929
+        },
+        {
+          "id": 59607,
+          "content": "Spring Cloud Sleuth",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13929
+        },
+        {
+          "id": 59608,
+          "content": "Spring Cloud Stream",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13929
+        }
+      ]
+    },
+    {
+      "id": 13930,
+      "content": "How does Spring Cloud enhance the resilience of a microservices architecture?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59609,
+          "content": "By forcing all services to share a single database.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13930
+        },
+        {
+          "id": 59610,
+          "content": "By providing patterns like Circuit Breaker to handle service failures gracefully.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13930
+        },
+        {
+          "id": 59611,
+          "content": "By ensuring all network connections are 100% reliable.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13930
+        },
+        {
+          "id": 59612,
+          "content": "By removing the need for inter-service communication.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13930
+        }
+      ]
+    },
+    {
+      "id": 13931,
+      "content": "What is a Predicate in the context of Spring Cloud Gateway?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59613,
+          "content": "A component that modifies the downstream request or response.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13931
+        },
+        {
+          "id": 59614,
+          "content": "A rule that must be matched for a route to be applied, often based on the path, host, or headers.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13931
+        },
+        {
+          "id": 59615,
+          "content": "A component that discovers other services.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13931
+        },
+        {
+          "id": 59616,
+          "content": "A component that provides a fallback response.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13931
+        }
+      ]
+    },
+    {
+      "id": 13932,
+      "content": "Consider the following Java configuration for a route in Spring Cloud Gateway:\n@Bean \npublic RouteLocator customRouteLocator(RouteLocatorBuilder builder) {\n    return builder.routes() \n        .route(\"user_service_route\", r -> r.path(\"/users/**\")\n            .uri(\"http://localhost:8081\")) \n        .build(); \n}\nWhat does this configuration do?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59617,
+          "content": "It routes all traffic to http://localhost:8081.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13932
+        },
+        {
+          "id": 59618,
+          "content": "It routes any request whose path starts with /users/ to a service at http://localhost:8081.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13932
+        },
+        {
+          "id": 59619,
+          "content": "It adds a header to all requests for /users/.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13932
+        },
+        {
+          "id": 59620,
+          "content": "It defines a fallback for the user service.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13932
+        }
+      ]
+    },
+    {
+      "id": 13933,
+      "content": "In a distributed system, externalizing configuration helps to:",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59621,
+          "content": "Tightly couple the application code with specific deployment environments.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13933
+        },
+        {
+          "id": 59622,
+          "content": "Make it harder to manage different configurations for development, staging, and production.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13933
+        },
+        {
+          "id": 59623,
+          "content": "Improve security by removing sensitive data like database passwords from the codebase.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13933
+        },
+        {
+          "id": 59624,
+          "content": "Ensure that configuration can only be changed by recompiling the application.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13933
+        }
+      ]
+    },
+    {
+      "id": 13934,
+      "content": "The \"Environment\" abstraction in Spring Cloud Config represents:",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59625,
+          "content": "The physical server hardware.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13934
+        },
+        {
+          "id": 59626,
+          "content": "A collection of property sources for a specific application and profile.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13934
+        },
+        {
+          "id": 59627,
+          "content": "The network location of the Config Server.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13934
+        },
+        {
+          "id": 59628,
+          "content": "The operating system of the client.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13934
+        }
+      ]
+    },
+    {
+      "id": 13935,
+      "content": "By default, the Config Server exposes its API over HTTP. What would be the standard URL for a client named user-service with a dev profile to fetch its configuration?",
+      "explanation": "A",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59629,
+          "content": "http://localhost:8888/user-service/dev",
+          "is_correct": true,
+          "index_order": 1,
+          "question_target_id": 13935
+        },
+        {
+          "id": 59630,
+          "content": "http://localhost:8888/dev/user-service",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13935
+        },
+        {
+          "id": 59631,
+          "content": "http://localhost:8888/config/user-service-dev",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13935
+        },
+        {
+          "id": 59632,
+          "content": "http://localhost:8888/user-service-dev.json",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13935
+        }
+      ]
+    },
+    {
+      "id": 13936,
+      "content": "Which of the following are considered the four key (ACID) properties of a transaction?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59633,
+          "content": "Atomicity, Concurrency, Integrity, Durability",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13936
+        },
+        {
+          "id": 59634,
+          "content": "Availability, Consistency, Isolation, Durability",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13936
+        },
+        {
+          "id": 59635,
+          "content": "Atomicity, Consistency, Isolation, Durability",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13936
+        },
+        {
+          "id": 59636,
+          "content": "Atomicity, Concurrency, Infallibility, Delegation",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13936
+        }
+      ]
+    },
+    {
+      "id": 13937,
+      "content": "What is the primary reason that managing transactions is more complex in a microservices architecture?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59637,
+          "content": "Microservices are always written in different programming languages.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13937
+        },
+        {
+          "id": 59638,
+          "content": "A single business transaction often spans multiple services, each with its own private database.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13937
+        },
+        {
+          "id": 59639,
+          "content": "Network communication between services is always 100% reliable.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13937
+        },
+        {
+          "id": 59640,
+          "content": "Monolithic applications have better tools for transaction management.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13937
+        }
+      ]
+    },
+    {
+      "id": 13938,
+      "content": "The CAP theorem states that a distributed system can only provide two out of three guarantees: Consistency, Availability, and Partition Tolerance. Which guarantee is typically prioritized in microservices, leading to challenges with transactions?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59641,
+          "content": "Consistency",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13938
+        },
+        {
+          "id": 59642,
+          "content": "Availability",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13938
+        },
+        {
+          "id": 59643,
+          "content": "Partition Tolerance",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13938
+        },
+        {
+          "id": 59644,
+          "content": "Durability",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13938
+        }
+      ]
+    },
+    {
+      "id": 13939,
+      "content": "The Two-Phase Commit (2PC) pattern provides strong consistency but is often avoided in microservices because:",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59645,
+          "content": "It is too simple to implement.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13939
+        },
+        {
+          "id": 59646,
+          "content": "It is a \"chatty\" protocol that requires locking resources, which reduces availability and performance.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13939
+        },
+        {
+          "id": 59647,
+          "content": "It does not guarantee data consistency.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13939
+        },
+        {
+          "id": 59648,
+          "content": "It only works with NoSQL databases.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13939
+        }
+      ]
+    },
+    {
+      "id": 13940,
+      "content": "In a \"Choreography\" based saga, how do services coordinate?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59649,
+          "content": "A central orchestrator service tells each service what to do.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13940
+        },
+        {
+          "id": 59650,
+          "content": "Each service communicates directly with every other service in a synchronous manner.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13940
+        },
+        {
+          "id": 59651,
+          "content": "Services coordinate by publishing and subscribing to events from a message broker, without a central controller.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13940
+        },
+        {
+          "id": 59652,
+          "content": "All services update a shared state in a centralized database.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13940
+        }
+      ]
+    },
+    {
+      "id": 13941,
+      "content": "Why is securing microservices fundamentally different from securing a traditional monolith?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59653,
+          "content": "Monoliths do not require any security measures.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13941
+        },
+        {
+          "id": 59654,
+          "content": "Microservices have a much larger attack surface due to their distributed nature and numerous network endpoints.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13941
+        },
+        {
+          "id": 59655,
+          "content": "Microservices run on a single server, making them easier to protect.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13941
+        },
+        {
+          "id": 59656,
+          "content": "Security is handled automatically by container orchestration platforms.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13941
+        }
+      ]
+    },
+    {
+      "id": 13942,
+      "content": "The security goal of \"Confidentiality\" ensures that:",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59657,
+          "content": "Data is accurate and has not been tampered with.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13942
+        },
+        {
+          "id": 59658,
+          "content": "The system is available and operational when needed.",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13942
+        },
+        {
+          "id": 59659,
+          "content": "Information is not disclosed to unauthorized individuals, entities, or processes.",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13942
+        },
+        {
+          "id": 59660,
+          "content": "A user or service cannot deny having performed an action.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13942
+        }
+      ]
+    },
+    {
+      "id": 13943,
+      "content": "What is the purpose of the \"Client Secret\" in the OAuth 2.0 flow?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59661,
+          "content": "It is a public identifier shared with users.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13943
+        },
+        {
+          "id": 59662,
+          "content": "It is a secret known only to the application and the authorization server, used to authenticate the application itself.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13943
+        },
+        {
+          "id": 59663,
+          "content": "It is an access token used to call APIs on behalf of the user.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13943
+        },
+        {
+          "id": 59664,
+          "content": "It is used to encrypt the user's password.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13943
+        }
+      ]
+    },
+    {
+      "id": 13944,
+      "content": "When creating an \"OAuth 2.0 Client ID\" in the Google Cloud Console, a developer must choose an \"Application type\". Which type should be selected for a traditional server-side application that will handle the OAuth flow on its backend?",
+      "explanation": "C",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59665,
+          "content": "TV and Limited Input devices",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13944
+        },
+        {
+          "id": 59666,
+          "content": "iOS",
+          "is_correct": false,
+          "index_order": 2,
+          "question_target_id": 13944
+        },
+        {
+          "id": 59667,
+          "content": "Web application",
+          "is_correct": true,
+          "index_order": 3,
+          "question_target_id": 13944
+        },
+        {
+          "id": 59668,
+          "content": "Android",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13944
+        }
+      ]
+    },
+    {
+      "id": 13945,
+      "content": "To implement the \"Read\" (R in CRUD) operation for a user's order history, the Order service receives a GET /orders?userId=123 request. What is the most important security check the service must perform before returning the data?",
+      "explanation": "B",
+      "quizTargetId": 36,
+      "answersList": [
+        {
+          "id": 59669,
+          "content": "Verify that the format of the userId is a valid number.",
+          "is_correct": false,
+          "index_order": 1,
+          "question_target_id": 13945
+        },
+        {
+          "id": 59670,
+          "content": "Ensure the authenticated user making the request is user 123 or an administrator with permission to view all orders.",
+          "is_correct": true,
+          "index_order": 2,
+          "question_target_id": 13945
+        },
+        {
+          "id": 59671,
+          "content": "Check if the database has an index on the userId column for faster reads.",
+          "is_correct": false,
+          "index_order": 3,
+          "question_target_id": 13945
+        },
+        {
+          "id": 59672,
+          "content": "Make sure the HTTP response code is 200 OK.",
+          "is_correct": false,
+          "index_order": 4,
+          "question_target_id": 13945
+        }
+      ]
+    }
+  ]
+}

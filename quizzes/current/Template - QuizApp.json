@@ -1,0 +1,22 @@
+{
+  "id": "Số nguyên (ID của bộ câu hỏi/Quiz)",
+  "name": "Chuỗi ký tự (Tên của bộ câu hỏi)",
+  "subjectTargetId": "Số nguyên (ID của môn học)",
+  "questionsList": [
+    {
+      "id": "Số nguyên (ID của câu hỏi)",
+      "content": "Chuỗi ký tự (Nội dung câu hỏi)",
+      "explanation": "Chuỗi ký tự (Giải thích đáp án hoặc ký tự đại diện cho đáp án đúng)",
+      "quizTargetId": "Số nguyên (ID của bộ câu hỏi mà câu hỏi này thuộc về)",
+      "answersList": [
+        {
+          "id": "Số nguyên (ID của câu trả lời/đáp án)",
+          "content": "Chuỗi ký tự (Nội dung của câu trả lời)",
+          "is_correct": "Boolean (true/false - Trạng thái đáp án đúng hay sai)",
+          "index_order": "Số nguyên (Thứ tự sắp xếp của đáp án)",
+          "question_target_id": "Số nguyên (ID của câu hỏi mà đáp án này thuộc về)"
+        }
+      ]
+    }
+  ]
+}
