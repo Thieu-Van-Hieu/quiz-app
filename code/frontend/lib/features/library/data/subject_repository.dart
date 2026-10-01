@@ -1,4 +1,5 @@
-import 'package:frontend/core/extensions/condition_extension.dart';
+import 'package:frontend/core/extensions/list_extension.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/models/search_params/subject_search_params.dart';
@@ -26,48 +27,28 @@ class SubjectRepository {
         .map((query) => query.find());
   }
 
-  Condition<Subject>? getSearchParamsCondition(SubjectSearchParams params) {
-    Condition<Subject>? condition;
-
-    // Xây dựng query theo logic mong muốn
-    condition = condition
-        .safeOr(
-          params.keyword,
-          (v) => Subject_.name.contains(v, caseSensitive: false),
-        )
-        .safeOr(
-          params.keyword,
-          (v) => Subject_.code.contains(v, caseSensitive: false),
-        );
-
-    return condition;
+  /// Lọc theo keyword (tên hoặc mã môn) bằng TextMatcher để hỗ trợ các tuỳ chọn tìm kiếm
+  List<Subject> _search(List<Subject> subjects, SubjectSearchParams params) {
+    final matcher = TextMatcher(params.keyword ?? '', params.options);
+    return matcher.filter(subjects, (s) => [s.name, s.code]);
   }
 
   Stream<List<Subject>> watchSubjects(SubjectSearchParams params) {
     return _subjectBox
-        .query(getSearchParamsCondition(params))
+        .query()
         .watch(triggerImmediately: true)
-        .map(((query) {
-          query.offset = params.page * params.size;
-          query.limit = params.size;
-
-          // Lúc này find() sẽ trả về đúng số lượng đã phân trang
-          return query.find();
-        }));
+        .map(
+          (query) =>
+              _search(query.find(), params).paged(params.page, params.size),
+        );
   }
 
   Stream<int> watchTotalPages(SubjectSearchParams params) {
-    return _subjectBox
-        .query(getSearchParamsCondition(params))
-        .watch(triggerImmediately: true)
-        .map((query) {
-          // 3. Đếm tổng số bản ghi khớp điều kiện
-          final totalItems = query.count();
-          if (totalItems == 0) return 1;
-
-          // 4. Tính toán số trang: ceil(totalItems / size)
-          return (totalItems / params.size).ceil();
-        });
+    return _subjectBox.query().watch(triggerImmediately: true).map((query) {
+      final totalItems = _search(query.find(), params).length;
+      if (totalItems == 0) return 1;
+      return (totalItems / params.size).ceil();
+    });
   }
 
   /// 2. Lấy môn học theo ID

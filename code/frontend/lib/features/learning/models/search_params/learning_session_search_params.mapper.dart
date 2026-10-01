@@ -18,6 +18,7 @@ class LearningSessionSearchParamsMapper
       MapperContainer.globals.use(
         _instance = LearningSessionSearchParamsMapper._(),
       );
+      SearchOptionsMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -43,6 +44,9 @@ class LearningSessionSearchParamsMapper
     _$keyword,
     opt: true,
   );
+  static SearchOptions _$options(LearningSessionSearchParams v) => v.options;
+  static const Field<LearningSessionSearchParams, SearchOptions> _f$options =
+      Field('options', _$options, opt: true, def: const SearchOptions());
   static bool? _$isCompleted(LearningSessionSearchParams v) => v.isCompleted;
   static const Field<LearningSessionSearchParams, bool> _f$isCompleted = Field(
     'isCompleted',
@@ -69,6 +73,7 @@ class LearningSessionSearchParamsMapper
     #quizId: _f$quizId,
     #mode: _f$mode,
     #keyword: _f$keyword,
+    #options: _f$options,
     #isCompleted: _f$isCompleted,
     #size: _f$size,
     #page: _f$page,
@@ -79,6 +84,7 @@ class LearningSessionSearchParamsMapper
       quizId: data.dec(_f$quizId),
       mode: data.dec(_f$mode),
       keyword: data.dec(_f$keyword),
+      options: data.dec(_f$options),
       isCompleted: data.dec(_f$isCompleted),
       size: data.dec(_f$size),
       page: data.dec(_f$page),
@@ -138,10 +144,12 @@ abstract class LearningSessionSearchParamsCopyWith<
   $Out
 >
     implements ClassCopyWith<$R, $In, $Out> {
+  SearchOptionsCopyWith<$R, SearchOptions, SearchOptions> get options;
   $R call({
     int? quizId,
     String? mode,
     String? keyword,
+    SearchOptions? options,
     bool? isCompleted,
     int? size,
     int? page,
@@ -169,10 +177,14 @@ class _LearningSessionSearchParamsCopyWithImpl<$R, $Out>
   late final ClassMapperBase<LearningSessionSearchParams> $mapper =
       LearningSessionSearchParamsMapper.ensureInitialized();
   @override
+  SearchOptionsCopyWith<$R, SearchOptions, SearchOptions> get options =>
+      $value.options.copyWith.$chain((v) => call(options: v));
+  @override
   $R call({
     Object? quizId = $none,
     Object? mode = $none,
     Object? keyword = $none,
+    SearchOptions? options,
     Object? isCompleted = $none,
     int? size,
     int? page,
@@ -181,6 +193,7 @@ class _LearningSessionSearchParamsCopyWithImpl<$R, $Out>
       if (quizId != $none) #quizId: quizId,
       if (mode != $none) #mode: mode,
       if (keyword != $none) #keyword: keyword,
+      if (options != null) #options: options,
       if (isCompleted != $none) #isCompleted: isCompleted,
       if (size != null) #size: size,
       if (page != null) #page: page,
@@ -192,6 +205,7 @@ class _LearningSessionSearchParamsCopyWithImpl<$R, $Out>
         quizId: data.get(#quizId, or: $value.quizId),
         mode: data.get(#mode, or: $value.mode),
         keyword: data.get(#keyword, or: $value.keyword),
+        options: data.get(#options, or: $value.options),
         isCompleted: data.get(#isCompleted, or: $value.isCompleted),
         size: data.get(#size, or: $value.size),
         page: data.get(#page, or: $value.page),

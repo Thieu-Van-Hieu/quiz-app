@@ -1,6 +1,8 @@
 import 'package:frontend/core/exceptions/app_exception.dart';
 import 'package:frontend/core/extensions/condition_extension.dart';
+import 'package:frontend/core/extensions/list_extension.dart';
 import 'package:frontend/core/extensions/query_builder_extension.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/learning_setting.dart';
@@ -35,15 +37,18 @@ class LearningSessionRepository {
         .safeAnd(params.mode, LearningSession_.learningMode.equals)
         .safeAnd(params.isCompleted, LearningSession_.isCompleted.equals);
 
-    final queryBuilder = _sessionBox.query(condition);
+    return _sessionBox.query(condition)
+      ..order(LearningSession_.startTime, flags: Order.descending);
+  }
 
-    queryBuilder.safeLink(
-      params.keyword,
-      LearningSession_.quiz,
-      (keyword) => Quiz_.name.contains(keyword, caseSensitive: false),
-    );
+  /// Có keyword: lấy hết rồi lọc theo tên Quiz bằng TextMatcher (hỗ trợ bỏ dấu, regex...).
+  /// Trả về null khi không có keyword để dùng phân trang của ObjectBox cho nhanh.
+  List<LearningSession>? _searchByQuizName(LearningSessionSearchParams params) {
+    final matcher = TextMatcher(params.keyword ?? '', params.options);
+    if (matcher.isEmpty) return null;
 
-    return queryBuilder;
+    final sessions = _buildQuery(params).buildAndClose((q) => q.find());
+    return matcher.filter(sessions, (s) => [s.quiz.target?.name ?? '']);
   }
 
   // Thống kê (totalPass, totalNotPass) tính từ Detail và danh sách hiển thị tên Quiz,
@@ -62,9 +67,10 @@ class LearningSessionRepository {
     LearningSessionSearchParams params,
   ) {
     return _watchSessionChanges().map((_) {
-      final queryBuilder = _buildQuery(params)
-        ..order(LearningSession_.startTime, flags: Order.descending);
-      return queryBuilder.buildAndClose((query) {
+      final searched = _searchByQuizName(params);
+      if (searched != null) return searched.paged(params.page, params.size);
+
+      return _buildQuery(params).buildAndClose((query) {
         query
           ..limit = params.size
           ..offset = params.page * params.size;
@@ -76,9 +82,9 @@ class LearningSessionRepository {
   // 3. Tính tổng số trang
   Stream<int> watchTotalPages(LearningSessionSearchParams params) {
     return _watchSessionChanges().map((_) {
-      final totalCount = _buildQuery(
-        params,
-      ).buildAndClose((query) => query.count());
+      final totalCount =
+          _searchByQuizName(params)?.length ??
+          _buildQuery(params).buildAndClose<int>((query) => query.count());
       if (totalCount == 0) return 0;
       return (totalCount / params.size).ceil();
     });

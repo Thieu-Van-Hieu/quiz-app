@@ -15,6 +15,7 @@ class QuizSearchParamsMapper extends ClassMapperBase<QuizSearchParams> {
   static QuizSearchParamsMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = QuizSearchParamsMapper._());
+      SearchOptionsMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -32,6 +33,13 @@ class QuizSearchParamsMapper extends ClassMapperBase<QuizSearchParams> {
     'keyword',
     _$keyword,
     opt: true,
+  );
+  static SearchOptions _$options(QuizSearchParams v) => v.options;
+  static const Field<QuizSearchParams, SearchOptions> _f$options = Field(
+    'options',
+    _$options,
+    opt: true,
+    def: const SearchOptions(),
   );
   static int _$size(QuizSearchParams v) => v.size;
   static const Field<QuizSearchParams, int> _f$size = Field(
@@ -52,6 +60,7 @@ class QuizSearchParamsMapper extends ClassMapperBase<QuizSearchParams> {
   final MappableFields<QuizSearchParams> fields = const {
     #subjectId: _f$subjectId,
     #keyword: _f$keyword,
+    #options: _f$options,
     #size: _f$size,
     #page: _f$page,
   };
@@ -60,6 +69,7 @@ class QuizSearchParamsMapper extends ClassMapperBase<QuizSearchParams> {
     return QuizSearchParams(
       subjectId: data.dec(_f$subjectId),
       keyword: data.dec(_f$keyword),
+      options: data.dec(_f$options),
       size: data.dec(_f$size),
       page: data.dec(_f$page),
     );
@@ -127,7 +137,14 @@ extension QuizSearchParamsValueCopy<$R, $Out>
 
 abstract class QuizSearchParamsCopyWith<$R, $In extends QuizSearchParams, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({int? subjectId, String? keyword, int? size, int? page});
+  SearchOptionsCopyWith<$R, SearchOptions, SearchOptions> get options;
+  $R call({
+    int? subjectId,
+    String? keyword,
+    SearchOptions? options,
+    int? size,
+    int? page,
+  });
   QuizSearchParamsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -142,19 +159,29 @@ class _QuizSearchParamsCopyWithImpl<$R, $Out>
   late final ClassMapperBase<QuizSearchParams> $mapper =
       QuizSearchParamsMapper.ensureInitialized();
   @override
-  $R call({int? subjectId, Object? keyword = $none, int? size, int? page}) =>
-      $apply(
-        FieldCopyWithData({
-          if (subjectId != null) #subjectId: subjectId,
-          if (keyword != $none) #keyword: keyword,
-          if (size != null) #size: size,
-          if (page != null) #page: page,
-        }),
-      );
+  SearchOptionsCopyWith<$R, SearchOptions, SearchOptions> get options =>
+      $value.options.copyWith.$chain((v) => call(options: v));
+  @override
+  $R call({
+    int? subjectId,
+    Object? keyword = $none,
+    SearchOptions? options,
+    int? size,
+    int? page,
+  }) => $apply(
+    FieldCopyWithData({
+      if (subjectId != null) #subjectId: subjectId,
+      if (keyword != $none) #keyword: keyword,
+      if (options != null) #options: options,
+      if (size != null) #size: size,
+      if (page != null) #page: page,
+    }),
+  );
   @override
   QuizSearchParams $make(CopyWithData data) => QuizSearchParams(
     subjectId: data.get(#subjectId, or: $value.subjectId),
     keyword: data.get(#keyword, or: $value.keyword),
+    options: data.get(#options, or: $value.options),
     size: data.get(#size, or: $value.size),
     page: data.get(#page, or: $value.page),
   );

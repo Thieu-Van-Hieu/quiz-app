@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
+import 'package:frontend/core/search/search_options.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/services/ocr/ocr_controller.dart';
 import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
@@ -22,10 +24,16 @@ class QuestionPage extends HookConsumerWidget {
   final int subjectId;
   final int quizId;
 
+  /// Từ khoá & tuỳ chọn tìm kiếm ban đầu (vd. mở từ Master Search)
+  final String? initialKeyword;
+  final SearchOptions initialOptions;
+
   const QuestionPage({
     super.key,
     required this.subjectId,
     required this.quizId,
+    this.initialKeyword,
+    this.initialOptions = const SearchOptions(),
   });
 
   /// Hàm helper giúp điều chỉnh trang sau khi thay đổi dữ liệu
@@ -51,8 +59,18 @@ class QuestionPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final params = useState(
-      QuestionSearchParams(quizId: quizId, size: 10, page: 0),
+      QuestionSearchParams(
+        quizId: quizId,
+        size: 10,
+        page: 0,
+        keyword: initialKeyword,
+        options: initialOptions,
+      ),
     );
+    final searchError = TextMatcher(
+      params.value.keyword ?? '',
+      params.value.options,
+    ).error;
     final showOnlyErrors = useState(false);
     final isOcrLoading = useState(false);
 
@@ -219,6 +237,11 @@ class QuestionPage extends HookConsumerWidget {
                 questions: questionsAsync.hasValue ? questionsAsync.value! : [],
                 onSearch: (val) =>
                     params.value = params.value.copyWith(keyword: val, page: 0),
+                initialKeyword: initialKeyword ?? '',
+                options: params.value.options,
+                onOptionsChanged: (options) => params.value = params.value
+                    .copyWith(options: options, page: 0),
+                searchError: searchError,
                 showOnlyErrors: showOnlyErrors.value,
                 onToggleError: (val) {
                   showOnlyErrors.value = val;

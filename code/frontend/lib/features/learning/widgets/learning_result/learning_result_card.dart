@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/button/action_button.dart';
 import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/text/highlighted_text.dart';
 import 'package:frontend/features/learning/enums/learning_mode.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:intl/intl.dart';
 
 class LearningResultCard extends StatelessWidget {
   final LearningSession session;
+  final TextMatcher? matcher; // Highlight từ khoá tìm kiếm
   final VoidCallback onTap;
   final VoidCallback onRetake;
-  final VoidCallback
-  onConfigureRetake;
+  final VoidCallback onConfigureRetake;
   final VoidCallback? onCreateMistakeSession;
   final VoidCallback onDelete;
 
   const LearningResultCard({
     super.key,
+    this.matcher,
     required this.session,
     required this.onTap,
     required this.onRetake,
@@ -138,8 +141,9 @@ class LearningResultCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                Text(
+                HighlightedText(
                   quizName,
+                  matcher: matcher,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(

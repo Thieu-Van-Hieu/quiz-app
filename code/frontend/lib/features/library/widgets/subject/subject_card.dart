@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/button/action_button.dart';
+import 'package:frontend/core/widgets/text/highlighted_text.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/models/subject.dart';
 
 class SubjectCard extends StatelessWidget {
   final Subject subject;
+  final TextMatcher? matcher; // Highlight từ khoá tìm kiếm
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const SubjectCard({
     super.key,
+    this.matcher,
     required this.subject,
     required this.onTap,
     required this.onEdit,
@@ -75,8 +79,9 @@ class SubjectCard extends StatelessWidget {
               const Spacer(),
 
               // --- CONTENT: Code (Headline) & Name (Subtitle) ---
-              Text(
+              HighlightedText(
                 subject.code,
+                matcher: matcher,
                 style: const TextStyle(
                   color: LibraryColors.primaryText,
                   fontWeight: FontWeight.w900,
@@ -87,8 +92,9 @@ class SubjectCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              Text(
+              HighlightedText(
                 subject.name,
+                matcher: matcher,
                 style: const TextStyle(
                   color: LibraryColors.secondaryText,
                   fontWeight: FontWeight.w500,

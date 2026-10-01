@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
 import 'package:frontend/core/widgets/input/search_bar.dart';
 import 'package:frontend/core/widgets/layout/pagination.dart';
@@ -22,6 +23,10 @@ class LearningResultPage extends HookConsumerWidget {
     // 1. Khởi tạo Params
     final searchParamsNotifier = useState(
       LearningSessionSearchParams(page: 0, size: 10),
+    );
+    final searchMatcher = TextMatcher(
+      searchParamsNotifier.value.keyword ?? '',
+      searchParamsNotifier.value.options,
     );
 
     // 2. Watch dữ liệu
@@ -68,6 +73,12 @@ class LearningResultPage extends HookConsumerWidget {
               onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
                   .value
                   .copyWith(keyword: v, page: 0),
+              initialValue: searchParamsNotifier.value.keyword ?? '',
+              options: searchParamsNotifier.value.options,
+              onOptionsChanged: (options) =>
+                  searchParamsNotifier.value = searchParamsNotifier.value
+                      .copyWith(options: options, page: 0),
+              error: searchMatcher.error,
             ),
             const SizedBox(height: 32),
 
@@ -128,6 +139,7 @@ class LearningResultPage extends HookConsumerWidget {
                                 '${session.id}_${session.isCompleted}',
                               ),
                               session: session,
+                              matcher: searchMatcher,
                               onTap: () => context.go(
                                 LearningRoutes.sessionPath(session.id),
                               ),

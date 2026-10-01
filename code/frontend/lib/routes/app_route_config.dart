@@ -7,6 +7,7 @@ import 'package:frontend/core/widgets/dialog/alert_dialog.dart';
 import 'package:frontend/features/dashboard/routes/dashboard_routes.dart';
 import 'package:frontend/features/learning/routes/learning_routes.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
+import 'package:frontend/features/search/routes/search_routes.dart';
 import 'package:frontend/features/setting/routes/setting_routes.dart';
 import 'package:frontend/routes/types.dart';
 
@@ -39,6 +40,7 @@ class AppRouteConfig {
   static final List<AppRouteItem> mainMenuItems = [
     DashboardRoutes.config,
     LibraryRoutes.config,
+    SearchRoutes.config,
     LearningRoutes.config,
     SettingRoutes.config,
     AppRouteItem(

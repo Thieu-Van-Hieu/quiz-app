@@ -1,5 +1,7 @@
 // features/library/routes/library_routes.dart
 import 'package:flutter/material.dart';
+import 'package:frontend/core/search/search_options.dart';
+import 'package:frontend/features/library/models/question_page_args.dart';
 import 'package:frontend/features/library/pages/question_page.dart'; // Import trang Quiz mới
 import 'package:frontend/features/library/pages/quiz_page.dart';
 import 'package:frontend/features/library/pages/subject_page.dart';
@@ -44,7 +46,18 @@ class LibraryRoutes {
               final quizId =
                   int.tryParse(state.pathParameters['quizId'] ?? '0') ?? 0;
 
-              return QuestionPage(subjectId: subjectId, quizId: quizId);
+              final args = state.extra is QuestionPageArgs
+                  ? state.extra as QuestionPageArgs
+                  : null;
+
+              return QuestionPage(
+                // Key mới để khởi tạo lại bộ lọc khi mở từ Master Search với từ khoá khác
+                key: args != null ? ObjectKey(args) : null,
+                subjectId: subjectId,
+                quizId: quizId,
+                initialKeyword: args?.keyword,
+                initialOptions: args?.options ?? const SearchOptions(),
+              );
             },
           ),
         ],

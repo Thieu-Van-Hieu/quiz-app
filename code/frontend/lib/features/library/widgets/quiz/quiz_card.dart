@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/button/action_button.dart';
 import 'package:frontend/core/widgets/input/menu.dart';
+import 'package:frontend/core/widgets/text/highlighted_text.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 
 class QuizCard extends StatelessWidget {
   final Quiz quiz;
+  final TextMatcher? matcher; // Highlight từ khoá tìm kiếm
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -16,6 +19,7 @@ class QuizCard extends StatelessWidget {
 
   const QuizCard({
     super.key,
+    this.matcher,
     required this.quiz,
     required this.onTap,
     required this.onEdit,
@@ -143,8 +147,9 @@ class QuizCard extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // --- NỘI DUNG: Tên bộ đề ---
-                Text(
+                HighlightedText(
                   quiz.name,
+                  matcher: matcher,
                   style: const TextStyle(
                     color: LibraryColors.primaryText,
                     fontWeight: FontWeight.bold,

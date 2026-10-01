@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_colors.dart';
+import 'package:frontend/core/search/search_options.dart';
+import 'package:frontend/core/widgets/input/search_option_toggles.dart';
 
 class AppSearchBar extends HookWidget {
   final String hintText;
   final Function(String) onSearch;
   final double maxWidth;
+  final String initialValue;
+
+  /// Tuỳ chọn tìm kiếm. Chỉ hiện cụm nút tuỳ chọn khi có [onOptionsChanged].
+  final SearchOptions options;
+  final ValueChanged<SearchOptions>? onOptionsChanged;
+
+  /// Lỗi của từ khoá (vd. regex sai cú pháp)
+  final String? error;
 
   const AppSearchBar({
     super.key,
     required this.onSearch,
     this.hintText = "Tìm kiếm...",
     this.maxWidth = double.infinity,
+    this.initialValue = '',
+    this.options = const SearchOptions(),
+    this.onOptionsChanged,
+    this.error,
   });
 
   @override
   Widget build(BuildContext context) {
-    final controller = useTextEditingController();
+    final controller = useTextEditingController(text: initialValue);
     // Dùng cái này để lắng nghe trạng thái re-render khi user gõ chữ (hiện/ẩn nút Xóa)
     final hasText = useValueListenable(controller);
 
@@ -61,19 +75,31 @@ class AppSearchBar extends HookWidget {
             ),
 
             // Nút xóa text (X) tròn kẹo ngọt xuất hiện mượt mà
-            suffixIcon: hasText.text.isNotEmpty
+            suffixIcon: hasText.text.isNotEmpty || onOptionsChanged != null
                 ? Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        color: AppColors.secondaryText,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        controller.clear();
-                        onSearch('');
-                      },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (hasText.text.isNotEmpty)
+                          IconButton(
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              color: AppColors.secondaryText,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              controller.clear();
+                              onSearch('');
+                            },
+                          ),
+                        if (onOptionsChanged != null)
+                          SearchOptionToggles(
+                            options: options,
+                            onChanged: onOptionsChanged!,
+                            error: error,
+                          ),
+                      ],
                     ),
                   )
                 : null,

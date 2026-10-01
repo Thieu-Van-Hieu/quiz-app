@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/layout/pagination.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
@@ -36,11 +37,11 @@ class QuestionGridView extends StatelessWidget {
     }
 
     final baseFiltered = showOnlyErrors ? errorQuestions : allQuestions;
-    final filtered = baseFiltered.where((q) {
-      final kw = params.keyword?.toLowerCase() ?? '';
-      return q.content.toLowerCase().contains(kw) ||
-          q.answers.any((a) => a.content.toLowerCase().contains(kw));
-    }).toList();
+    final matcher = TextMatcher(params.keyword ?? '', params.options);
+    final filtered = matcher.filter(
+      baseFiltered,
+      (q) => [q.content, q.explanation, ...q.answers.map((a) => a.content)],
+    );
 
     if (filtered.isEmpty) {
       return Center(
@@ -78,6 +79,7 @@ class QuestionGridView extends StatelessWidget {
                 index: (params.page * params.size) + index + 1,
                 question: question,
                 isNew: question.content.isEmpty,
+                matcher: matcher.isEmpty ? null : matcher,
                 onSave: (updated) =>
                     onUpdate(allQuestions.indexOf(question), updated),
                 onDelete: () => onDelete(allQuestions.indexOf(question)),

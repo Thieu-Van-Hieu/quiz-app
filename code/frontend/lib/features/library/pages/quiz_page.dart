@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
 import 'package:frontend/core/widgets/input/search_bar.dart';
 import 'package:frontend/core/widgets/layout/pagination.dart';
@@ -40,6 +41,10 @@ class QuizPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchParamsNotifier = useState(
       QuizSearchParams(subjectId: subjectId, size: 10, page: 0),
+    );
+    final searchMatcher = TextMatcher(
+      searchParamsNotifier.value.keyword ?? '',
+      searchParamsNotifier.value.options,
     );
     final quizzesAsync = ref.watch(quizProvider(searchParamsNotifier.value));
     final totalPagesAsync = ref.watch(
@@ -299,6 +304,11 @@ class QuizPage extends HookConsumerWidget {
             onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
                 .value
                 .copyWith(keyword: v, page: 0),
+            initialValue: searchParamsNotifier.value.keyword ?? '',
+            options: searchParamsNotifier.value.options,
+            onOptionsChanged: (options) => searchParamsNotifier.value =
+                searchParamsNotifier.value.copyWith(options: options, page: 0),
+            error: searchMatcher.error,
           ),
           const SizedBox(height: 32),
           Expanded(
@@ -319,6 +329,7 @@ class QuizPage extends HookConsumerWidget {
                                 ),
                             itemBuilder: (context, index) => QuizCard(
                               quiz: quizzes[index],
+                              matcher: searchMatcher,
                               onTap: () => _onQuizTap(
                                 context,
                                 ref,

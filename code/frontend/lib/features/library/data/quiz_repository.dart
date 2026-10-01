@@ -1,6 +1,7 @@
 import 'package:frontend/core/exceptions/app_exception.dart';
-import 'package:frontend/core/extensions/condition_extension.dart';
+import 'package:frontend/core/extensions/list_extension.dart';
 import 'package:frontend/core/extensions/query_builder_extension.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
@@ -39,27 +40,19 @@ class QuizRepository {
     );
   }
 
-  Condition<Quiz>? getSearchParamsCondition(QuizSearchParams params) {
-    Condition<Quiz>? condition;
-    return condition
-        .safeAnd(params.subjectId, Quiz_.subject.equals)
-        .safeAnd(
-          params.keyword,
-          (value) => Quiz_.name.contains(value, caseSensitive: false),
-        );
+  /// Lấy Quiz của môn học rồi lọc theo keyword bằng TextMatcher
+  List<Quiz> _search(QuizSearchParams params) {
+    final quizzes = _quizBox
+        .query(Quiz_.subject.equals(params.subjectId))
+        .buildAndClose((query) => query.find());
+    final matcher = TextMatcher(params.keyword ?? '', params.options);
+    return matcher.filter(quizzes, (q) => [q.name]);
   }
 
   /// Theo dõi danh sách Quiz có phân trang và tìm kiếm
   Stream<List<Quiz>> watchQuizzes(QuizSearchParams params) {
     return _watchQuizChanges().map(
-      (_) => _quizBox.query(getSearchParamsCondition(params)).buildAndClose((
-        query,
-      ) {
-        query
-          ..offset = params.page * params.size
-          ..limit = params.size;
-        return query.find();
-      }),
+      (_) => _search(params).paged(params.page, params.size),
     );
   }
 
@@ -71,9 +64,7 @@ class QuizRepository {
   /// Theo dõi tổng số trang
   Stream<int> watchTotalPages(QuizSearchParams params) {
     return _watchQuizChanges().map((_) {
-      final totalCount = _quizBox
-          .query(getSearchParamsCondition(params))
-          .buildAndClose((query) => query.count());
+      final totalCount = _search(params).length;
       if (totalCount == 0) return 1;
       return (totalCount / params.size).ceil();
     });

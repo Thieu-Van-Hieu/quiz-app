@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/constants/app_strings.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/button/action_button.dart';
 import 'package:frontend/core/widgets/button/button.dart';
+import 'package:frontend/core/widgets/text/highlighted_text.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/answer.dart';
@@ -16,6 +18,9 @@ class QuestionCard extends HookWidget {
   final Function(Question) onSave;
   final VoidCallback onDelete;
 
+  /// Dùng để highlight từ khoá tìm kiếm ở chế độ xem
+  final TextMatcher? matcher;
+
   const QuestionCard({
     super.key,
     required this.index,
@@ -23,6 +28,7 @@ class QuestionCard extends HookWidget {
     required this.question,
     required this.onSave,
     required this.onDelete,
+    this.matcher,
   });
 
   @override
@@ -210,10 +216,11 @@ class QuestionCard extends HookWidget {
                 overlayColor: WidgetStateProperty.all(Colors.transparent),
                 child: SizedBox(
                   width: double.infinity,
-                  child: Text(
+                  child: HighlightedText(
                     question.content.isEmpty
                         ? LibraryStrings.noContent
                         : question.content,
+                    matcher: matcher,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -283,8 +290,9 @@ class QuestionCard extends HookWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
+            child: HighlightedText(
               ans.content,
+              matcher: matcher,
               style: TextStyle(
                 color: ans.isCorrect
                     ? LibraryColors.primaryText
@@ -318,8 +326,9 @@ class QuestionCard extends HookWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
+            child: HighlightedText(
               question.explanation,
+              matcher: matcher,
               style: const TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,

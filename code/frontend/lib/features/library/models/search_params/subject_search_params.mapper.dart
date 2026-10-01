@@ -15,6 +15,7 @@ class SubjectSearchParamsMapper extends ClassMapperBase<SubjectSearchParams> {
   static SubjectSearchParamsMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SubjectSearchParamsMapper._());
+      SearchOptionsMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -27,6 +28,13 @@ class SubjectSearchParamsMapper extends ClassMapperBase<SubjectSearchParams> {
     'keyword',
     _$keyword,
     opt: true,
+  );
+  static SearchOptions _$options(SubjectSearchParams v) => v.options;
+  static const Field<SubjectSearchParams, SearchOptions> _f$options = Field(
+    'options',
+    _$options,
+    opt: true,
+    def: const SearchOptions(),
   );
   static int _$size(SubjectSearchParams v) => v.size;
   static const Field<SubjectSearchParams, int> _f$size = Field(
@@ -46,6 +54,7 @@ class SubjectSearchParamsMapper extends ClassMapperBase<SubjectSearchParams> {
   @override
   final MappableFields<SubjectSearchParams> fields = const {
     #keyword: _f$keyword,
+    #options: _f$options,
     #size: _f$size,
     #page: _f$page,
   };
@@ -53,6 +62,7 @@ class SubjectSearchParamsMapper extends ClassMapperBase<SubjectSearchParams> {
   static SubjectSearchParams _instantiate(DecodingData data) {
     return SubjectSearchParams(
       keyword: data.dec(_f$keyword),
+      options: data.dec(_f$options),
       size: data.dec(_f$size),
       page: data.dec(_f$page),
     );
@@ -128,7 +138,8 @@ abstract class SubjectSearchParamsCopyWith<
   $Out
 >
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? keyword, int? size, int? page});
+  SearchOptionsCopyWith<$R, SearchOptions, SearchOptions> get options;
+  $R call({String? keyword, SearchOptions? options, int? size, int? page});
   SubjectSearchParamsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -143,9 +154,18 @@ class _SubjectSearchParamsCopyWithImpl<$R, $Out>
   late final ClassMapperBase<SubjectSearchParams> $mapper =
       SubjectSearchParamsMapper.ensureInitialized();
   @override
-  $R call({Object? keyword = $none, int? size, int? page}) => $apply(
+  SearchOptionsCopyWith<$R, SearchOptions, SearchOptions> get options =>
+      $value.options.copyWith.$chain((v) => call(options: v));
+  @override
+  $R call({
+    Object? keyword = $none,
+    SearchOptions? options,
+    int? size,
+    int? page,
+  }) => $apply(
     FieldCopyWithData({
       if (keyword != $none) #keyword: keyword,
+      if (options != null) #options: options,
       if (size != null) #size: size,
       if (page != null) #page: page,
     }),
@@ -153,6 +173,7 @@ class _SubjectSearchParamsCopyWithImpl<$R, $Out>
   @override
   SubjectSearchParams $make(CopyWithData data) => SubjectSearchParams(
     keyword: data.get(#keyword, or: $value.keyword),
+    options: data.get(#options, or: $value.options),
     size: data.get(#size, or: $value.size),
     page: data.get(#page, or: $value.page),
   );

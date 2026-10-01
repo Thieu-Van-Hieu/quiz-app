@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:frontend/core/extensions/future_toast_extension.dart';
+import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/widgets/dialog/delete_confirm_dialog.dart';
-import 'package:frontend/core/widgets/layout/pagination.dart'; // Import Widget phân trang của bạn
 import 'package:frontend/core/widgets/input/search_bar.dart';
+import 'package:frontend/core/widgets/layout/pagination.dart'; // Import Widget phân trang của bạn
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
 import 'package:frontend/features/library/models/search_params/subject_search_params.dart';
 import 'package:frontend/features/library/models/subject.dart';
 import 'package:frontend/features/library/notifiers/subject_notifier.dart';
 import 'package:frontend/features/library/routes/library_routes.dart';
-import 'package:frontend/features/library/widgets/subject/subject_header.dart';
 import 'package:frontend/features/library/widgets/subject/subject_card.dart';
+import 'package:frontend/features/library/widgets/subject/subject_header.dart';
 import 'package:frontend/features/library/widgets/subject/update_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,6 +25,10 @@ class SubjectPage extends HookConsumerWidget {
     // 1. Khởi tạo Params (Mặc định trang 0, mỗi trang 12 môn)
     final searchParamsNotifier = useState(
       SubjectSearchParams(size: 12, page: 0),
+    );
+    final searchMatcher = TextMatcher(
+      searchParamsNotifier.value.keyword ?? '',
+      searchParamsNotifier.value.options,
     );
 
     // 2. Watch data theo searchParamsNotifier hiện tại
@@ -66,6 +71,12 @@ class SubjectPage extends HookConsumerWidget {
               onSearch: (v) => searchParamsNotifier.value = searchParamsNotifier
                   .value
                   .copyWith(keyword: v, page: 0),
+              initialValue: searchParamsNotifier.value.keyword ?? '',
+              options: searchParamsNotifier.value.options,
+              onOptionsChanged: (options) =>
+                  searchParamsNotifier.value = searchParamsNotifier.value
+                      .copyWith(options: options, page: 0),
+              error: searchMatcher.error,
             ),
             const SizedBox(height: 32),
 
@@ -91,6 +102,7 @@ class SubjectPage extends HookConsumerWidget {
                           itemCount: list.length,
                           itemBuilder: (context, index) => SubjectCard(
                             subject: list[index],
+                            matcher: searchMatcher,
                             onTap: () => context.go(
                               LibraryRoutes.getSubjectDetailPath(
                                 list[index].id,
