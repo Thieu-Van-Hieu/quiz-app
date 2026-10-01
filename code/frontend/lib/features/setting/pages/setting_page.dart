@@ -26,7 +26,6 @@ class SettingPage extends HookConsumerWidget {
   void _update(WidgetRef ref, AppConfig config) {
     final container = ProviderScope.containerOf(ref.context);
     container.read(appConfigProvider.notifier).updateConfig(config);
-    container.invalidate(watchAppConfigProvider);
   }
 
   @override

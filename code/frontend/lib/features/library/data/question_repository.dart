@@ -3,6 +3,7 @@ import 'package:frontend/core/extensions/condition_extension.dart';
 import 'package:frontend/core/extensions/list_extension.dart';
 import 'package:frontend/core/extensions/query_builder_extension.dart';
 import 'package:frontend/core/services/object_box_service.dart';
+import 'package:frontend/features/library/models/answer.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/models/search_params/question_search_params.dart';
@@ -24,44 +25,48 @@ class QuestionRepository {
   // Watch danh sách có lọc và phân trang
 
   Stream<List<Question>> watchQuestions(QuestionSearchParams params) {
-    // Chỉ lắng nghe bảng Question.
-    // Vì chúng ta sẽ "Touch" (update) bảng Question khi có thay đổi Answer,
-    // nên không cần lắng nghe bảng Answer làm gì cho tốn tài nguyên.
-    return _questionBox.query().watch(triggerImmediately: true).map((_) {
-      // 1. Khởi tạo QueryBuilder
-      final questionContentQb = _questionBox.query(
-        Question_.quiz
-            .equals(params.quizId)
-            .safeAnd(params.keyword, Question_.content.contains),
-      );
+    // Tìm kiếm theo cả nội dung đáp án nên phải lắng nghe cả bảng Answer
+    final db = ObjectBoxService.instance;
+    return db
+        .watchTables([db.store.watch<Question>(), db.store.watch<Answer>()])
+        .map((_) {
+          // 1. Khởi tạo QueryBuilder
+          final questionContentQb = _questionBox.query(
+            Question_.quiz
+                .equals(params.quizId)
+                .safeAnd(params.keyword, Question_.content.contains),
+          );
 
-      final answerContentQb = _questionBox.query(
-        Question_.quiz.equals(params.quizId),
-      );
-      answerContentQb.safeBacklink(
-        params.keyword,
-        Answer_.question,
-        Answer_.content.contains,
-      );
+          final answerContentQb = _questionBox.query(
+            Question_.quiz.equals(params.quizId),
+          );
+          answerContentQb.safeBacklink(
+            params.keyword,
+            Answer_.question,
+            Answer_.content.contains,
+          );
 
-      // 2. Build và thực thi
-      final questionContentIds = questionContentQb.getIdsAndClose();
-      final answerContentIds = answerContentQb.getIdsAndClose();
-      final combineIds = {...questionContentIds, ...answerContentIds}.toList();
+          // 2. Build và thực thi
+          final questionContentIds = questionContentQb.getIdsAndClose();
+          final answerContentIds = answerContentQb.getIdsAndClose();
+          final combineIds = {
+            ...questionContentIds,
+            ...answerContentIds,
+          }.toList();
 
-      final pagedIds = combineIds.paged(params.page, params.size);
-      final questions = _questionBox
-          .getMany(pagedIds)
-          .whereType<Question>()
-          .toList();
+          final pagedIds = combineIds.paged(params.page, params.size);
+          final questions = _questionBox
+              .getMany(pagedIds)
+              .whereType<Question>()
+              .toList();
 
-      // 3. SORT DỮ LIỆU (Pure Dart, không cần thư viện)
-      for (var q in questions) {
-        q.answers.sort((a, b) => a.indexOrder.compareTo(b.indexOrder));
-      }
+          // 3. SORT DỮ LIỆU (Pure Dart, không cần thư viện)
+          for (var q in questions) {
+            q.answers.sort((a, b) => a.indexOrder.compareTo(b.indexOrder));
+          }
 
-      return questions;
-    });
+          return questions;
+        });
   }
 
   // 2. Lấy danh sách câu hỏi theo Quiz (Async)

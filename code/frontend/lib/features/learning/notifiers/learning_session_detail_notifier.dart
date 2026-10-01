@@ -1,6 +1,5 @@
 import 'package:frontend/features/learning/data/learning_session_detail_repository.dart';
 import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
-import 'package:frontend/features/learning/notifiers/learning_session_notifier.dart';
 import 'package:frontend/features/library/models/answer.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,15 +16,11 @@ class LearningSessionDetailNotifier extends _$LearningSessionDetailNotifier {
   Future<void> toggleAnswer(int detailId, Answer answer) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
     await repo.toggleAnswer(detailId, answer);
-    ref.container.invalidate(watchLearningSessionDetailProvider);
-    ref.container.invalidate(watchLearningSessionProvider);
   }
 
   Future<void> updatePassStatus(int detailId, bool status) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
     await repo.updatePassStatus(detailId, status);
-    ref.container.invalidate(watchLearningSessionDetailProvider);
-    ref.container.invalidate(watchLearningSessionProvider);
   }
 
   Future<void> markAsNotPass(int detailId) async {
@@ -41,23 +36,17 @@ class LearningSessionDetailNotifier extends _$LearningSessionDetailNotifier {
   Future<void> checkQuestion(int detailId) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
     await repo.checkQuestion(detailId);
-    ref.container.invalidate(watchLearningSessionDetailProvider);
-    ref.container.invalidate(watchLearningSessionProvider);
   }
 
   Future<void> toggleCheckStatus(int detailId) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
     await repo.toggleCheckStatus(detailId);
-    ref.container.invalidate(watchLearningSessionDetailProvider);
-    ref.container.invalidate(watchLearningSessionProvider);
   }
 
   Future<void> resetDetailForRetry(int detailId) async {
     final repo = ref.read(learningSessionDetailRepositoryProvider);
     await repo.resetDetailForRetry(detailId);
 
-    ref.container.invalidate(watchLearningSessionDetailProvider);
-    ref.container.invalidate(watchLearningSessionProvider);
   }
 }
 

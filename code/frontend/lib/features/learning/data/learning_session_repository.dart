@@ -46,26 +46,39 @@ class LearningSessionRepository {
     return queryBuilder;
   }
 
+  // Thống kê (totalPass, totalNotPass) tính từ Detail và danh sách hiển thị tên Quiz,
+  // nên phải lắng nghe cả 3 bảng
+  Stream<void> _watchSessionChanges() {
+    final store = ObjectBoxService.instance.store;
+    return ObjectBoxService.instance.watchTables([
+      store.watch<LearningSession>(),
+      store.watch<LearningSessionDetail>(),
+      store.watch<Quiz>(),
+    ]);
+  }
+
   // 2. Watch danh sách phiên học
   Stream<List<LearningSession>> watchSessions(
     LearningSessionSearchParams params,
   ) {
-    final queryBuilder = _buildQuery(params);
-    queryBuilder.order(LearningSession_.startTime, flags: Order.descending);
-
-    return queryBuilder.watch(triggerImmediately: true).map((query) {
-      query
-        ..limit = params.size
-        ..offset = params.page * params.size;
-      return query.find();
+    return _watchSessionChanges().map((_) {
+      final queryBuilder = _buildQuery(params)
+        ..order(LearningSession_.startTime, flags: Order.descending);
+      return queryBuilder.buildAndClose((query) {
+        query
+          ..limit = params.size
+          ..offset = params.page * params.size;
+        return query.find();
+      });
     });
   }
 
   // 3. Tính tổng số trang
   Stream<int> watchTotalPages(LearningSessionSearchParams params) {
-    final queryBuilder = _buildQuery(params);
-    return queryBuilder.watch(triggerImmediately: true).map((query) {
-      final totalCount = query.count();
+    return _watchSessionChanges().map((_) {
+      final totalCount = _buildQuery(
+        params,
+      ).buildAndClose((query) => query.count());
       if (totalCount == 0) return 0;
       return (totalCount / params.size).ceil();
     });
@@ -73,10 +86,7 @@ class LearningSessionRepository {
 
   // 4. Xem chi tiết một phiên học
   Stream<LearningSession?> watchSession(int id) {
-    return _sessionBox
-        .query(LearningSession_.id.equals(id))
-        .watch(triggerImmediately: true)
-        .map(((query) => query.findFirst()));
+    return _watchSessionChanges().map((_) => _sessionBox.get(id));
   }
 
   // --- CÁC HÀM THAY ĐỔI DỮ LIỆU ---

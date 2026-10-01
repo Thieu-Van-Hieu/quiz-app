@@ -41,7 +41,7 @@ final class SubjectNotifierProvider
   }
 }
 
-String _$subjectNotifierHash() => r'90d399e52cccb83d6cdb306d87b1e8cd36ef661c';
+String _$subjectNotifierHash() => r'4f5358455cf6babab85e94586b6a68e187175a8f';
 
 abstract class _$SubjectNotifier extends $Notifier<void> {
   void build();

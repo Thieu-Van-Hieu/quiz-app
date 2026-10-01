@@ -1,5 +1,6 @@
 import 'package:frontend/core/exceptions/app_exception.dart';
 import 'package:frontend/core/extensions/condition_extension.dart';
+import 'package:frontend/core/extensions/query_builder_extension.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/library/models/question.dart';
 import 'package:frontend/features/library/models/quiz.dart';
@@ -20,12 +21,22 @@ class QuizRepository {
   final _quizBox = ObjectBoxService.instance.get<Quiz>();
   final _subjectBox = ObjectBoxService.instance.get<Subject>();
 
-  /// 1. Theo dõi tất cả Quiz của một Subject (Real-time)
+  // Các bảng ảnh hưởng tới dữ liệu Quiz hiển thị (tên môn, số câu hỏi...)
+  Stream<void> _watchQuizChanges() {
+    return _db.watchTables([
+      _db.store.watch<Quiz>(),
+      _db.store.watch<Question>(),
+      _db.store.watch<Subject>(),
+    ]);
+  }
+
+  /// 1. Theo dõi tất cả Quiz của một Subject
   Stream<List<Quiz>> watchAllQuizzes(int subjectId) {
-    return _quizBox
-        .query(Quiz_.subject.equals(subjectId))
-        .watch(triggerImmediately: true)
-        .map((query) => query.find());
+    return _watchQuizChanges().map(
+      (_) => _quizBox
+          .query(Quiz_.subject.equals(subjectId))
+          .buildAndClose((query) => query.find()),
+    );
   }
 
   Condition<Quiz>? getSearchParamsCondition(QuizSearchParams params) {
@@ -38,48 +49,42 @@ class QuizRepository {
         );
   }
 
+  /// Theo dõi danh sách Quiz có phân trang và tìm kiếm
   Stream<List<Quiz>> watchQuizzes(QuizSearchParams params) {
-    return _quizBox
-        .query(
-          // Quiz_.subject
-          //     .equals(params.subjectId)
-          //     .safeAnd(params.keyword, Quiz_.name.contains),
-          getSearchParamsCondition(params),
-        )
-        .watch(triggerImmediately: true)
-        .map(((query) {
-          query.offset = params.page * params.size;
-          query.limit = params.size;
-
-          // Lúc này find() sẽ trả về đúng số lượng đã phân trang
-          return query.find();
-        }));
+    return _watchQuizChanges().map(
+      (_) => _quizBox.query(getSearchParamsCondition(params)).buildAndClose((
+        query,
+      ) {
+        query
+          ..offset = params.page * params.size
+          ..limit = params.size;
+        return query.find();
+      }),
+    );
   }
 
+  /// Theo dõi chi tiết 1 Quiz theo ID (cập nhật khi câu hỏi bên trong thay đổi)
   Stream<Quiz?> watchQuiz(int id) {
-    return _quizBox
-        .query(Quiz_.id.equals(id))
-        .watch(triggerImmediately: true)
-        .map(((query) => query.findFirst()));
+    return _watchQuizChanges().map((_) => _quizBox.get(id));
   }
 
+  /// Theo dõi tổng số trang
   Stream<int> watchTotalPages(QuizSearchParams params) {
-    return _quizBox
-        .query(getSearchParamsCondition(params))
-        .watch(triggerImmediately: true)
-        .map((query) {
-          final totalCount = query.count();
-          if (totalCount == 0) return 1;
-          return (totalCount / params.size).ceil();
-        });
+    return _watchQuizChanges().map((_) {
+      final totalCount = _quizBox
+          .query(getSearchParamsCondition(params))
+          .buildAndClose((query) => query.count());
+      if (totalCount == 0) return 1;
+      return (totalCount / params.size).ceil();
+    });
   }
 
-  /// 2. Lấy Quiz theo ID
+  /// 2. Lấy Quiz theo ID (Không đổi)
   Future<Quiz?> getQuizById(int id) {
     return _quizBox.getAsync(id);
   }
 
-  /// 3. Lấy Quiz theo SubjectId và Tên (Query kết hợp)
+  /// 3. Lấy Quiz theo SubjectId và Tên (Không đổi)
   Future<Quiz?> getQuizBySubjectIdAndName(int subjectId, String name) async {
     final query = _quizBox
         .query(Quiz_.subject.equals(subjectId).and(Quiz_.name.equals(name)))
@@ -90,7 +95,6 @@ class QuizRepository {
     return result;
   }
 
-  /// 4. Cập nhật danh sách câu hỏi của Quiz (Upsert logic)
   /// 4. Cập nhật danh sách câu hỏi của Quiz (Upsert logic)
   Future<void> updateQuizQuestions(int quizId, List<Question> questions) async {
     final quiz = await _quizBox.getAsync(quizId);
@@ -113,16 +117,15 @@ class QuizRepository {
 
       for (var q in newQuestions) {
         q.quiz.target = currentQuiz;
-        // Tự động đồng bộ quan hệ nội bộ của Question
         q.syncAnswers();
       }
 
-      // Chỉ cần put Question, ObjectBox sẽ tự động put các Answer trong ToMany
       internalQuestionBox.putMany(newQuestions);
 
-      // Cập nhật link từ Quiz sang Question để đồng bộ danh sách
       currentQuiz.questions.clear();
       currentQuiz.questions.addAll(newQuestions);
+
+      // Lệnh put này kích hoạt sự thay đổi của bảng Quiz
       internalQuizBox.put(currentQuiz);
     }, [quizId, questions]);
   }
@@ -134,10 +137,7 @@ class QuizRepository {
       throw EntityNotFoundException('Môn học không tồn tại.');
     }
 
-    // Thiết lập liên kết (Target thay cho Value)
     quiz.subject.target = subject;
-
-    // ObjectBox tự động lưu relation khi put
     await _quizBox.putAsync(quiz);
   }
 

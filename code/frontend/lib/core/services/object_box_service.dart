@@ -9,6 +9,8 @@ import 'package:frontend/features/library/models/quiz.dart';
 import 'package:frontend/features/library/models/subject.dart'; // File generated bởi ObjectBox
 import 'package:frontend/features/setting/models/app_config.dart';
 import 'package:frontend/objectbox.g.dart';
+import 'package:rxdart/rxdart.dart'
+    show Rx, DebounceExtensions, StartWithExtension;
 
 class ObjectBoxService {
   /// Biến static lưu trữ instance duy nhất (Singleton)
@@ -50,6 +52,18 @@ class ObjectBoxService {
   }
 
   Box<T> get<T>() => _boxes[T] as Box<T>;
+
+  /// Gộp sự kiện thay đổi của nhiều bảng thành 1 stream tín hiệu (thay cho ref.invalidate).
+  /// - Phát ngay 1 lần khi bắt đầu lắng nghe để lấy dữ liệu ban đầu.
+  /// - Các thay đổi xảy ra sát nhau (vd. 1 transaction ghi cả Quiz, Question, Answer)
+  ///   được gom lại thành 1 lần phát để không query lặp nhiều lần.
+  ///
+  /// Ví dụ: `watchTables([store.watch<Quiz>(), store.watch<Question>()]).map((_) => ...)`
+  Stream<void> watchTables(List<Stream<void>> tableChanges) {
+    return Rx.merge(
+      tableChanges,
+    ).debounceTime(const Duration(milliseconds: 16)).startWith(null);
+  }
 
   /// Hàm khởi tạo Async (Chạy ở main.dart)
   static Future<ObjectBoxService> create() async {

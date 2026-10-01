@@ -11,6 +11,16 @@ extension QueryBuilderExt<T> on QueryBuilder<T> {
     }
   }
 
+  /// Build -> chạy [action] -> Close. Dùng trong các stream watchTables để không rò rỉ Query
+  R buildAndClose<R>(R Function(Query<T> query) action) {
+    final query = build();
+    try {
+      return action(query);
+    } finally {
+      query.close();
+    }
+  }
+
   /// 2. RELATION XUÔI - ToOne (Ví dụ: Order -> User)
   QueryBuilder<T> safeLink<Target, V>(
     V? value,

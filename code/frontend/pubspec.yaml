@@ -35,6 +35,7 @@ dependencies:
   url_launcher: ^6.3.2
   re_editor: ^0.10.0
   upgrader: ^13.6.0
+  rxdart: ^0.28.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

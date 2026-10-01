@@ -20,18 +20,12 @@ class LearningSessionNotifier extends _$LearningSessionNotifier {
   }) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     final result = await repo.createSession(quizId: quizId, setting: setting);
-    ref.container.invalidate(watchLearningSessionsProvider);
-    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
     return result;
   }
 
   Future<LearningSession> retakeSession(int oldSessionId) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     final result = await repo.retakeSession(oldSessionId);
-
-    // Invalidate để làm mới danh sách (xóa cache tất cả các params)
-    ref.container.invalidate(watchLearningSessionsProvider);
-    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
 
     return result;
   }
@@ -40,34 +34,23 @@ class LearningSessionNotifier extends _$LearningSessionNotifier {
     final repo = ref.read(learningSessionRepositoryProvider);
     final result = await repo.createMistakeSession(oldSessionId);
 
-    // Invalidate sau khi thực hiện xong
-    ref.container.invalidate(watchLearningSessionsProvider);
-    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
-
     return result;
   }
 
   Future<void> completeSession(int id) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     await repo.completeSession(id);
-
-    // Invalidate sau khi update xong
-    ref.container.invalidate(watchLearningSessionsProvider);
   }
 
   // Hàm update cực kỳ quan trọng, giờ gọi rất dễ
   Future<void> updateSession(LearningSession session) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     await repo.updateSession(session);
-    ref.container.invalidate(watchLearningSessionProvider);
   }
 
   Future<void> deleteSession(int id) async {
     final repo = ref.read(learningSessionRepositoryProvider);
     await repo.deleteSession(id);
-    ref.container.invalidate(watchLearningSessionProvider);
-    ref.container.invalidate(watchLearningSessionsProvider);
-    ref.container.invalidate(watchLearningSessionTotalPagesProvider);
   }
 }
 

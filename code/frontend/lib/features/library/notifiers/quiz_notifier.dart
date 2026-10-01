@@ -49,21 +49,11 @@ class QuizNotifier extends _$QuizNotifier {
     // 3. Thực thi lưu dữ liệu
     quiz.name = trimmedName; // Cập nhật tên đã được trim
     await repo.saveQuiz(subjectId, quiz);
-
-    if (!ref.mounted) return;
-    // 4. Invalidate để làm mới danh sách (xóa cache tất cả các params)
-    ref.invalidate(watchQuizzesProvider);
-    ref.invalidate(watchQuizTotalPagesProvider);
-    ref.invalidate(watchQuizProvider);
   }
 
   Future<void> deleteQuiz(int id) async {
     final repo = ref.read(quizRepositoryProvider);
     await repo.deleteQuiz(id);
-    if (!ref.mounted) return;
-    // Invalidate để làm mới danh sách (xóa cache tất cả các params)
-    ref.invalidate(watchQuizzesProvider);
-    ref.invalidate(watchQuizTotalPagesProvider);
   }
 }
 
