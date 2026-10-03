@@ -128,10 +128,10 @@ class SettingPage extends HookConsumerWidget {
                           AppSwitch(
                             label: "",
                             value: config.enableQuickAnswer,
-                            onChanged: (val) {
-                              config.enableQuickAnswer = val;
-                              _update(ref, config);
-                            },
+                            onChanged: (val) => _update(
+                              ref,
+                              config.copyWith(enableQuickAnswer: val),
+                            ),
                           ),
                         ],
                       ),
@@ -207,8 +207,7 @@ class SettingPage extends HookConsumerWidget {
     final List<PhysicalKey> keys = List.from(currentMap[action] ?? []);
     if (keys.remove(key)) {
       currentMap[action] = keys;
-      config.keyBindings = currentMap;
-      _update(ref, config);
+      _update(ref, config.withKeyBindings(currentMap));
     }
   }
 
@@ -220,9 +219,14 @@ class SettingPage extends HookConsumerWidget {
   ) {
     showDialog(
       context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setModalState) {
-          final currentSize = config.fontSize;
+      // Đọc lại config mới nhất từ provider mỗi lần DB đổi để slider cập nhật
+      // ngay, không phải sửa trực tiếp object `config` cũ.
+      builder: (ctx) => Consumer(
+        builder: (context, ref, _) {
+          final latest = ref.watch(watchAppConfigProvider).value ?? config;
+          final currentSize = latest.fontSize;
+          void setSize(double size) =>
+              _update(ref, latest.copyWith(fontSize: size));
 
           return AppAlertDialog(
             title: "Kích thước phông chữ",
@@ -248,7 +252,7 @@ class SettingPage extends HookConsumerWidget {
                       "Mẫu văn bản hiển thị (${currentSize.toInt()}px)",
                       style: TextStyle(
                         fontSize: currentSize,
-                        fontFamily: config.fontFamily,
+                        fontFamily: latest.fontFamily,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textMain,
                       ),
@@ -264,12 +268,7 @@ class SettingPage extends HookConsumerWidget {
                     AppActionButton(
                       icon: Icons.remove,
                       onTap: currentSize > 12
-                          ? () {
-                              setModalState(() {
-                                config.fontSize = currentSize - 1;
-                              });
-                              _update(ref, config);
-                            }
+                          ? () => setSize(currentSize - 1)
                           : null,
                       actionType: ActionType.edit,
                     ),
@@ -288,24 +287,14 @@ class SettingPage extends HookConsumerWidget {
                           min: 12,
                           max: 30,
                           divisions: 18,
-                          onChanged: (val) {
-                            setModalState(() {
-                              config.fontSize = val;
-                            });
-                            _update(ref, config);
-                          },
+                          onChanged: setSize,
                         ),
                       ),
                     ),
                     AppActionButton(
                       icon: Icons.add,
                       onTap: currentSize < 30
-                          ? () {
-                              setModalState(() {
-                                config.fontSize = currentSize + 1;
-                              });
-                              _update(ref, config);
-                            }
+                          ? () => setSize(currentSize + 1)
                           : null,
                       actionType: ActionType.edit,
                     ),
@@ -370,8 +359,7 @@ class SettingPage extends HookConsumerWidget {
                       )
                     : null,
                 onTap: () {
-                  config.fontFamily = font;
-                  _update(ref, config);
+                  _update(ref, config.copyWith(fontFamily: font));
                   Navigator.pop(ctx);
                 },
               );
@@ -446,8 +434,7 @@ class SettingPage extends HookConsumerWidget {
       if (!keys.contains(picked)) {
         keys.add(picked);
         currentMap[action] = keys;
-        config.keyBindings = currentMap;
-        _update(ref, config);
+        _update(ref, config.withKeyBindings(currentMap));
       }
       Navigator.pop(ctx);
     }

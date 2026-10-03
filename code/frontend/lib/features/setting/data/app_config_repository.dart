@@ -1,3 +1,4 @@
+import 'package:frontend/core/extensions/stream_extension.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:frontend/features/library/models/subject.dart';
@@ -26,6 +27,7 @@ class AppConfigRepository {
     return _appConfigBox
         .query(AppConfig_.id.equals(1))
         .watch(triggerImmediately: true)
+        .pauseSafe()
         .map((query) => query.findFirst());
   }
 

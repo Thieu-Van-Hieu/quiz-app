@@ -1,3 +1,4 @@
+import 'package:frontend/core/extensions/stream_extension.dart';
 import 'package:frontend/core/exceptions/app_exception.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/library/models/answer.dart';
@@ -23,6 +24,7 @@ class AnswerRepository {
         .query(Answer_.question.equals(questionId))
         .order(Answer_.indexOrder)
         .watch(triggerImmediately: true)
+        .pauseSafe()
         .map((q) => q.find());
   }
 

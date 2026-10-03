@@ -1,3 +1,4 @@
+import 'package:frontend/core/extensions/stream_extension.dart';
 import 'package:frontend/core/services/object_box_service.dart';
 import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
 import 'package:frontend/features/library/models/answer.dart';
@@ -24,6 +25,7 @@ class LearningSessionDetailRepository {
     // Trả về stream, mỗi khi Box có thay đổi (put/delete), nó sẽ phát lại data
     return query
         .watch(triggerImmediately: true)
+        .pauseSafe()
         .map(((query) => query.findFirst()));
   }
 

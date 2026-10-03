@@ -38,6 +38,13 @@ class AppConfig with AppConfigMappable {
     internalKeyBindings = MapperContainer.globals.toJson(map);
   }
 
+  // Trả về bản sao mới thay vì sửa trực tiếp object đang được provider giữ:
+  // Riverpod so sánh bằng `==` (dart_mappable so theo giá trị) nên nếu sửa
+  // tại chỗ thì bản mới từ DB "bằng" bản cũ và UI sẽ không rebuild.
+  AppConfig withKeyBindings(Map<ShortcutAction, List<PhysicalKey>> map) {
+    return copyWith()..keyBindings = map;
+  }
+
   Map<ShortcutAction, List<PhysicalKey>> get keyBindings {
     try {
       ShortcutActionMapper.ensureInitialized();

@@ -1,3 +1,4 @@
+import 'package:frontend/core/extensions/stream_extension.dart';
 import 'package:frontend/core/extensions/list_extension.dart';
 import 'package:frontend/core/search/text_matcher.dart';
 import 'package:frontend/core/services/object_box_service.dart';
@@ -24,6 +25,7 @@ class SubjectRepository {
     return _subjectBox
         .query()
         .watch(triggerImmediately: true)
+        .pauseSafe()
         .map((query) => query.find());
   }
 
@@ -37,6 +39,7 @@ class SubjectRepository {
     return _subjectBox
         .query()
         .watch(triggerImmediately: true)
+        .pauseSafe()
         .map(
           (query) =>
               _search(query.find(), params).paged(params.page, params.size),
@@ -44,7 +47,9 @@ class SubjectRepository {
   }
 
   Stream<int> watchTotalPages(SubjectSearchParams params) {
-    return _subjectBox.query().watch(triggerImmediately: true).map((query) {
+    return _subjectBox.query().watch(triggerImmediately: true).pauseSafe().map((
+      query,
+    ) {
       final totalItems = _search(query.find(), params).length;
       if (totalItems == 0) return 1;
       return (totalItems / params.size).ceil();

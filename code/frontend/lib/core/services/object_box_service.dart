@@ -1,5 +1,6 @@
 // Import tất cả các model của bạn
 import 'package:flutter/cupertino.dart';
+import 'package:frontend/core/extensions/stream_extension.dart';
 import 'package:frontend/core/services/path_service.dart';
 import 'package:frontend/features/learning/models/session/learning_session.dart';
 import 'package:frontend/features/learning/models/session/learning_session_detail.dart';
@@ -60,9 +61,11 @@ class ObjectBoxService {
   ///
   /// Ví dụ: `watchTables([store.watch<Quiz>(), store.watch<Question>()]).map((_) => ...)`
   Stream<void> watchTables(List<Stream<void>> tableChanges) {
-    return Rx.merge(
-      tableChanges,
-    ).debounceTime(const Duration(milliseconds: 16)).startWith(null);
+    // pauseSafe: xem giải thích trong stream_extension.dart
+    return Rx.merge(tableChanges)
+        .pauseSafe()
+        .debounceTime(const Duration(milliseconds: 16))
+        .startWith(null);
   }
 
   /// Hàm khởi tạo Async (Chạy ở main.dart)
