@@ -9,7 +9,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-0078D6?logo=windows&logoColor=white)](https://flutter.dev/desktop)
 [![ObjectBox](https://img.shields.io/badge/Database-ObjectBox-green)](https://objectbox.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.2.0-brightgreen)](RELEASE.md)
+[![Version](https://img.shields.io/badge/Version-1.2.1-brightgreen)](RELEASE.md)
 
 </div>
 
@@ -57,6 +57,8 @@ Updater**.
 - ✅ Thêm **Câu hỏi & Đáp án** với phần giải thích chi tiết
 - ✅ Tìm kiếm (kèm tuỳ chọn nâng cao & highlight từ khoá) và phân trang
 - ✅ **Import/Export JSON** — chia sẻ bộ đề dễ dàng
+- ✅ **Kho đề online** — xem, tải & import bộ đề có sẵn trên GitHub bằng 1 nút, biết bộ đề nào mới cập nhật / có bản
+  mới
 - ✅ **Import/Export Quizlet** — hỗ trợ định dạng trắc nghiệm với custom separator, tích hợp **Lazy Load** xử lý mượt dữ
   liệu lớn
 - ✅ **Cảnh báo câu trùng** khi import / thêm câu hỏi, xoá câu trùng bằng 1 nút
@@ -103,6 +105,13 @@ Updater**.
 | 🧹 **Lọc trùng**  | Xoá câu trùng hoàn toàn, liệt kê câu trùng nội dung nhưng khác đáp án                                                   |
 
 Kết quả tách / gộp được lưu thành **bộ đề mới**, bộ đề gốc không bị thay đổi.
+
+### ☁️ Kho đề
+
+- Liệt kê các bộ đề có sẵn trong [`quizzes/current`](quizzes/current) trên GitHub, không cần tải file thủ công.
+- Nhãn độ mới (*Mới cập nhật* / *Cập nhật gần đây* / *Đã lâu* / *Lâu chưa cập nhật*) và trạng thái trên máy (*Đã
+  import* / *Có bản mới*).
+- **Tải & import 1 nút**: tự chọn môn học theo mã môn (hoặc tạo môn mới), kiểm tra câu trùng như import thường.
 
 ### ⚙️ Cài đặt & Hệ thống
 
@@ -195,6 +204,11 @@ lib/
 │   │   ├── data/                # Corpus tìm kiếm (watch nhiều bảng)
 │   │   ├── services/            # MasterSearchService
 │   │   └── pages/ widgets/      # MasterSearchPage, QuestionHitCard
+│   │
+│   ├── store/                   # Trang Kho đề (bộ đề có sẵn trên GitHub)
+│   │   ├── services/            # GithubQuizSource (GitHub API + cache)
+│   │   ├── notifiers/           # Tải, import, ghi nhận bản đã import
+│   │   └── pages/ widgets/      # QuizStorePage, RemoteQuizCard, ImportRemoteDialog
 │   │
 │   ├── utilities/               # Trang Công cụ
 │   │   ├── services/            # QuizAnalyzer, QuizSplitter, QuizMerger
@@ -307,6 +321,7 @@ Subject (1) ──→ (N) Quiz (1) ──→ (N) Question (1) ──→ (N) Answ
 * [x] Hỗ trợ chính thức Linux OS
 * [x] Tìm kiếm toàn cục & tuỳ chọn tìm kiếm nâng cao (bỏ dấu, Regex...)
 * [x] Trang Công cụ: phân tích, tách, gộp, lọc trùng bộ đề
+* [x] Kho đề online: tải & import bộ đề có sẵn trên GitHub
 * [x] Unit test cho các service xử lý dữ liệu
 * [ ] Hỗ trợ macOS
 * [ ] Export / Import backup toàn bộ dữ liệu (Full DB Dump)

@@ -1,3 +1,36 @@
+## [1.2.1] — 2026-10-03
+
+### ✨ Thêm mới
+
+- **Trang Kho đề** (`features/store/`): Mục "Kho đề" mới trên sidebar, liệt kê các bộ đề trong `quizzes/current` của
+  repo GitHub (bỏ qua file Template).
+    - Nhãn độ mới theo commit gần nhất sửa file: mới cập nhật (≤ 7 ngày) / gần đây (≤ 30 ngày) / đã lâu (≤ 90 ngày) /
+      lâu chưa cập nhật, kèm thời gian tương đối và dung lượng.
+    - Trạng thái so với máy: *Đã import* / *Có bản mới* (so `sha` của file với bản đã import).
+    - Tải & import 1 nút: kiểm tra câu trùng, tự chọn môn theo mã môn hoặc tạo môn mới, báo lỗi trùng tên ngay trong
+      dialog; bản cập nhật được gợi ý tên kèm ngày.
+    - Tìm kiếm, lọc (chưa import / có bản mới), sắp xếp theo ngày cập nhật hoặc tên.
+    - Cache chi tiết commit trên máy (`quiz_store.json`) để tiết kiệm giới hạn 60 request/giờ của GitHub API; mất mạng
+      thì hiển thị danh sách lần trước.
+- **Lối tắt "Kho đề online"** trong menu Import của trang bộ đề.
+
+### 🐛 Sửa lỗi
+
+- **Cài đặt**: Gán / xoá phím tắt, bật tắt phím nhanh, đổi font và cỡ chữ không cập nhật ngay (phải hard refresh). Nguyên
+  nhân: trang sửa trực tiếp object `AppConfig` mà provider đang giữ; Riverpod 3 so sánh bằng `==` (dart_mappable so theo
+  giá trị) nên bản mới từ DB "bằng" bản cũ và không rebuild. Giờ luôn tạo bản sao bằng `copyWith` /
+  `AppConfig.withKeyBindings`.
+- **Trang đang ẩn không nhận thay đổi DB** (vd. môn học mới tạo ở trang khác không hiện trong Thư viện): Riverpod 3
+  pause provider của trang ẩn, còn stream watch của ObjectBox mất sự kiện khi bị pause (`store.watch<T>()` đóng observer,
+  `Query.watch()` bỏ subscription cũ khi resume). Thêm `Stream.pauseSafe()` (`core/extensions/stream_extension.dart`)
+  và áp dụng cho mọi watch, kể cả `ObjectBoxService.watchTables()`.
+
+### 🧪 Kỹ thuật
+
+- Thêm unit / widget test (62 test): Kho đề, `pauseSafe`, card bộ đề không bị tràn layout.
+
+---
+
 ## [1.2.0] — 2026-10-01
 
 ### ✨ Thêm mới
