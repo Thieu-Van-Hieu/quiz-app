@@ -1,6 +1,6 @@
 class AppStrings {
   static const String appName = "Quiz App";
-  static const String appVersion = "Version: 1.2.0";
+  static const String appVersion = "Version: 1.2.1";
 
   // Common Actions
   static const String btnCancel = "Hủy";
