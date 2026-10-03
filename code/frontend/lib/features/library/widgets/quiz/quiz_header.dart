@@ -3,6 +3,8 @@ import 'package:frontend/core/widgets/button/button.dart';
 import 'package:frontend/core/widgets/input/menu.dart';
 import 'package:frontend/features/library/constants/library_colors.dart';
 import 'package:frontend/features/library/constants/library_strings.dart';
+import 'package:frontend/features/store/routes/store_routes.dart';
+import 'package:go_router/go_router.dart';
 
 class QuizHeader extends StatelessWidget {
   final Function(bool) onImport;
@@ -34,6 +36,11 @@ class QuizHeader extends StatelessWidget {
           icon: Icons.auto_awesome_rounded,
           iconColor: Colors.purple,
         ),
+        AppMenuItem(
+          value: 3,
+          label: "Kho đề online",
+          icon: Icons.cloud_download_rounded,
+        ),
       ],
     );
 
@@ -41,6 +48,7 @@ class QuizHeader extends StatelessWidget {
     if (selectedValue == 0) onImport(false);
     if (selectedValue == 1) onImport(true);
     if (selectedValue == 2) onQuizletImport();
+    if (selectedValue == 3 && context.mounted) context.go(StoreRoutes.root);
   }
 
   @override
